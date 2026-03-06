@@ -1,0 +1,151 @@
+/* Paleta de colores (copiada para referencia local) */
+:root {
+    --color-primary-accent: #41E8EF;
+    /* Azul/Cian */
+    --color-secondary-accent: #B965F0;
+    /* Púrpura */
+    --color-text-secondary: #6D6D6D;
+    /* Gris Oscuro */
+    --color-background-dark: #000000;
+    /* Negro */
+    --color-text-light: #EAEAEA;
+    /* Blanco roto */
+    --color-background-body: #121212;
+    /* Gris muy oscuro suave */
+}
+
+/* --- Estilos Generales de Contenido --- */
+.main-content-info {
+    max-width: 1000px;
+    margin: 60px auto;
+    padding: 0 20px;
+}
+
+.page-title {
+    font-size: 2.5em;
+    color: var(--color-primary-accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.tabs-container {
+    background-color: #1a1a1a;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    padding-bottom: 30px;
+}
+
+/* --- Navegación de Pestañas (Simulación) --- */
+.tabs-nav {
+    display: flex;
+    border-bottom: 2px solid var(--color-background-dark);
+    background-color: #000000;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.tab-link {
+    flex-grow: 1;
+    text-align: center;
+    padding: 15px 20px;
+    color: var(--color-text-light);
+    font-weight: bold;
+    font-size: 1.1em;
+    transition: background-color 0.3s, color 0.3s;
+    border-bottom: 3px solid transparent;
+}
+
+.tab-link:hover {
+    background-color: #222;
+    color: var(--color-primary-accent);
+}
+
+.tab-link.active {
+    background-color: var(--color-background-body);
+    color: var(--color-secondary-accent);
+    border-bottom: 3px solid var(--color-secondary-accent);
+}
+
+/* --- Contenido de Pestañas --- */
+
+.tabs-content {
+    padding: 30px;
+}
+
+.tab-pane {
+    /* Aquí se usaría JavaScript para manejar qué pestaña es 'active' y mostrarla.
+       Por defecto, se muestra la primera. */
+    display: block;
+}
+
+/* Ocultar las pestañas no activas si se usa solo CSS (requiere más HTML) */
+/* .tab-pane:not(.active) { display: none; } */
+
+.tab-pane h2 {
+    color: var(--color-primary-accent);
+    font-size: 2em;
+    border-left: 4px solid var(--color-primary-accent);
+    padding-left: 15px;
+    margin-bottom: 20px;
+}
+
+.section-intro {
+    font-size: 1.05em;
+    color: var(--color-text-light);
+    margin-bottom: 30px;
+}
+
+.info-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.info-list li {
+    background-color: #222;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    border-left: 4px solid var(--color-secondary-accent);
+    line-height: 1.5;
+}
+
+.info-list li strong {
+    color: var(--color-primary-accent);
+}
+
+/* Lore Section */
+.lore-details p {
+    background-color: #222;
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+/* FAQ Section (Details/Summary) */
+.faq-item {
+    background-color: #222;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    border-left: 3px solid var(--color-primary-accent);
+    transition: background-color 0.3s;
+}
+
+.faq-item:hover {
+    background-color: #2c2c2c;
+}
+
+.faq-item summary {
+    font-weight: bold;
+    padding: 15px;
+    cursor: pointer;
+    color: var(--color-text-light);
+    outline: none;
+}
+
+.faq-item p {
+    padding: 0 15px 15px;
+    margin: 0;
+    color: var(--color-text-secondary);
+}

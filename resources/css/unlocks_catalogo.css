@@ -1,0 +1,211 @@
+/* Paleta de colores (copiada para referencia local) */
+:root {
+    --color-primary-accent: #41E8EF;
+    /* Azul/Cian */
+    --color-secondary-accent: #B965F0;
+    /* Púrpura */
+    --color-text-secondary: #6D6D6D;
+    /* Gris Oscuro */
+    --color-background-dark: #000000;
+    /* Negro */
+    --color-text-light: #EAEAEA;
+    /* Blanco roto */
+    --color-background-body: #121212;
+    /* Gris muy oscuro suave */
+}
+
+/* --- Estilos Generales de Contenido --- */
+.main-content-catalogo {
+    max-width: 1200px;
+    margin: 60px auto;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.page-title {
+    font-size: 2.5em;
+    color: var(--color-primary-accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+}
+
+.catalogo-intro {
+    font-size: 1.1em;
+    color: var(--color-text-secondary);
+    max-width: 800px;
+    margin: 0 auto 50px auto;
+    padding-bottom: 20px;
+    border-bottom: 1px dashed var(--color-secondary-accent);
+}
+
+/* --- Rejilla y Tarjetas --- */
+.catalogo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    /* 3 o 4 columnas en desktop */
+    gap: 30px;
+    margin-bottom: 60px;
+}
+
+.item-card {
+    display: block;
+    text-decoration: none;
+    padding: 30px;
+    border-radius: 12px;
+    background-color: #1a1a1a;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    text-align: center;
+    border: 2px solid transparent;
+}
+
+.item-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+}
+
+.item-card h2 {
+    color: var(--color-text-light);
+    font-size: 1.6em;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.item-card p {
+    color: var(--color-text-secondary);
+    font-size: 0.95em;
+    margin-bottom: 5px;
+}
+
+.item-card .unlock-req {
+    color: var(--color-primary-accent);
+    font-weight: bold;
+    font-size: 0.9em;
+    margin-top: 15px;
+}
+
+.card-icon {
+    font-size: 3em;
+    display: block;
+    margin-bottom: 10px;
+    transition: color 0.3s;
+}
+
+/* Colores Específicos de Borde al Hacer Hover */
+
+.card-personaje:hover {
+    border-color: var(--color-secondary-accent);
+    /* Púrpura */
+}
+
+.card-arma:hover {
+    border-color: var(--color-primary-accent);
+    /* Cian */
+}
+
+.card-tomo:hover {
+    border-color: #FFC300;
+    /* Dorado */
+}
+
+.card-item:hover {
+    border-color: #DA70D6;
+    /* Magenta */
+}
+
+/* Colores de Texto y Icono por defecto (se usan en el HTML con iconos emoji) */
+.card-personaje .card-icon {
+    color: var(--color-secondary-accent);
+}
+
+.card-arma .card-icon {
+    color: var(--color-primary-accent);
+}
+
+.card-tomo .card-icon {
+    color: #FFC300;
+}
+
+.card-item .card-icon {
+    color: #DA70D6;
+}
+
+/* --- CAMBIOS PARA EL CHECKBOX DE UNLOCKS --- */
+
+.item-card {
+    position: relative;
+    /* Necesario para posicionar el checkbox de forma absoluta */
+    text-align: left;
+    /* Alineamos todo el texto a la izquierda */
+    padding-top: 50px;
+    /* Añadimos espacio arriba para el checkbox */
+}
+
+.item-card .card-icon {
+    position: absolute;
+    /* Hacemos que el icono flote */
+    top: 15px;
+    left: 20px;
+    font-size: 2.5em;
+}
+
+.item-card h2 {
+    margin-top: 0;
+    margin-left: 70px;
+    /* Desplaza el título a la derecha del icono */
+    font-size: 1.4em;
+}
+
+.item-card p {
+    margin-left: 70px;
+    /* Desplaza el texto a la derecha del icono */
+}
+
+.item-card .unlock-req {
+    margin-left: 70px;
+    font-size: 0.8em;
+}
+
+.unlock-checkbox {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+
+.unlock-checkbox input[type="checkbox"] {
+    /* Ocultar el checkbox nativo */
+    display: none;
+}
+
+.checkbox-label {
+    display: block;
+    width: 25px;
+    height: 25px;
+    border: 3px solid var(--color-secondary-accent);
+    /* Borde Púrpura */
+    border-radius: 4px;
+    cursor: pointer;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+.unlock-checkbox input[type="checkbox"]:checked+.checkbox-label {
+    background-color: var(--color-primary-accent);
+    /* Fondo Cian si está marcado */
+    border-color: var(--color-primary-accent);
+    /* Añadir un checkmark (símbolo de verificación) con CSS */
+    content: '✓';
+    color: var(--color-background-dark);
+    font-size: 20px;
+    line-height: 25px;
+    text-align: center;
+}
+
+.unlock-checkbox input[type="checkbox"]:checked+.checkbox-label::before {
+    content: '✓';
+    color: var(--color-background-dark);
+    font-size: 20px;
+    line-height: 23px;
+    text-align: center;
+    display: block;
+}

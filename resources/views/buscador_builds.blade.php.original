@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador de Builds | MEGABONK GUIDE</title>
+    <link rel="stylesheet" href="{{ asset('css/estilos.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/buscador_builds.css') }}">
+    <link rel="icon" href="iconotlabaho.webp" type="image/x-icon">
+</head>
+
+<body>
+
+    <header class="main-header">
+        <div class="header-content">
+            <a href="{{ route('home') }}" class="site-title">
+                <img src="iconotlabaho.webp" alt="Logo MEGABONK GUIDE" id="header-logo">
+                <a href="{{ route('home') }}" class="site-title">MEGABONK GUIDE</a>
+
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="{{ route('tierlist') }}">TIERLIST</a></li>
+                        <li><a href="{{ route('builds.search') }}">BUSCADOR DE BUILDS</a></li>
+                        <li><a href="{{ route('comunity.index') }}">COMMUNITY</a></li>
+                        <li class="dropdown">
+                            <a href="{{ route('unlocks.index') }}">UNLOCKS ▼</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ route('unlocks.weapons') }}">Armas</a></li>
+                                <li><a href="{{ route('unlocks.tomes') }}">Tomos</a></li>
+                                <li><a href="{{ route('unlocks.items') }}">Items</a></li>
+                                <li><a href="{{ route('unlocks.characters') }}">Personajes</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="{{ route('meta') }}">META</a></li>
+                        <li><a href="{{ route('info.general') }}">INFO GENERAL</a></li>
+                        <li><a href="{{ route('info.news') }}">NOVEDADES</a></li>
+                        <li><a href="{{ route('leaderboard') }}">LEADERBOARD</a></li>
+                    </ul>
+                </nav>
+                <div class="user-auth-links">
+                    <a href="{{ route('login') }}" class="auth-link">Login</a> |
+                    <a href="{{ route('register') }}" class="auth-link">Registro</a>
+                </div>
+        </div>
+    </header>
+
+    <main class="main-content-builds">
+
+        <h1 class="page-title">🔎 Buscador Avanzado de Builds</h1>
+
+        <section class="search-layout-grid">
+
+            <aside class="filter-panel">
+                <h2>Filtros</h2>
+
+                <form class="filter-form">
+
+                    <div class="filter-group">
+                        <label for="search-text">Buscar por título:</label>
+                        <input type="text" id="search-text" placeholder="Ej: Bonk Crítico, Velocidad Extrema">
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="character">Personaje:</label>
+                        <select id="character">
+                            <option value="">Cualquiera</option>
+                            <option value="maestra-bonk">La Maestra del Bonk</option>
+                            <option value="berserker">El Berserker</option>
+                            <option value="ilusionista">La Ilusionista</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="weapon">Arma principal:</label>
+                        <select id="weapon">
+                            <option value="">Cualquiera</option>
+                            <option value="hacha-purpura">Hacha Púrpura Radiante</option>
+                            <option value="baston-cobre">Bastón de Cobre</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="rating">Rating Mínimo:</label>
+                        <input type="range" id="rating" min="1" max="5" value="3">
+                        <span id="rating-value">3 Estrellas</span>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Tipo de Build:</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" checked> DPS</label>
+                            <label><input type="checkbox"> Tanque</label>
+                            <label><input type="checkbox"> Soporte</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-search">Aplicar Filtros</button>
+                    <button type="reset" class="btn-reset">Limpiar Filtros</button>
+                </form>
+            </aside>
+
+            <section class="results-list">
+                <h2>Resultados (15)</h2>
+
+                <div class="build-card">
+                    <div class="card-header">
+                        <h3>Build Definitiva: Crítico Infinito</h3>
+                        <span class="rating">⭐⭐⭐⭐⭐</span>
+                    </div>
+                    <p class="card-details">
+                        **Personaje:** La Maestra del Bonk | **Arma:** Hacha Púrpura | **Autor:** ProBonker99
+                    </p>
+                    <p class="card-description">
+                        Maximizando el Tomo de Velocidad, esta build logra una tasa de crítico del 100% y un Bonk
+                        perpetuo. Ideal para el nivel Bonk +10.
+                    </p>
+                    <a href="#" class="view-build-link">Ver Build Completa →</a>
+                </div>
+
+                <div class="build-card">
+                    <div class="card-header">
+                        <h3>Build Tanque: El Muro de Hueso</h3>
+                        <span class="rating">⭐⭐⭐⭐</span>
+                    </div>
+                    <p class="card-details">
+                        **Personaje:** El Berserker | **Arma:** Mazo de Guerra | **Autor:** TankMaster
+                    </p>
+                    <p class="card-description">
+                        Enfocada en el Item Único "Armadura del Olvido" para generar escudos pasivos. Extremadamente
+                        difícil de derribar.
+                    </p>
+                    <a href="#" class="view-build-link">Ver Build Completa →</a>
+                </div>
+
+            </section>
+
+        </section>
+
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-sections">
+            <div>
+                <h3>Enlaces Rápidos</h3>
+                <ul>
+                    <li><a href="{{ route('tierlist') }}">TIERLIST</a></li>
+                    <li><a href="{{ route('meta') }}">META</a></li>
+                    <li><a href="{{ route('info.news') }}">NOVEDADES</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Soporte</h3>
+                <ul>
+                    <li><a href="#">Contáctanos</a></li>
+                    <li><a href="{{ route('comunity.suggestions') }}">Sugerencias</a></li>
+                    <li><a href="#">Preguntas Frecuentes</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Legal</h3>
+                <ul>
+                    <li><a href="#">Términos y Condiciones</a></li>
+                    <li><a href="#">Política de Privacidad</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-copy">
+            &copy; 2025 MEGABONK GUIDE. Todos los derechos reservados.
+        </div>
+    </footer>
+
+</body>
+
+</html>

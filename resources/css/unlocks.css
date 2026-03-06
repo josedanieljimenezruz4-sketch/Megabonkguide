@@ -1,0 +1,129 @@
+/* Paleta de colores (copiada para referencia local) */
+:root {
+    --color-primary-accent: #41E8EF;
+    /* Azul/Cian */
+    --color-secondary-accent: #B965F0;
+    /* Púrpura */
+    --color-text-secondary: #6D6D6D;
+    /* Gris Oscuro */
+    --color-background-dark: #000000;
+    /* Negro */
+    --color-text-light: #EAEAEA;
+    /* Blanco roto */
+    --color-background-body: #121212;
+    /* Gris muy oscuro suave */
+}
+
+/* --- Estilos Generales de Contenido --- */
+.main-content-unlocks {
+    max-width: 1200px;
+    margin: 60px auto;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.page-title {
+    font-size: 2.5em;
+    color: var(--color-primary-accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+}
+
+.intro-text-unlocks {
+    font-size: 1.1em;
+    color: var(--color-text-secondary);
+    max-width: 800px;
+    margin: 0 auto 50px auto;
+    padding-bottom: 20px;
+    border-bottom: 1px dashed var(--color-text-secondary);
+}
+
+/* --- Grid de Categorías (Cards) --- */
+.unlocks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    /* 4 columnas responsivas */
+    gap: 30px;
+    margin-bottom: 60px;
+}
+
+.unlock-card {
+    display: block;
+    text-decoration: none;
+    padding: 30px;
+    border-radius: 12px;
+    background-color: #1a1a1a;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-align: center;
+    border: 1px solid transparent;
+}
+
+.unlock-card:hover {
+    transform: translateY(-8px);
+    /* Efecto de levitación */
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.7);
+    border-color: var(--color-primary-accent);
+}
+
+.unlock-card h2 {
+    color: var(--color-text-light);
+    font-size: 1.8em;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.unlock-card p {
+    color: var(--color-text-secondary);
+    font-size: 0.95em;
+}
+
+.card-icon {
+    font-size: 3em;
+    display: block;
+    margin-bottom: 10px;
+}
+
+/* Colores de Acento por Categoría */
+
+.card-personajes .card-icon {
+    color: var(--color-secondary-accent);
+    /* Púrpura */
+}
+
+.card-armas .card-icon {
+    color: var(--color-primary-accent);
+    /* Cian */
+}
+
+.card-tomos .card-icon {
+    color: #FFC300;
+    /* Dorado/Amarillo */
+}
+
+.card-items .card-icon {
+    color: #DA70D6;
+    /* Magenta */
+}
+
+/* Hover específicos para el texto */
+.card-personajes:hover h2,
+.card-personajes:hover p {
+    color: var(--color-secondary-accent);
+}
+
+.card-armas:hover h2,
+.card-armas:hover p {
+    color: var(--color-primary-accent);
+}
+
+/* --- Sección de Notas --- */
+.notes-section {
+    max-width: 800px;
+    margin: 40px auto;
+    font-size: 0.9em;
+    color: var(--color-text-secondary);
+    padding: 15px;
+    border-left: 3px solid var(--color-secondary-accent);
+}

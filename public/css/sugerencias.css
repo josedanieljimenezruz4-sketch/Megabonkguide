@@ -1,0 +1,114 @@
+/* Paleta de colores (copiada para referencia local) */
+:root {
+    --color-primary-accent: #41E8EF;
+    /* Azul/Cian */
+    --color-secondary-accent: #B965F0;
+    /* Púrpura */
+    --color-text-secondary: #6D6D6D;
+    /* Gris Oscuro */
+    --color-background-dark: #000000;
+    /* Negro */
+    --color-text-light: #EAEAEA;
+    /* Blanco roto */
+    --color-background-body: #121212;
+    /* Gris muy oscuro suave */
+}
+
+/* --- Layout Principal --- */
+.main-content-suggestions {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: calc(100vh - 120px);
+    padding: 40px 20px;
+}
+
+/* --- Tarjeta del Formulario --- */
+.suggestions-card {
+    background-color: #1a1a1a;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+    width: 100%;
+    max-width: 650px;
+    border-left: 5px solid var(--color-primary-accent);
+}
+
+.page-title {
+    color: var(--color-secondary-accent);
+    font-size: 2.2em;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.intro-text-suggestions {
+    color: var(--color-text-secondary);
+    margin-bottom: 30px;
+    font-size: 1em;
+    text-align: center;
+    padding-bottom: 20px;
+    border-bottom: 1px dashed var(--color-primary-accent);
+}
+
+/* --- Formulario --- */
+.suggestions-form {
+    text-align: left;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    color: var(--color-text-light);
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 0.95em;
+}
+
+.suggestions-form input[type="text"],
+.suggestions-form input[type="email"],
+.suggestions-form select,
+.suggestions-form textarea {
+    width: 100%;
+    padding: 12px;
+    background-color: #222;
+    border: 1px solid #333;
+    border-radius: 4px;
+    color: var(--color-text-light);
+    font-size: 1em;
+    box-sizing: border-box;
+    resize: vertical;
+    /* Permite redimensionar el textarea verticalmente */
+    transition: border-color 0.3s;
+}
+
+.suggestions-form input:focus,
+.suggestions-form select:focus,
+.suggestions-form textarea:focus {
+    border-color: var(--color-secondary-accent);
+    outline: none;
+    box-shadow: 0 0 5px rgba(185, 101, 240, 0.5);
+}
+
+/* --- Botón de Enviar --- */
+.btn-submit-suggestion {
+    width: 100%;
+    padding: 15px;
+    background-color: var(--color-primary-accent);
+    color: var(--color-background-dark);
+    font-size: 1.1em;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 15px;
+}
+
+.btn-submit-suggestion:hover {
+    background-color: #38D3D3;
+    transform: translateY(-2px);
+}

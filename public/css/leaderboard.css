@@ -1,0 +1,168 @@
+/* Paleta de colores (copiada para referencia local) */
+:root {
+    --color-primary-accent: #41E8EF;
+    /* Azul/Cian */
+    --color-secondary-accent: #B965F0;
+    /* Púrpura */
+    --color-text-secondary: #6D6D6D;
+    /* Gris Oscuro */
+    --color-background-dark: #000000;
+    /* Negro */
+    --color-text-light: #EAEAEA;
+    /* Blanco roto */
+    --color-background-body: #121212;
+    /* Gris muy oscuro suave */
+    --color-gold: #FFD700;
+    --color-silver: #C0C0C0;
+    --color-bronze: #CD7F32;
+}
+
+/* --- Estilos Generales de Contenido --- */
+.main-content-leaderboard {
+    max-width: 1200px;
+    margin: 60px auto;
+    padding: 0 20px;
+}
+
+.page-title {
+    font-size: 2.5em;
+    color: var(--color-primary-accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* --- Controles Superiores --- */
+.leaderboard-controls {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 15px;
+    background-color: #1a1a1a;
+    border-radius: 8px;
+    border: 1px solid rgba(185, 101, 240, 0.3);
+}
+
+.leaderboard-controls p {
+    font-size: 1.1em;
+    color: var(--color-text-light);
+    margin-bottom: 15px;
+}
+
+.filter-options {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.filter-options label {
+    color: var(--color-secondary-accent);
+    font-weight: bold;
+}
+
+.custom-select {
+    padding: 8px 12px;
+    background-color: #222;
+    color: var(--color-primary-accent);
+    border: 1px solid var(--color-primary-accent);
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+/* --- Tabla de Clasificación --- */
+.leaderboard-table-container {
+    overflow-x: auto;
+    /* Permite desplazamiento horizontal en móviles */
+}
+
+.leaderboard-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    overflow: hidden;
+    text-align: left;
+    margin-top: 20px;
+}
+
+.leaderboard-table-container th,
+.leaderboard-table-container td {
+    padding: 15px;
+    border-bottom: 1px solid #222;
+}
+
+.leaderboard-table-container thead th {
+    background-color: var(--color-background-dark);
+    color: var(--color-primary-accent);
+    text-transform: uppercase;
+    font-size: 0.9em;
+    letter-spacing: 0.5px;
+}
+
+.leaderboard-table-container tbody tr {
+    background-color: #1a1a1a;
+    transition: background-color 0.2s;
+}
+
+.leaderboard-table-container tbody tr:hover {
+    background-color: #252525;
+}
+
+.rank-col {
+    text-align: center;
+    font-weight: bold;
+    width: 60px;
+}
+
+.score-highlight {
+    font-weight: bold;
+    color: var(--color-secondary-accent);
+}
+
+.build-link {
+    color: var(--color-primary-accent);
+    text-decoration: underline;
+}
+
+.build-link:hover {
+    color: var(--color-secondary-accent);
+}
+
+/* Colores de Medallas para el Top 3 */
+
+.top-3 {
+    border-left: 5px solid transparent;
+}
+
+.top-3:hover {
+    background-color: #2c2c2c;
+}
+
+.rank-gold {
+    color: var(--color-gold);
+    background-color: rgba(255, 215, 0, 0.1);
+}
+
+.top-3.rank-gold {
+    border-left-color: var(--color-gold);
+}
+
+.rank-silver {
+    color: var(--color-silver);
+    background-color: rgba(192, 192, 192, 0.1);
+}
+
+.top-3.rank-silver {
+    border-left-color: var(--color-silver);
+}
+
+.rank-bronze {
+    color: var(--color-bronze);
+    background-color: rgba(205, 127, 50, 0.1);
+}
+
+.top-3.rank-bronze {
+    border-left-color: var(--color-bronze);
+}

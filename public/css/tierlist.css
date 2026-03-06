@@ -1,0 +1,171 @@
+/* Paleta de colores (copiada para referencia local) */
+:root {
+    --color-primary-accent: #41E8EF;
+    /* Azul/Cian */
+    --color-secondary-accent: #B965F0;
+    /* Púrpura */
+    --color-text-secondary: #6D6D6D;
+    /* Gris Oscuro */
+    --color-background-dark: #000000;
+    /* Negro */
+    --color-text-light: #EAEAEA;
+    /* Blanco roto */
+    --color-background-body: #121212;
+    /* Gris muy oscuro suave */
+}
+
+/* --- Estilos Generales de Contenido --- */
+
+.main-content-tierlist {
+    max-width: 1000px;
+    margin: 60px auto;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.page-title {
+    font-size: 2.5em;
+    color: var(--color-primary-accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+}
+
+.intro-text-tierlist {
+    font-size: 1.1em;
+    color: var(--color-text-light);
+    max-width: 800px;
+    margin: 0 auto 40px auto;
+    padding: 15px;
+    border-bottom: 1px solid var(--color-text-secondary);
+}
+
+/* --- Estilos de la Tabla Tier List --- */
+
+.tierlist-container {
+    width: 100%;
+    margin-bottom: 60px;
+}
+
+.tierlist-container table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    overflow: hidden;
+    /* Asegura que las esquinas redondeadas se vean bien */
+}
+
+.tierlist-container th,
+.tierlist-container td {
+    padding: 15px;
+    border: 1px solid rgba(109, 109, 109, 0.3);
+    text-align: left;
+}
+
+.tierlist-container thead th {
+    background-color: var(--color-background-dark);
+    color: var(--color-primary-accent);
+    font-size: 1.1em;
+    text-transform: uppercase;
+}
+
+.tierlist-container tbody tr:hover {
+    background-color: rgba(185, 101, 240, 0.05);
+    /* Hover púrpura sutil */
+}
+
+/* Colores Específicos para el Rango (Tier) */
+.tier-rank {
+    font-weight: bold;
+    text-align: center !important;
+    width: 80px;
+    font-size: 1.5em;
+    letter-spacing: 1px;
+}
+
+.tier-s {
+    background-color: rgba(65, 232, 239, 0.1);
+    /* Fondo Cian Sutil */
+}
+
+.tier-s .tier-rank {
+    color: #FFD700;
+    /* Dorado para S */
+    border-left: 5px solid #FFD700;
+}
+
+.tier-a {
+    background-color: rgba(185, 101, 240, 0.1);
+    /* Fondo Púrpura Sutil */
+}
+
+.tier-a .tier-rank {
+    color: #C0C0C0;
+    /* Plata para A */
+    border-left: 5px solid #C0C0C0;
+}
+
+.tier-b .tier-rank {
+    color: #CD7F32;
+    /* Bronce para B */
+    border-left: 5px solid #CD7F32;
+}
+
+.tier-c .tier-rank {
+    color: var(--color-text-secondary);
+    /* Gris para C */
+    border-left: 5px solid var(--color-text-secondary);
+}
+
+
+/* --- Enlaces de Meta al final --- */
+
+.meta-links {
+    margin-top: 50px;
+    padding: 30px;
+    border-top: 1px solid var(--color-text-secondary);
+}
+
+.meta-links h2 {
+    color: var(--color-primary-accent);
+}
+
+.action-buttons-small {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+/* Reutilizando estilos de botón de inicio (pequeños) */
+.btn-primary-link,
+.btn-secondary-link {
+    padding: 10px 20px;
+    font-size: 1em;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.btn-primary-link {
+    background-color: var(--color-primary-accent);
+    color: var(--color-background-dark);
+}
+
+.btn-primary-link:hover {
+    background-color: #38D3D3;
+    transform: scale(1.05);
+}
+
+.btn-secondary-link {
+    background-color: var(--color-secondary-accent);
+    color: var(--color-text-light);
+}
+
+.btn-secondary-link:hover {
+    background-color: #A350E0;
+    transform: scale(1.05);
+}

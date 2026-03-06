@@ -1,0 +1,337 @@
+/* Paleta de colores */
+:root {
+    --color-primary-accent: #41E8EF;
+    /* Azul/Cian */
+    --color-secondary-accent: #B965F0;
+    /* Púrpura */
+    --color-text-secondary: #6D6D6D;
+    /* Gris Oscuro */
+    --color-background-dark: #000000;
+    /* Negro */
+    --color-text-light: #EAEAEA;
+    /* Blanco roto */
+    --color-background-body: #121212;
+    /* Gris muy oscuro suave */
+}
+
+/* Estilos Generales */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-background-body);
+    color: var(--color-text-light);
+    min-height: 100vh;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.3s ease, border-bottom 0.3s ease;
+}
+
+/* --- Header y Navegación --- */
+
+.main-header {
+    background-color: var(--color-background-dark);
+    border-bottom: 1px solid rgba(65, 232, 239, 0.4);
+    padding: 10px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.header-content {
+    max-width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.site-title {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: var(--color-primary-accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    flex-shrink: 0;
+}
+
+.main-nav {
+    flex-grow: 1;
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
+.main-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 30px;
+}
+
+.main-nav a {
+    color: var(--color-text-light);
+    font-weight: 500;
+    padding: 10px 0;
+    border-bottom: 2px solid transparent;
+}
+
+.main-nav a:hover {
+    color: var(--color-primary-accent);
+    border-bottom: 2px solid var(--color-primary-accent);
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.site-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Estilos del Desplegable (Dropdown) */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-menu {
+    display: none;
+    /* 1. OCULTO POR DEFECTO */
+    position: absolute;
+    /* 2. CLAVE: Sacarlo del flujo para que no ocupe espacio (el "agujero") */
+    top: 100%;
+    left: 0;
+    background-color: #1a1a1a;
+    /* min-width: 160px; <-- Eliminado para que el ancho sea flexible y ajustado al contenido */
+    padding: 5px 0;
+    z-index: 10;
+    border-radius: 4px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.7);
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+    /* SE MUESTRA SOLO AL HACER HOVER */
+}
+
+.dropdown-menu li {
+    padding: 0;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 8px 15px;
+    color: var(--color-text-light);
+    white-space: nowrap;
+    border-bottom: none;
+}
+
+.dropdown-menu a:hover {
+    background-color: rgba(185, 101, 240, 0.2);
+    color: var(--color-primary-accent);
+}
+
+/* Estilos de autenticación en el header (pequeño) */
+.user-auth-links {
+    font-size: 0.9em;
+    font-weight: 500;
+    margin-left: 0;
+    flex-shrink: 0;
+}
+
+.user-auth-links a {
+    color: var(--color-text-secondary);
+}
+
+.user-auth-links a:hover {
+    color: var(--color-primary-accent);
+}
+
+
+/* --- Contenido Principal (Estilos del proyecto inicial, mantenidos) --- */
+
+.main-content-container {
+    max-width: 1300px;
+    margin: 60px auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0 20px;
+    gap: 30px;
+}
+
+.main-content-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5), 0 0 10px var(--color-primary-accent);
+}
+
+.image-left,
+.image-right {
+    flex: 0 0 25%;
+    text-align: center;
+}
+
+.image-left {
+    margin-top: -50px;
+}
+
+.image-caption {
+    font-size: 0.9em;
+    font-weight: bold;
+    font-style: italic;
+    color: var(--color-primary-accent);
+    margin-top: 10px;
+}
+
+.main-text-section {
+    flex: 1;
+    background-color: rgba(185, 101, 240, 0.8);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
+    color: var(--color-text-light);
+}
+
+.main-text-section h2 {
+    color: var(--color-text-light);
+    text-align: center;
+    margin-top: 0;
+    font-size: 2.2em;
+    letter-spacing: 1px;
+}
+
+
+/* --- Footer --- */
+
+.main-footer {
+    background-color: var(--color-background-dark);
+    color: var(--color-text-light);
+    padding: 40px 20px 20px;
+    border-top: 1px solid rgba(65, 232, 239, 0.4);
+    margin-top: 50px;
+}
+
+.footer-sections {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 30px;
+    border-bottom: 1px solid var(--color-text-secondary);
+    gap: 50px;
+}
+
+.footer-sections h3 {
+    color: var(--color-primary-accent);
+    margin-bottom: 15px;
+}
+
+.footer-sections ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-sections a {
+    color: var(--color-text-secondary);
+    line-height: 2.2;
+}
+
+.footer-sections a:hover {
+    color: var(--color-primary-accent);
+}
+
+.footer-copy {
+    max-width: 1200px;
+    margin: 30px auto 0;
+    text-align: center;
+    font-size: 0.9em;
+    color: var(--color-text-secondary);
+}
+
+/* --- CAMBIOS PARA EL ICONO CIRCULAR DE PERFIL/LOGO --- */
+
+.user-auth-links {
+    /* Aseguramos que el contenedor sea flexible para alinear */
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    /* Espacio entre los enlaces de login/registro y la imagen */
+    font-size: 0.9em;
+    font-weight: 500;
+    flex-shrink: 0;
+}
+
+/* Contenedor de la imagen */
+.profile-image-container {
+    width: 40px;
+    /* Tamaño del círculo */
+    height: 40px;
+    border-radius: 50%;
+    /* Hace la forma circular */
+    overflow: hidden;
+    /* Recorta la imagen a la forma circular */
+    border: 2px solid var(--color-secondary-accent);
+    /* Borde Púrpura */
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+.profile-image-container:hover {
+    border-color: var(--color-primary-accent);
+    /* Borde Cian al pasar el ratón */
+    box-shadow: 0 0 8px rgba(65, 232, 239, 0.5);
+}
+
+.profile-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Asegura que la imagen llene el círculo sin distorsión */
+    display: block;
+}
+
+/* Ocultar el texto de 'Perfil' cuando se muestra la imagen */
+.user-auth-links .auth-link.hide-on-login {
+    display: none;
+}
+
+/* Añade esto al final de tu archivo estilos.css o en una sección relevante */
+#header-logo {
+    border-radius: 50%;
+    /* Hace que la imagen sea redonda */
+    width: 60px;
+    /* Ajusta el tamaño del logo según tus preferencias */
+    height: 60px;
+    /* Mismo valor que el ancho para que sea un círculo perfecto */
+    object-fit: cover;
+    /* Asegura que la imagen cubra el área sin distorsión */
+    display: block;
+    /* Para eliminar cualquier espacio extra que pueda añadir el navegador a las imágenes */
+}
+
+/* Opcional: Si el texto "MEGABONK GUIDE" sigue apareciendo o quieres ajustar el espaciado alrededor del logo */
+.site-title {
+    display: flex;
+    /* Para asegurar la alineación si necesitas otros elementos */
+    align-items: center;
+    /* Alinea verticalmente el logo */
+    text-decoration: none;
+    /* Elimina el subrayado si el .site-title lo tiene por ser un enlace */
+    color: var(--color-primary-accent);
+    /* Cambia 'inherit' a la variable de color azul */
+}
