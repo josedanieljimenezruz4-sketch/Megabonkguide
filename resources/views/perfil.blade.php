@@ -8,6 +8,38 @@
     <link rel="stylesheet" href="{{ asset('css/estilos.css') }}">
     <link rel="stylesheet" href="{{ asset('css/perfil.css') }}">
     <link rel="icon" href="iconotlabaho.webp" type="image/x-icon">
+    <style>
+        .progress-bar-container {
+            width: 100%;
+            background-color: #2c2f33; /* Fondo oscuro sutil */
+            border-radius: 8px;
+            height: 12px;
+            margin-top: 15px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff4b2b, #ff416c); /* Gradiente llamativo */
+            transition: width 0.8s ease-in-out;
+            border-radius: 8px;
+        }
+        .progress-text {
+            font-size: 0.85rem;
+            color: #b9bbbe;
+            margin-top: 5px;
+            text-align: right;
+            font-weight: 600;
+        }
+        .stat-unlocks .stat-value {
+            font-size: 1.1rem; /* Ajustado para que el texto encaje mejor */
+            font-weight: bold;
+        }
+        .mt-3 {
+            margin-top: 15px;
+            display: inline-block;
+        }
+    </style>
 </head>
 
 <body>
@@ -40,8 +72,14 @@
             <div class="stat-card stat-unlocks">
                 <span class="stat-icon">🔓</span>
                 <h3>Unlocks Completados</h3>
-                <p class="stat-value">75/120</p>
-                <a href="{{ route('unlocks.index') }}" class="card-link">Ver Requisitos →</a>
+                <p class="stat-value">Has desbloqueado {{ $unlockedItems }} de {{ $totalItems }} ítems</p>
+                
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" style="width: {{ $percentage }}%;"></div>
+                </div>
+                <p class="progress-text">{{ $percentage }}% Completado</p>
+
+                <a href="{{ route('unlocks.index') }}" class="card-link mt-3">Ver Requisitos →</a>
             </div>
 
             <div class="stat-card stat-contributions">
@@ -55,10 +93,13 @@
         <section class="profile-actions">
             <h2>Configuración y Gestión</h2>
             <div class="action-buttons-group">
-                <a href="{{ route('profile.settings') }}" class="btn-action btn-manage-data">⚙️ Cambiar Datos de la
-                    Cuenta</a>
+                <a href="{{ route('inventory') }}" class="btn-action" style="background: linear-gradient(90deg, #ff4b2b, #ff416c); color:white; font-weight:bold; border:none; box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4);">🎒 Abrir Mi Inventario</a>
+                <a href="{{ route('profile.settings') }}" class="btn-action btn-manage-data">⚙️ Configuración</a>
                 <a href="#user-builds" class="btn-action btn-my-builds">🛠️ Mis Builds Guardadas</a>
-                <a href="#" class="btn-action btn-logout">🚪 Cerrar Sesión</a>
+                <form action="{{ route('logout') }}" method="POST" style="display:inline; width: 100%;">
+                    @csrf
+                    <button type="submit" class="btn-action btn-logout" style="width:100%; border:none; cursor:pointer; font-size:1rem;">🚪 Cerrar Sesión</button>
+                </form>
             </div>
         </section>
 

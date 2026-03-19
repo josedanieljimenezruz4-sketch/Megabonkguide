@@ -19,7 +19,17 @@ class UserController extends Controller
     }
     public function profile()
     {
-        return view('perfil');
+        // El total de ínventario del juego ahora se lee directamente y con precisión matemática desde MySQL
+        $totalItems = \App\Models\Item::count();
+        $totalItems = $totalItems > 0 ? $totalItems : 1; // Para evitar posible división por cero
+
+        // Calculamos cuántos ha desbloqueado el usuario
+        $unlockedItems = \Illuminate\Support\Facades\DB::table('user_unlocks')->where('user_id', auth()->id())->count();
+        
+        // Calculamos el porcentaje
+        $percentage = round(($unlockedItems / $totalItems) * 100);
+
+        return view('perfil', compact('totalItems', 'unlockedItems', 'percentage'));
     }
     public function settings()
     {

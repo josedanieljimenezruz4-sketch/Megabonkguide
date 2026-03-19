@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Item;
 
 class User extends Authenticatable
 {
@@ -41,4 +42,12 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Get the items that the user has unlocked.
+     */
+    public function unlocks()
+    {
+        return $this->belongsToMany(Item::class, 'user_unlocks', 'user_id', 'item_id')->withTimestamps();
+    }
 }

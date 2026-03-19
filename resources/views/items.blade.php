@@ -21,40 +21,88 @@
             Los Ítems ofrecen poderosos efectos pasivos. Aquí están las guías para obtener cada uno.
         </p>
 
+        <div class="filters-panel" style="background:#1e1e24; padding:15px; border-radius:8px; display:flex; gap:15px; margin-bottom:20px; align-items:center; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+            <p style="margin:0; font-weight:bold; color:#ff416c;">Filtros Instantáneos:</p>
+            <div style="display:flex; gap:10px; width:100%;">
+                <select id="filter-status" style="padding:10px; border-radius:6px; background:#2c2f33; color:white; border:1px solid #3f4247; font-weight:bold; cursor:pointer;">
+                    <option value="all">🌟 Todos los Estados</option>
+                    <option value="completed">✅ Solo Completados</option>
+                    <option value="pending">⏳ Solo Pendientes</option>
+                </select>
+                <select id="filter-order" style="padding:10px; border-radius:6px; background:#2c2f33; color:white; border:1px solid #3f4247; font-weight:bold; cursor:pointer;">
+                    <option value="asc">🔤 Orden Alfabético (A-Z)</option>
+                    <option value="desc">🔤 Orden Alfabético (Z-A)</option>
+                </select>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const filterStatus = document.getElementById('filter-status');
+                const filterOrder = document.getElementById('filter-order');
+                const grid = document.querySelector('.catalogo-grid');
+                
+                function applyFilters() {
+                    const status = filterStatus.value;
+                    const order = filterOrder.value;
+                    let cards = Array.from(grid.querySelectorAll('.item-card'));
+                    
+                    cards.forEach(card => {
+                        const cb = card.querySelector('input[type="checkbox"]');
+                        const isChecked = cb ? cb.checked : false;
+                        
+                        if (status === 'completed' && !isChecked) {
+                            card.style.display = 'none';
+                        } else if (status === 'pending' && isChecked) {
+                            card.style.display = 'none';
+                        } else {
+                            card.style.display = '';
+                        }
+                    });
+                    
+                    cards.sort((a, b) => {
+                        const nameA = a.querySelector('h2').innerText.trim().toLowerCase();
+                        const nameB = b.querySelector('h2').innerText.trim().toLowerCase();
+                        return order === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
+                    });
+                    
+                    cards.forEach(card => grid.appendChild(card));
+                }
+                
+                filterStatus.addEventListener('change', applyFilters);
+                filterOrder.addEventListener('change', applyFilters);
+
+                // Auto-refresh when completing/uncompleting an item
+                grid.addEventListener('change', (e) => {
+                    if(e.target.matches('input[type="checkbox"]')) {
+                        setTimeout(applyFilters, 50);
+                    }
+                });
+            });
+        </script>
+
         <section class="catalogo-grid">
 
-            <a href="#" class="item-card card-item">
-                <div class="unlock-checkbox">
-                    <input type="checkbox" id="unl-anillo-critico" name="unl-anillo-critico" checked>
-                    <label for="unl-anillo-critico" class="checkbox-label"></label>
-                </div>
-                <span class="card-icon">💍</span>
-                <h2>Anillo del Bonk Crítico</h2>
-                <p>Efecto: +10% de Probabilidad Crítica</p>
-                <p class="unlock-req">Requisito: Lograr 50 golpes críticos consecutivos.</p>
-            </a>
+            <!-- Ítems cargados desde la Base de Datos -->
 
-            <a href="#" class="item-card card-item">
+            @foreach($items as $item)
+            <a href="#" class="item-card">
                 <div class="unlock-checkbox">
-                    <input type="checkbox" id="unl-moneda-avaro" name="unl-moneda-avaro">
-                    <label for="unl-moneda-avaro" class="checkbox-label"></label>
+                    <input type="checkbox" id="unl-{{ $item->id }}" name="unl-{{ $item->id }}" data-item-id="{{ $item->id }}" {{ in_array($item->id, $unlockedItems ?? []) ? 'checked' : '' }}>
+                    <label for="unl-{{ $item->id }}" class="checkbox-label"></label>
                 </div>
-                <span class="card-icon">💰</span>
-                <h2>Moneda del Avaro</h2>
-                <p>Efecto: +20% de Oro al Matar</p>
-                <p class="unlock-req">Requisito: Acumular 10,000 de Oro en una sola partida.</p>
+                @if($item->image_path)
+                    <img src="{{ asset('storage/' . $item->image_path) }}" alt="{{ $item->name }}" style="width: 60px; height: 60px; object-fit: contain; margin-bottom: 15px; border-radius: 6px; background-color: #1a1a20; padding: 4px; box-shadow: inset 0 0 5px rgba(0,0,0,0.5);">
+                @else
+                    <span class="card-icon">💎</span>
+                @endif
+                <h2>{{ $item->name }}</h2>
+                <p>{!! nl2br(e($item->description)) !!}</p>
+                @if($item->requirement)
+                <p class="unlock-req">{{ $item->requirement }}</p>
+                @endif
             </a>
-
-            <a href="#" class="item-card card-item">
-                <div class="unlock-checkbox">
-                    <input type="checkbox" id="unl-armadura-olvido" name="unl-armadura-olvido">
-                    <label for="unl-armadura-olvido" class="checkbox-label"></label>
-                </div>
-                <span class="card-icon">🧊</span>
-                <h2>Armadura del Olvido</h2>
-                <p>Efecto: Congela al enemigo al recibir daño.</p>
-                <p class="unlock-req">Requisito: Derrotar a 100 enemigos tipo Golem.</p>
-            </a>
+            @endforeach
 
         </section>
 
@@ -88,6 +136,50 @@
         </div>
         <div class="footer-copy">&copy; 2025 MEGABONK GUIDE. Todos los derechos reservados.</div>
     </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkboxes = document.querySelectorAll('.unlock-checkbox input[type="checkbox"]');
+            
+            checkboxes.forEach(chk => {
+                chk.addEventListener('change', async function(e) {
+                    e.stopImmediatePropagation();
+                    
+                    const checkbox = this;
+                    const isChecked = checkbox.checked;
+                    
+                    let itemId = checkbox.dataset.itemId || checkbox.value;
+                    if (!itemId || itemId === 'on') {
+                        itemId = checkbox.id.replace('unl-', '');
+                    }
+                    
+                    try {
+                        const response = await fetch('{{ route('unlocks.toggle') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({ item_id: itemId, is_checked: isChecked })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (!response.ok || data.status !== 'success') {
+                            throw new Error('Respuesta fallida del servidor');
+                        }
+                        
+                        console.log('Unlock sincronizado:', data);
+                        if (typeof window.showToast === 'function') {
+                            window.showToast(isChecked ? '✨ Ítem desbloqueado' : '❌ Ítem bloqueado');
+                        }
+                    } catch (err) {
+                        console.error('Error sincronizando unlock:', err);
+                        checkbox.checked = !isChecked; // Revertir en caso de error
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

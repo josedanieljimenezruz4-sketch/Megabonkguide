@@ -29,14 +29,22 @@
             @auth
                 <!-- Si el usuario está logueado -->
                 <div class="dropdown user-dropdown">
-                    <div class="profile-header" onclick="toggleUserDropdown(event)">
-                        <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=B965F0&color=fff&size=64"
-                            alt="{{ Auth::user()->name }}" class="profile-avatar">
-                        <span class="dropdown-arrow">▼</span>
+                    <div class="profile-header" style="display: flex; align-items: center;">
+                        <a href="{{ route('profile') }}" title="Ir a mi perfil">
+                            <!-- Cambiado 'name' por 'username' ya que es el campo utilizado en el modelo User -->
+                            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username ?? 'Usuario') }}&background=B965F0&color=fff&size=64"
+                                alt="Perfil" class="profile-avatar">
+                        </a>
+                        <span class="dropdown-arrow" onclick="toggleUserDropdown(event)" style="cursor: pointer; margin-left: 8px; padding: 5px;">▼</span>
                     </div>
                     <ul class="dropdown-menu dropdown-menu-right" id="userDropdownMenu">
-                        <li><a href="#">Configuración</a></li>
-                        <li><a href="#">Editar perfil</a></li>
+                        @if(Auth::user()->is_admin)
+                            <li><a href="{{ route('admin.dashboard') }}" style="color: #ff416c; font-weight: bold;">👑 Panel Admin</a></li>
+                            <li class="separator"></li>
+                        @endif
+                        <li><a href="{{ route('profile') }}">Mi Perfil</a></li>
+                        <li><a href="{{ route('inventory') }}">🎒 Mi Inventario</a></li>
+                        <li><a href="{{ route('profile.settings') }}">Cambiar Datos</a></li>
                         <li class="separator"></li>
                         <li>
                             <form method="POST" action="{{ route('logout') }}" id="logout-form">
@@ -71,4 +79,43 @@
             }
         });
     });
+</script>
+
+<!-- Toast Global UI -->
+<div id="global-toast" class="toast-notification">Progreso actualizado</div>
+<style>
+.toast-notification {
+    visibility: hidden;
+    min-width: 250px;
+    background: linear-gradient(90deg, #ff4b2b, #ff416c);
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 16px;
+    position: fixed;
+    z-index: 9999;
+    right: 30px;
+    bottom: 30px;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.toast-notification.show {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+}
+</style>
+<script>
+window.showToast = function(message) {
+    const toast = document.getElementById("global-toast");
+    if(message) toast.innerText = message;
+    toast.classList.add("show");
+    setTimeout(function(){ 
+        toast.classList.remove("show"); 
+    }, 2000);
+}
 </script>
