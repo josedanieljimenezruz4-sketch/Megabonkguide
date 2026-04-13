@@ -73,6 +73,10 @@ Route::middleware('auth')->group(function () {
 
     // Builds
     Route::post('/builds', [App\Http\Controllers\BuildController::class, 'store'])->name('builds.store');
+
+    // Votes
+    Route::post('/items/{id}/vote', [App\Http\Controllers\GameDataController::class, 'voteItem'])->name('items.vote');
+    Route::post('/items/{id}/vote-rank', [App\Http\Controllers\GameDataController::class, 'voteRankItem'])->name('items.voteRank');
 });
 
 // Rutas de Administrador (Requieren sesión y ser admin)
@@ -80,4 +84,9 @@ Route::middleware(['auth', 'admin'])->name('admin.')->prefix('admin')->group(fun
     Route::get('/', [AdminController::class, 'index'])->name('dashboard');
     Route::get('/items/create', [ItemController::class, 'create'])->name('items.create');
     Route::post('/items', [ItemController::class, 'store'])->name('items.store');
+    
+    // Gestión de votos
+    Route::get('/votes', [AdminController::class, 'votes'])->name('votes.index');
+    Route::post('/votes/reset-all', [AdminController::class, 'resetAllVotes'])->name('votes.resetAll');
+    Route::post('/votes/{id}/reset', [AdminController::class, 'resetItemVotes'])->name('votes.resetItem');
 });

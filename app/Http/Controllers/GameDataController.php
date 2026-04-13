@@ -6,9 +6,104 @@ use Illuminate\Http\Request;
 
 class GameDataController extends Controller
 {
-    public function tierlist()
+    public function tierlist(\Illuminate\Http\Request $request)
     {
-        return view('tierlist');
+        $category = $request->get('category');
+        $sort = $request->get('sort');
+        
+        $query = \App\Models\Item::query();
+
+        if ($category) {
+            $query->where('type', $category);
+        }
+
+        if ($sort === 'popularity') {
+            $query->orderBy('votes', 'desc');
+        } else {
+            $query->orderBy('name', 'asc');
+        }
+
+        $allItems = $query->get();
+        $itemsByRank = $allItems->whereNotNull('rank')->groupBy('rank');
+        $pendingItems = $allItems->whereNull('rank');
+
+        $pendingItemIds = $pendingItems->pluck('id')->toArray();
+        $rankVotes = \Illuminate\Support\Facades\DB::table('user_rank_votes')
+            ->select('item_id', 'suggested_rank', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+            ->whereIn('item_id', $pendingItemIds)
+            ->groupBy('item_id', 'suggested_rank')
+            ->get();
+            
+        $mostVotedRanks = [];
+        $votesGrouped = collect($rankVotes)->groupBy('item_id');
+        foreach ($votesGrouped as $itemId => $votes) {
+            $mostVoted = $votes->sortByDesc('total')->first();
+            $mostVotedRanks[$itemId] = $mostVoted->suggested_rank;
+        }
+
+        return view('tierlist', compact('itemsByRank', 'pendingItems', 'mostVotedRanks', 'category', 'sort'));
+    }
+
+    public function voteItem(\Illuminate\Http\Request $request, $id)
+    {
+        $item = \App\Models\Item::findOrFail($id);
+        
+        $userId = auth()->id();
+        
+        $exists = \Illuminate\Support\Facades\DB::table('item_user_votes')
+            ->where('user_id', $userId)
+            ->where('item_id', $id)
+            ->exists();
+            
+        if ($exists) {
+            return response()->json([
+                'success' => false,
+                'message' => '¡Solo puedes votar una vez por este item!'
+            ]);
+        }
+        
+        \Illuminate\Support\Facades\DB::table('item_user_votes')->insert([
+            'user_id' => $userId,
+            'item_id' => $id,
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+        
+        $item->increment('votes');
+
+        return response()->json([
+            'success' => true,
+            'votes' => $item->votes
+        ]);
+    }
+
+    public function voteRankItem(\Illuminate\Http\Request $request, $id)
+    {
+        $item = \App\Models\Item::findOrFail($id);
+        
+        $request->validate([
+            'rank' => 'required|in:S,A,B,C'
+        ]);
+        
+        $userId = auth()->id();
+        $rank = $request->input('rank');
+        
+        \Illuminate\Support\Facades\DB::table('user_rank_votes')->updateOrInsert(
+            ['user_id' => $userId, 'item_id' => $id],
+            ['suggested_rank' => $rank, 'updated_at' => now()]
+        );
+        
+        $mostVoted = \Illuminate\Support\Facades\DB::table('user_rank_votes')
+            ->select('suggested_rank', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+            ->where('item_id', $id)
+            ->groupBy('suggested_rank')
+            ->orderBy('total', 'desc')
+            ->first();
+
+        return response()->json([
+            'success' => true,
+            'most_voted_rank' => $mostVoted ? $mostVoted->suggested_rank : $rank
+        ]);
     }
 
     public function meta()

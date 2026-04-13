@@ -83,9 +83,14 @@
     <div class="admin-dashboard">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
             <h1 class="admin-title" style="margin-bottom: 0;">👑 Panel de Control</h1>
-            <a href="{{ route('admin.items.create') }}" style="background: linear-gradient(90deg, #ff4b2b, #ff416c); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 10px rgba(255, 65, 108, 0.4);">
-                ➕ Añadir Ítem
-            </a>
+            <div>
+                <a href="{{ route('admin.votes.index') }}" style="background: linear-gradient(90deg, #36d1dc, #5b86e5); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-right: 15px; box-shadow: 0 4px 10px rgba(91, 134, 229, 0.4);">
+                    📊 Gestión de Votos
+                </a>
+                <a href="{{ route('admin.items.create') }}" style="background: linear-gradient(90deg, #ff4b2b, #ff416c); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 10px rgba(255, 65, 108, 0.4);">
+                    ➕ Añadir Ítem
+                </a>
+            </div>
         </div>
 
         <div class="admin-stats-grid">
