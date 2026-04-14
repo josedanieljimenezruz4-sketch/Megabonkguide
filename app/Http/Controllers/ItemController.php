@@ -41,4 +41,46 @@ class ItemController extends Controller
 
         return redirect()->back()->with('success', 'Ítem guardado con éxito. Su imagen ahora es pública.');
     }
+
+    public function approveRank(Request $request, $id)
+    {
+        $item = Item::findOrFail($id);
+        
+        $request->validate([
+            'rank' => 'required|in:S,A,B,C'
+        ]);
+
+        $item->rank = $request->input('rank');
+        $item->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => "Rango {$item->rank} asignado permanentemente al ítem."
+        ]);
+    }
+
+    public function bulkApprove(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:items,id',
+            'rank' => 'required|in:S,A,B,C,PENDING'
+        ]);
+
+        $ids = $request->input('ids');
+        $rank = $request->input('rank');
+        
+        $dbRank = ($rank === 'PENDING') ? null : $rank;
+
+        Item::whereIn('id', $ids)->update(['rank' => $dbRank]);
+
+        $msg = ($rank === 'PENDING') 
+            ? count($ids) . " ítems han sido devueltos a pendientes (Laboratorio)." 
+            : count($ids) . " ítems han sido asignados al rango {$rank} masivamente.";
+
+        return response()->json([
+            'success' => true,
+            'message' => $msg
+        ]);
+    }
 }

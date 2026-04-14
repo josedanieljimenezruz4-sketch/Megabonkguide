@@ -84,6 +84,9 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
             <h1 class="admin-title" style="margin-bottom: 0;">👑 Panel de Control</h1>
             <div>
+                <a href="{{ route('admin.tierlist-manager') }}" style="background: linear-gradient(90deg, #B965F0, #8E44AD); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-right: 15px; box-shadow: 0 4px 10px rgba(185, 101, 240, 0.4);">
+                    👁️ Panóptico Tier List
+                </a>
                 <a href="{{ route('admin.votes.index') }}" style="background: linear-gradient(90deg, #36d1dc, #5b86e5); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-right: 15px; box-shadow: 0 4px 10px rgba(91, 134, 229, 0.4);">
                     📊 Gestión de Votos
                 </a>

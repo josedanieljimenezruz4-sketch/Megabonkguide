@@ -378,3 +378,23 @@
     transform: translateY(1px) scale(0.95);
     box-shadow: 0 2px 5px rgba(0, 230, 118, 0.4);
 }
+
+/* --- Botones de Administración (Aprobar Rango) --- */
+.btn-rank-admin {
+    background: linear-gradient(135deg, #ff4757, #ff6b81);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(255, 71, 87, 0.3);
+}
+
+.btn-rank-admin:hover {
+    transform: translateY(-4px) scale(1.15);
+    box-shadow: 0 8px 20px rgba(255, 71, 87, 0.6);
+    border-color: #fff;
+}
+
+.btn-rank-admin:active {
+    transform: translateY(1px) scale(0.95);
+    box-shadow: 0 2px 5px rgba(255, 71, 87, 0.4);
+}

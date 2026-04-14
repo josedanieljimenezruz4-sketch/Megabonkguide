@@ -8,6 +8,15 @@ use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
+    public function tierlistManager()
+    {
+        $allItems = \App\Models\Item::orderBy('name', 'asc')->get();
+        $itemsByRank = $allItems->whereNotNull('rank')->groupBy('rank');
+        $pendingItems = $allItems->whereNull('rank');
+
+        return view('admin.tierlist-manager', compact('itemsByRank', 'pendingItems'));
+    }
+
     public function index()
     {
         $totalUsers = User::count();

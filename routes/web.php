@@ -82,8 +82,11 @@ Route::middleware('auth')->group(function () {
 // Rutas de Administrador (Requieren sesión y ser admin)
 Route::middleware(['auth', 'admin'])->name('admin.')->prefix('admin')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('dashboard');
+    Route::get('/tierlist-manager', [AdminController::class, 'tierlistManager'])->name('tierlist-manager');
     Route::get('/items/create', [ItemController::class, 'create'])->name('items.create');
     Route::post('/items', [ItemController::class, 'store'])->name('items.store');
+    Route::post('/items/bulk-approve', [ItemController::class, 'bulkApprove'])->name('items.bulkApprove');
+    Route::post('/items/{id}/approve-rank', [ItemController::class, 'approveRank'])->name('items.approveRank');
     
     // Gestión de votos
     Route::get('/votes', [AdminController::class, 'votes'])->name('votes.index');
