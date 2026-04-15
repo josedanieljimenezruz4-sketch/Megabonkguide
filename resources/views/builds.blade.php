@@ -10,6 +10,29 @@
     <link rel="icon" href="iconotlabaho.webp" type="image/x-icon">
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        .star-rating-display {
+            display: inline-block;
+            font-size: 1.2rem;
+            position: relative;
+            color: #444; /* Estrellas vacías oscuras */
+            letter-spacing: 2px;
+        }
+        .star-rating-display::before {
+            content: "★★★★★";
+        }
+        .star-rating-display::after {
+            content: "★★★★★";
+            color: #FFD700; /* Oro vibrante */
+            position: absolute;
+            left: 0;
+            top: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            width: calc(var(--rating) * 20%);
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+        }
+    </style>
 </head>
 
 <body>
@@ -25,72 +48,59 @@
             <aside class="filter-panel">
                 <h2>Filtros</h2>
 
-                <form class="filter-form">
+                <form class="filter-form" @submit.prevent>
 
                     <div class="filter-group">
                         <label for="search-text">Buscar por título:</label>
-                        <input type="text" id="search-text" placeholder="Ej: Bonk Crítico, Velocidad Extrema"
+                        <input type="text" id="search-text" placeholder="Ej: Bonk Crítico..."
                             x-model="filters.search" @input.debounce.500ms="fetchBuilds()">
                     </div>
 
                     <div class="filter-group">
                         <label for="character">Personaje:</label>
-                        <select id="character" x-model="filters.character" @change="fetchBuilds()">
+                        <select id="character" x-model="filters.character_id" @change="fetchBuilds()">
                             <option value="">Cualquiera</option>
-                            <option value="Maestra del Bonk">La Maestra del Bonk</option>
-                            <option value="Berserker">El Berserker</option>
-                            <option value="Ilusionista">La Ilusionista</option>
+                            <option value="hacha-purpura">La Maestra del Bonk</option>
+                            {{-- Tienes que pasarlos desde el backend o usar texto fijo por ahora --}}
                         </select>
-                    </div>
-
-                    <div class="filter-group">
-                        <label for="weapon">Arma principal:</label>
-                        <select id="weapon" x-model="filters.weapon" @change="fetchBuilds()">
-                            <option value="">Cualquiera</option>
-                            <option value="Hacha Púrpura">Hacha Púrpura Radiante</option>
-                            <option value="Bastón de Cobre">Bastón de Cobre</option>
-                        </select>
-                    </div>
-
-                    <div class="filter-group">
-                        <label for="rating">Rating Mínimo:</label>
-                        <input type="range" id="rating" min="1" max="5" value="3">
-                        <span id="rating-value">3 Estrellas</span>
                     </div>
 
                     <div class="filter-group">
                         <label>Tipo de Build:</label>
                         <div class="checkbox-group">
-                            <label><input type="checkbox" checked> DPS</label>
-                            <label><input type="checkbox"> Tanque</label>
-                            <label><input type="checkbox"> Soporte</label>
+                            <label><input type="radio" value="" x-model="filters.type" @change="fetchBuilds()"> Todos</label>
+                            <label><input type="radio" value="DPS" x-model="filters.type" @change="fetchBuilds()"> DPS <span class="text-sm text-gray-500" x-text="counts['DPS'] ? `(${counts['DPS']})` : '(0)'"></span></label>
+                            <label><input type="radio" value="Tanque" x-model="filters.type" @change="fetchBuilds()"> Tanque <span class="text-sm text-gray-500" x-text="counts['Tanque'] ? `(${counts['Tanque']})` : '(0)'"></span></label>
+                            <label><input type="radio" value="Soporte" x-model="filters.type" @change="fetchBuilds()"> Soporte <span class="text-sm text-gray-500" x-text="counts['Soporte'] ? `(${counts['Soporte']})` : '(0)'"></span></label>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn-search">Aplicar Filtros</button>
-                    <button type="reset" class="btn-reset">Limpiar Filtros</button>
+                    <button type="button" @click="filters = {search: '', character_id: '', type: ''}; fetchBuilds();" class="btn-reset">Limpiar Filtros</button>
                 </form>
             </aside>
 
-            <section class="results-list" x-data="buildSearch()" x-init="fetchBuilds()">
-                <div class="results-header">
+            {{-- REMOVED SECOND x-data --}}
+            <section class="results-list">
+                <div class="results-header" style="display: flex; justify-content: space-between; align-items: center;">
                     <h2 x-text="'Resultados (' + builds.length + ')'">Resultados</h2>
+                    <a href="{{ route('builds.create') }}" class="btn-primary" style="padding: 10px 15px; border-radius: 8px; font-weight: bold;">+ Publicar mi Build</a>
                     <div x-show="loading" class="spinner"></div>
                 </div>
 
-                <template x-for="build in builds" :key="build.title">
+                {{-- Mapear los datos que vienen del paginator de Laravel `builds.data` --}}
+                <template x-for="build in builds" :key="build.id">
                     <div class="build-card fade-in">
                         <div class="card-header">
-                            <h3 x-text="build.title"></h3>
-                            <span class="rating" x-text="'⭐'.repeat(build.rating)"></span>
+                            <h3 x-text="build.name"></h3>
+                            <!-- Representación de Medias Estrellas con CSS -->
+                            <div class="star-rating-display" :style="`--rating: ${parseFloat(build.rating).toFixed(1)};`" :title="`${parseFloat(build.rating).toFixed(1)} Estrellas`"></div>
                         </div>
                         <p class="card-details">
-                            **Personaje:** <span x-text="build.character"></span> |
-                            **Arma:** <span x-text="build.weapon"></span> |
-                            **Autor:** <span x-text="build.author"></span>
+                            **Tipo:** <span x-text="build.type"></span> |
+                            **Autor ID:** <span x-text="build.user_id"></span>
                         </p>
                         <p class="card-description" x-text="build.description"></p>
-                        <a href="#" class="view-build-link">Ver Build Completa →</a>
+                        <a :href="'/builds/' + build.id" class="view-build-link">Ver Detalles →</a>
                     </div>
                 </template>
 
@@ -104,27 +114,24 @@
                 function buildSearch() {
                     return {
                         builds: [],
+                        counts: {},
                         loading: false,
                         filters: {
                             search: '',
-                            character: '',
-                            weapon: ''
-                        },
-                        init() {
-                            // Watch for changes in inputs handled outside x-data scope if needed, 
-                            // or better, move inputs inside or use event listeners.
-                            // Since inputs are in a sibling <aside>, we can use window events or 
-                            // put x-data on a higher parent.
-                            // Let's put x-data on the <main;> or simply listen to events.
+                            character_id: '',
+                            type: ''
                         },
                         async fetchBuilds() {
                             this.loading = true;
                             const params = new URLSearchParams(this.filters).toString();
                             try {
-                                const response = await fetch(`{{ route('builds.search') }}?${params}`, {
-                                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                                const response = await fetch(`{{ route('builds.index') }}?${params}`, {
+                                    headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
                                 });
-                                this.builds = await response.json();
+                                const data = await response.json();
+                                // Paginator de laravel retorna los items en "data"
+                                this.builds = data.builds.data;
+                                this.counts = data.counts;
                             } catch (error) {
                                 console.error('Error fetching builds:', error);
                             } finally {

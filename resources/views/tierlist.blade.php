@@ -184,7 +184,7 @@
             <h2>🔗 Analiza la Meta</h2>
             <p>Consulta las **Builds** de mayor rango o el **Leaderboard** para ver estas unidades en acción.</p>
             <div class="action-buttons-small">
-                <a href="{{ route('builds.search') }}" class="btn btn-primary-link">🔎 Buscador de Builds</a>
+                <a href="{{ route('builds.index') }}" class="btn btn-primary-link">🔎 Buscador de Builds</a>
                 <a href="{{ route('leaderboard') }}" class="btn btn-secondary-link">🏆 Ver Leaderboard</a>
             </div>
         </section>

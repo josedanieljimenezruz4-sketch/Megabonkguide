@@ -21,7 +21,7 @@
                 <nav class="main-nav">
                     <ul>
                         <li><a href="{{ route('tierlist') }}">TIERLIST</a></li>
-                        <li><a href="{{ route('builds.search') }}">BUSCADOR DE BUILDS</a></li>
+                        <li><a href="{{ route('builds.index') }}">BUILDS</a></li>
                         <li><a href="{{ route('comunity.index') }}">COMMUNITY</a></li>
                         <li class="dropdown">
                             <a href="{{ route('unlocks.index') }}">UNLOCKS ▼</a>

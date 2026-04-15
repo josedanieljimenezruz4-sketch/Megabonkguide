@@ -12,4 +12,11 @@ class Item extends Model
     protected $guarded = [];
     protected $keyType = 'string';
     public $incrementing = false;
+
+    public function builds()
+    {
+        return $this->belongsToMany(Build::class, 'build_item', 'item_id', 'build_id')
+                    ->withPivot('slot_type')
+                    ->withTimestamps();
+    }
 }

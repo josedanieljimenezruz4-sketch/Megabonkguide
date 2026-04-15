@@ -22,8 +22,28 @@ class Build extends Model
         return $this->belongsTo(Item::class, 'character_id', 'id');
     }
 
-    // Opcional: Relaciones individuales para armas si requieres
-    public function weapon1() {
-        return $this->belongsTo(Item::class, 'weapon_1_id', 'id');
+    // Relación Muchos-a-Muchos con items (todas las ranuras)
+    public function items() {
+        return $this->belongsToMany(Item::class, 'build_item', 'build_id', 'item_id')
+                    ->withPivot('slot_type')
+                    ->withTimestamps();
+    }
+
+    // Helpers opcionales si quieres obtener la colección filtrada directamente desde Eloquent
+    public function weapons() {
+        return $this->items()->wherePivot('slot_type', 'Arma');
+    }
+
+    public function tomes() {
+        return $this->items()->wherePivot('slot_type', 'Tomo');
+    }
+
+    public function accessories() {
+        return $this->items()->wherePivot('slot_type', 'Item');
+    }
+
+    public function votes()
+    {
+        return $this->hasMany(BuildVote::class);
     }
 }

@@ -22,11 +22,14 @@ use App\Http\Controllers\ItemController;
 // Página de Inicio
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// Rutas exclusivas a Builds
+Route::get('/builds', [\App\Http\Controllers\BuildController::class, 'index'])->name('builds.index');
+Route::get('/builds/{build}', [\App\Http\Controllers\BuildController::class, 'show'])->name('builds.show')->where('build', '[0-9]+');
+
 // Tierlist y Meta
 Route::controller(GameDataController::class)->group(function () {
     Route::get('/tierlist', 'tierlist')->name('tierlist');
     Route::get('/meta', 'meta')->name('meta');
-    Route::get('/buscador-builds', 'builds')->name('builds.search');
     Route::get('/leaderboard', 'leaderboard')->name('leaderboard');
 });
 
@@ -72,7 +75,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/inventario', [UnlockController::class, 'inventory'])->name('inventory');
 
     // Builds
+    Route::get('/builds/create', [App\Http\Controllers\BuildController::class, 'create'])->name('builds.create');
     Route::post('/builds', [App\Http\Controllers\BuildController::class, 'store'])->name('builds.store');
+    Route::post('/builds/{build}/vote', [App\Http\Controllers\BuildController::class, 'vote'])->name('builds.vote');
 
     // Votes
     Route::post('/items/{id}/vote', [App\Http\Controllers\GameDataController::class, 'voteItem'])->name('items.vote');
