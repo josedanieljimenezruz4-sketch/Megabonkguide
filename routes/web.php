@@ -64,6 +64,12 @@ Route::controller(UserController::class)->group(function () {
     Route::post('/logout', 'logout')->name('logout');
 });
 
+// OAuth (Social Login)
+Route::controller(\App\Http\Controllers\SocialController::class)->group(function () {
+    Route::get('/auth/{provider}/redirect', 'redirectToProvider')->name('social.redirect');
+    Route::get('/auth/{provider}/callback', 'handleProviderCallback')->name('social.callback');
+});
+
 // Rutas protegidas (Requieren sesión)
 Route::middleware('auth')->group(function () {
     Route::controller(UserController::class)->group(function () {

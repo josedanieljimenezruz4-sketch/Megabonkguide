@@ -97,6 +97,11 @@
                                     @if($comment->user && $comment->user->is_admin)
                                         <span style="color: #1da1f2; margin-left: 2px;" data-tippy-content="Personal Oficial de Megabonk Guide">☑️</span>
                                     @endif
+                                    @if($comment->user && $comment->user->discord_id)
+                                        <span style="color: #5865F2; margin-left: 4px; display: inline-flex; align-items: center;" data-tippy-content="Miembro de Discord Oficial">
+                                            <svg width="14" height="14" viewBox="0 0 127.14 96.36" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a67.58,67.58,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1,105.25,105.25,0,0,0,32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.56,65.36c-5.36,0-9.8-4.83-9.8-10.74s4.36-10.74,9.8-10.74c5.5,0,9.89,4.83,9.8,10.74C52.36,60.53,48.06,65.36,42.56,65.36Zm42,0c-5.36,0-9.8-4.83-9.8-10.74s4.36-10.74,9.8-10.74c5.5,0,9.89,4.83,9.8,10.74C94.41,60.53,90.1,65.36,84.56,65.36Z"/></svg>
+                                        </span>
+                                    @endif
                                 </strong>
                                 <div style="display: flex; align-items: center; gap: 10px;">
                                     <span style="color: #aaa; font-size: 0.85em;">{{ $comment->created_at->diffForHumans() }}</span>
@@ -154,6 +159,11 @@
                                                 {{ $reply->user->username ?? 'Usuario Anónimo' }}
                                                 @if($reply->user && $reply->user->is_admin)
                                                     <span style="color: #1da1f2; margin-left: 2px;" data-tippy-content="Personal Oficial de Megabonk Guide">☑️</span>
+                                                @endif
+                                                @if($reply->user && $reply->user->discord_id)
+                                                    <span style="color: #5865F2; margin-left: 4px; display: inline-flex; align-items: center;" data-tippy-content="Miembro de Discord Oficial">
+                                                        <svg width="14" height="14" viewBox="0 0 127.14 96.36" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a67.58,67.58,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1,105.25,105.25,0,0,0,32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.56,65.36c-5.36,0-9.8-4.83-9.8-10.74s4.36-10.74,9.8-10.74c5.5,0,9.89,4.83,9.8,10.74C52.36,60.53,48.06,65.36,42.56,65.36Zm42,0c-5.36,0-9.8-4.83-9.8-10.74s4.36-10.74,9.8-10.74c5.5,0,9.89,4.83,9.8,10.74C94.41,60.53,90.1,65.36,84.56,65.36Z"/></svg>
+                                                    </span>
                                                 @endif
                                             </strong>
                                             <div style="display: flex; align-items: center; gap: 10px;">

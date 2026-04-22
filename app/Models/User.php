@@ -22,6 +22,9 @@ class User extends Authenticatable
         'username', // Asegúrate de que diga username aquí
         'email',
         'password',
+        'google_id',
+        'discord_id',
+        'avatar',
     ];
 
     /**
