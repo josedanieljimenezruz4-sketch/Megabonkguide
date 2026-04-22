@@ -50,4 +50,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Item::class, 'user_unlocks', 'user_id', 'item_id')->withTimestamps();
     }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 }

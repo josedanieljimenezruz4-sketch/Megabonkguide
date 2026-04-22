@@ -25,31 +25,9 @@
             ¡Recuerda que la habilidad del jugador siempre es el factor más importante!
         </p>
 
-        <div class="tier-filters">
-            <a href="{{ route('tierlist') }}" class="filter-btn filter-all {{ !$category ? 'active' : '' }}">Todos</a>
-            <a href="{{ route('tierlist', ['category' => 'personaje']) }}"
-                class="filter-btn filter-personajes {{ $category == 'personaje' ? 'active' : '' }}">Personajes</a>
-            <a href="{{ route('tierlist', ['category' => 'arma']) }}"
-                class="filter-btn filter-armas {{ $category == 'arma' ? 'active' : '' }}">Armas</a>
-            <a href="{{ route('tierlist', ['category' => 'tomo']) }}"
-                class="filter-btn filter-tomos {{ $category == 'tomo' ? 'active' : '' }}">Tomos</a>
-        </div>
-
-        <div style="text-align: center; margin-bottom: 30px;">
-            <a href="{{ route('tierlist', ['category' => $category ?? null, 'sort' => 'popularity']) }}" class="btn btn-secondary-link" style="font-size: 0.85em; padding: 8px 15px;">
-                🔥 Ordenar por Popularidad
-            </a>
-        </div>
 
         <div class="tierlist-container">
             <table>
-                <thead>
-                    <tr>
-                        <th class="tier-rank">RANGO</th>
-                        <th>UNIDADES DESTACADAS</th>
-                        <th>DESCRIPCIÓN</th>
-                    </tr>
-                </thead>
                 <tbody>
                     @php
                         $rankDescriptions = [
@@ -59,7 +37,7 @@
                             'C' => 'Nicho o débiles. Solo útiles en composiciones de equipo muy específicas o para principiantes.'
                         ];
                         // Sort ranks manually if needed, but assuming S, A, B, C
-                        $ranksOrder = ['S', 'A', 'B', 'C'];
+                        $ranksOrder = ['S', 'A', 'B', 'C', 'D', 'E', 'F'];
                     @endphp
 
                     @foreach($ranksOrder as $rank)
@@ -69,7 +47,7 @@
                                 <td>
                                     <div class="tier-items-list"
                                         style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
-                                        @foreach($itemsByRank[$rank] as $item)
+                                        @foreach($itemsByRank[$rank]->sortByDesc('votes') as $item)
                                             <div class="tier-item" data-tippy-content="{{ $item->description ?? 'Sin descripción disponible.' }}"
                                                 style="display: flex; flex-direction: column; align-items: center; width: 80px; text-align: center;">
                                                 @php
@@ -104,10 +82,86 @@
             </table>
         </div>
 
+        <section class="meta-links" style="margin-top: 40px; margin-bottom: 40px; border: 1px solid #444; border-radius: 10px; padding: 20px; background: #1a1a1a;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 20px;">
+                <h2 style="margin: 0; display: flex; align-items: center; gap: 10px;">👥 Feed de la Comunidad</h2>
+                <div style="display: flex; gap: 10px;">
+                    <a href="{{ route('community-tierlists.index') }}" class="btn btn-secondary-link" style="padding: 8px 15px; font-size: 0.9em; background: transparent; border: 1px solid #aaa; color: #aaa;">Ver Todas</a>
+                    <a href="{{ route('community-tierlists.create') }}" class="btn btn-primary-link" style="padding: 8px 15px; font-size: 0.9em; background: #ff4757; color: white;">+ Crear tu Tier List</a>
+                </div>
+            </div>
+            
+            @if(isset($recentCommunityTierLists) && $recentCommunityTierLists->count() > 0)
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;">
+                    @foreach($recentCommunityTierLists as $ctl)
+                        <a href="{{ route('community-tierlists.show', $ctl->id) }}" style="text-decoration: none; color: inherit;">
+                            <div style="background: #2c2f33; padding: 15px; border-radius: 8px; border-left: 4px solid #ffcf00; transition: transform 0.2s, background 0.2s; cursor: pointer;">
+                                <h3 style="margin: 0 0 5px 0; font-size: 1.1em; color: #fff;">{{ $ctl->titulo }}</h3>
+                                <div style="display: flex; justify-content: space-between; font-size: 0.85em; color: #aaa; margin-bottom: 12px;">
+                                    <span>Por: <strong>{{ $ctl->user->username ?? 'Anónimo' }}</strong>
+                                        @if($ctl->user && $ctl->user->is_admin)
+                                            <span style="color: #1da1f2; margin-left: 2px;" data-tippy-content="Tier List Oficial de Megabonk Guide">☑️</span>
+                                        @endif
+                                    </span>
+                                </div>
+                                
+                                <div style="display: flex; flex-direction: column; gap: 4px;">
+                                    @php
+                                        $miniRanks = ['S' => '#ff7f7f', 'A' => '#ffbf7f', 'B' => '#ffff7f', 'C' => '#bfff7f', 'D' => '#7fffb2', 'E' => '#7fffff', 'F' => '#aaaaaa'];
+                                    @endphp
+                                    @foreach(['S', 'A', 'B', 'C', 'D', 'E', 'F'] as $r)
+                                        @php
+                                            $itemsInRank = $ctl->rows->where('rank', $r);
+                                        @endphp
+                                        @if($itemsInRank->count() > 0)
+                                            <div style="display: flex; align-items: center; background: #1a1a1a; border-radius: 4px; overflow: hidden; height: 24px;">
+                                                <div style="background: {{ $miniRanks[$r] }}; color: #000; font-weight: bold; width: 24px; text-align: center; line-height: 24px; font-size: 0.8em; flex-shrink: 0;">{{ $r }}</div>
+                                                <div style="display: flex; gap: 2px; padding-left: 4px; overflow: hidden;">
+                                                    @foreach($itemsInRank->take(8) as $row)
+                                                        @if($row->item)
+                                                            @php
+                                                                $imgSrc = asset('images/' . $row->item->image_path);
+                                                                if (\Illuminate\Support\Str::startsWith($row->item->image_path, 'items/')) $imgSrc = asset('storage/' . $row->item->image_path);
+                                                            @endphp
+                                                            <img src="{{ $row->item->image_path ? $imgSrc : asset('images/placeholder.png') }}" onerror="this.onerror=null; this.src='{{ asset('images/placeholder.png') }}';" style="width: 20px; height: 20px; object-fit: contain; border-radius: 2px; background: #222;">
+                                                        @endif
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+            @else
+                <p style="text-align: center; color: #aaa; padding: 20px 0;">
+                    Aún no hay Tier Lists creadas por la comunidad. ¡Sé el primero!
+                </p>
+            @endif
+        </section>
+
+        <div class="tier-filters">
+            <a href="{{ route('tierlist') }}" class="filter-btn filter-all {{ !$category ? 'active' : '' }}">Todos</a>
+            <a href="{{ route('tierlist', ['category' => 'personaje']) }}"
+                class="filter-btn filter-personajes {{ $category == 'personaje' ? 'active' : '' }}">Personajes</a>
+            <a href="{{ route('tierlist', ['category' => 'arma']) }}"
+                class="filter-btn filter-armas {{ $category == 'arma' ? 'active' : '' }}">Armas</a>
+            <a href="{{ route('tierlist', ['category' => 'tomo']) }}"
+                class="filter-btn filter-tomos {{ $category == 'tomo' ? 'active' : '' }}">Tomos</a>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 30px;">
+            <a href="{{ route('tierlist', ['category' => $category ?? null, 'sort' => 'popularity']) }}" class="btn btn-secondary-link" style="font-size: 0.85em; padding: 8px 15px;">
+                🔥 Ordenar por Popularidad
+            </a>
+        </div>
+
         @if(isset($pendingItems) && $pendingItems->count() > 0)
         <section class="meta-links">
-            <h2>🧪 Laboratorio de la Comunidad (Ítems Pendientes)</h2>
-            <p>Vota por el rango en el que crees que deberían estar estos ítems pendientes para ayudar a formarla.</p>
+            <h2>🧪 Votos de Popularidad (Ítems Pendientes)</h2>
+            <p>Dale tu voto (🔥) a los ítems que crees que deberíamos analizar y asignar pronto al meta oficial.</p>
             
             @if(auth()->check() && auth()->user()->is_admin)
             <div id="bulk-action-bar" style="display: none; background: rgba(255, 71, 87, 0.1); border: 1px dashed #ff4757; padding: 15px; border-radius: 8px; margin-top: 15px; text-align: center;">
@@ -118,6 +172,9 @@
                     <option value="A">Clase A</option>
                     <option value="B">Clase B</option>
                     <option value="C">Clase C</option>
+                    <option value="D">Clase D</option>
+                    <option value="E">Clase E</option>
+                    <option value="F">Clase F</option>
                 </select>
                 <button class="btn btn-primary-link" style="padding: 8px 20px; font-size: 0.9em; margin-left: 10px; cursor: pointer; background-color: #ff4757; color: white;" onclick="submitBulkApprove()">Mover Seleccionados</button>
             </div>
@@ -155,25 +212,13 @@
                         @endif
                         <span style="font-size: 0.8em; margin: 8px 0; line-height: 1.1;">{{ $item->name }}</span>
                         
-                        <div class="rank-buttons" style="display: flex; gap: 4px; margin-bottom: 8px;">
-                            <button class="btn-rank rank-s" onclick="voteRank('{{ $item->id }}', 'S')" title="Votar clase S">S</button>
-                            <button class="btn-rank rank-a" onclick="voteRank('{{ $item->id }}', 'A')" title="Votar clase A">A</button>
-                            <button class="btn-rank rank-b" onclick="voteRank('{{ $item->id }}', 'B')" title="Votar clase B">B</button>
-                            <button class="btn-rank rank-c" onclick="voteRank('{{ $item->id }}', 'C')" title="Votar clase C">C</button>
-                        </div>
 
-                        @if(auth()->check() && auth()->user()->is_admin)
-                        <div class="admin-rank-buttons" style="display: flex; gap: 4px; margin-bottom: 12px; border: 1px dashed #ff4757; padding: 4px; border-radius: 6px; background: rgba(255, 71, 87, 0.1);" title="Aprobar Rango Permanentemente" data-tippy-content="Opciones de Administrador">
-                            <button class="btn-rank btn-rank-admin" onclick="approveRank('{{ $item->id }}', 'S')">S</button>
-                            <button class="btn-rank btn-rank-admin" onclick="approveRank('{{ $item->id }}', 'A')">A</button>
-                            <button class="btn-rank btn-rank-admin" onclick="approveRank('{{ $item->id }}', 'B')">B</button>
-                            <button class="btn-rank btn-rank-admin" onclick="approveRank('{{ $item->id }}', 'C')">C</button>
-                        </div>
-                        @endif
 
-                        <div style="font-size: 0.7rem; color: #aaa;">
-                            Más votado: <strong id="most-voted-{{ $item->id }}" style="color: #ffcf00;">{{ $mostVotedRanks[$item->id] ?? 'Ninguno' }}</strong>
-                        </div>
+                        <button class="vote-btn" onclick="voteItem('{{ $item->id }}')" title="Votar esta unidad para Popularidad" style="margin-bottom: 10px; margin-top: 5px; cursor: pointer; background: #1a1a1a; border: 1px solid #444; border-radius: 5px; padding: 4px 8px; color: white;">
+                            🔥 <span id="vote-count-{{ $item->id }}">{{ $item->votes }}</span>
+                        </button>
+
+
                     </div>
                 @endforeach
             </div>

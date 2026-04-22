@@ -47,7 +47,7 @@ class ItemController extends Controller
         $item = Item::findOrFail($id);
         
         $request->validate([
-            'rank' => 'required|in:S,A,B,C'
+            'rank' => 'required|in:S,A,B,C,D,E,F,PENDING'
         ]);
 
         $item->rank = $request->input('rank');

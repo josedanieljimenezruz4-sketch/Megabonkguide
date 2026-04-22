@@ -23,10 +23,13 @@
             <span style="font-weight: bold; color: #fff; margin-right: 15px; text-transform: uppercase;">⚡ Acciones Masivas:</span>
             <select id="bulk-rank-select" style="padding: 10px; border-radius: 6px; background: #222; color: white; border: 2px solid transparent; outline: none; cursor: pointer; font-weight: bold;">
                 <option value="">Seleccionar Acción...</option>
-                <option value="S">🔥 Promover a Rango S</option>
-                <option value="A">⭐ Promover a Rango A</option>
-                <option value="B">💎 Promover a Rango B</option>
-                <option value="C">🟢 Promover a Rango C</option>
+                <option value="S">Clase S</option>
+                <option value="A">Clase A</option>
+                <option value="B">Clase B</option>
+                <option value="C">Clase C</option>
+                <option value="D">Clase D</option>
+                <option value="E">Clase E</option>
+                <option value="F">Clase F</option>
                 <option value="PENDING">🔄 Mover a Pendientes (Reset)</option>
             </select>
             <button id="submit-bulk-btn" class="btn" style="padding: 10px 25px; font-size: 0.95em; margin-left: 10px; cursor: pointer; background-color: #ff4757; color: white; font-weight: bold; border: 2px solid #fff; border-radius: 6px; transition: 0.3s;" onclick="submitBulkApprove()">
@@ -50,7 +53,7 @@
                 </thead>
                 <tbody>
                     @php
-                        $ranksOrder = ['S', 'A', 'B', 'C'];
+                        $ranksOrder = ['S', 'A', 'B', 'C', 'D', 'E', 'F'];
                     @endphp
 
                     @foreach($ranksOrder as $rank)

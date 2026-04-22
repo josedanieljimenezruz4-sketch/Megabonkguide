@@ -82,7 +82,16 @@ Route::middleware('auth')->group(function () {
     // Votes
     Route::post('/items/{id}/vote', [App\Http\Controllers\GameDataController::class, 'voteItem'])->name('items.vote');
     Route::post('/items/{id}/vote-rank', [App\Http\Controllers\GameDataController::class, 'voteRankItem'])->name('items.voteRank');
+
+    // Community Tier Lists
+    Route::get('/community-tierlists/create', [App\Http\Controllers\UserTierListController::class, 'create'])->name('community-tierlists.create');
+    Route::post('/community-tierlists', [App\Http\Controllers\UserTierListController::class, 'store'])->name('community-tierlists.store');
+    Route::post('/community-tierlists/{id}/comment', [App\Http\Controllers\CommentController::class, 'store'])->name('community-tierlists.comment');
 });
+
+// Rutas de visualización pública de listadas de la comunidad (no requieren auth)
+Route::get('/community-tierlists', [App\Http\Controllers\UserTierListController::class, 'index'])->name('community-tierlists.index');
+Route::get('/community-tierlists/{id}', [App\Http\Controllers\UserTierListController::class, 'show'])->name('community-tierlists.show')->where('id', '[0-9]+');
 
 // Rutas de Administrador (Requieren sesión y ser admin)
 Route::middleware(['auth', 'admin'])->name('admin.')->prefix('admin')->group(function () {
@@ -97,4 +106,9 @@ Route::middleware(['auth', 'admin'])->name('admin.')->prefix('admin')->group(fun
     Route::get('/votes', [AdminController::class, 'votes'])->name('votes.index');
     Route::post('/votes/reset-all', [AdminController::class, 'resetAllVotes'])->name('votes.resetAll');
     Route::post('/votes/{id}/reset', [AdminController::class, 'resetItemVotes'])->name('votes.resetItem');
+
+    // Moderación
+    Route::get('/community-tierlists', [AdminController::class, 'communityTierLists'])->name('community-tierlists.index');
+    Route::delete('/community-tierlists/{id}', [App\Http\Controllers\UserTierListController::class, 'destroyAdmin'])->name('community-tierlists.destroy');
+    Route::delete('/comments/{id}', [App\Http\Controllers\CommentController::class, 'destroyAdmin'])->name('comments.destroy');
 });

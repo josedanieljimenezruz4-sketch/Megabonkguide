@@ -54,4 +54,10 @@ class AdminController extends Controller
 
         return redirect()->route('admin.votes.index')->with('success', 'Los votos han sido reseteados para: ' . $item->name);
     }
+
+    public function communityTierLists()
+    {
+        $tierLists = \App\Models\TierList::with('user')->latest()->paginate(15);
+        return view('admin.community_tierlists', compact('tierLists'));
+    }
 }

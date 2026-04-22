@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Gestión de Votos | MEGABONK GUIDE')
+@section('title', 'Tier Lists de la Comunidad | MEGABONK GUIDE')
 
 @push('styles')
     <style>
@@ -39,8 +39,8 @@
             text-transform: uppercase;
             font-size: 0.9rem;
         }
-        .btn-reset {
-            background-color: #e74c3c;
+        .btn-delete {
+            background-color: #ff4757;
             color: white;
             border: none;
             padding: 8px 15px;
@@ -48,23 +48,12 @@
             cursor: pointer;
             font-weight: bold;
             transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
-        .btn-reset:hover {
-            background-color: #c0392b;
-        }
-        .btn-reset-all {
-            background: linear-gradient(90deg, #ff4b2b, #ff416c);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(255, 65, 108, 0.4);
-            transition: 0.3s;
-        }
-        .btn-reset-all:hover {
-            opacity: 0.9;
+        .btn-delete:hover {
+            background-color: #ff6b81;
         }
         .alert-success {
             background-color: #2ecc71;
@@ -99,16 +88,7 @@
 
 @section('content')
     <div class="admin-dashboard">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h1 class="admin-title" style="margin-bottom: 0;">📊 Votos de Popularidad</h1>
-            
-            <form action="{{ route('admin.votes.resetAll') }}" method="POST" onsubmit="return confirm('¿Estás seguro de que quieres BORRAR TODOS los votos de TODOS los ítems? Esta acción no se puede deshacer.')">
-                @csrf
-                <button type="submit" class="btn-reset-all">
-                    ⚠️ Reiniciar Popularidad Global
-                </button>
-            </form>
-        </div>
+        <h1 class="admin-title">📋 Tier Lists de la Comunidad</h1>
         
         <div style="margin-bottom: 20px;">
              <a href="{{ route('admin.dashboard') }}" style="color: #36d1dc; text-decoration: none; font-weight: bold;">&larr; Volver al Panel Principal</a>
@@ -123,42 +103,48 @@
         <table class="admin-users-table">
             <thead>
                 <tr>
-                    <th>Ítem</th>
-                    <th>Tipo</th>
-                    <th>Votos Totales</th>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Autor</th>
+                    <th>Categoría</th>
+                    <th>Fecha</th>
                     <th>Acción</th>
                 </tr>
             </thead>
             <tbody>
-                @forelse($items as $item)
+                @forelse($tierLists as $tl)
                 <tr>
-                    <td style="display: flex; align-items: center; gap: 10px;">
-                        @if($item->image_path)
-                            <img src="{{ asset('images/' . $item->image_path) }}" alt="{{ $item->name }}" style="width: 30px; height: 30px; border-radius: 5px; object-fit: contain; background: #fff;">
-                        @endif
-                        {{ $item->name }}
-                    </td>
-                    <td><span style="background: rgba(255,255,255,0.1); padding: 3px 8px; border-radius: 12px; font-size: 0.8em; text-transform: uppercase;">{{ $item->type }}</span></td>
-                    <td style="font-size: 1.2rem; font-weight: bold; color: #ffcf00;">{{ $item->votes }}</td>
+                    <td style="font-weight: bold; color: #ffcf00;">#{{ $tl->id }}</td>
                     <td>
-                        <form action="{{ route('admin.votes.resetItem', $item->id) }}" method="POST" onsubmit="return confirm('¿Seguro de resetear los votos de {{ $item->name }} a 0?')">
+                        <a href="{{ route('community-tierlists.show', $tl->id) }}" style="color: white; text-decoration: none; font-weight: bold;" target="_blank">
+                            {{ Str::limit($tl->titulo, 40) }}
+                        </a>
+                    </td>
+                    <td>{{ $tl->user->username ?? 'Anónimo' }}</td>
+                    <td><span style="background: rgba(255,255,255,0.1); padding: 3px 8px; border-radius: 12px; font-size: 0.8em; text-transform: uppercase;">{{ $tl->categoria }}</span></td>
+                    <td style="color: #aaa; font-size: 0.9em;">{{ $tl->created_at->format('d/m/Y H:i') }}</td>
+                    <td>
+                        <form action="{{ route('admin.community-tierlists.destroy', $tl->id) }}" method="POST" onsubmit="return confirm('¿Seguro de eliminar permanentemente la Tier List: {{ addslashes($tl->titulo) }}?');">
                             @csrf
-                            <button type="submit" class="btn-reset">Resetear a 0</button>
+                            @method('DELETE')
+                            <button type="submit" class="btn-delete" title="Eliminar Tier List">
+                                🗑️ Eliminar
+                            </button>
                         </form>
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="4" style="text-align: center;">No hay ítems registrados aún.</td>
+                    <td colspan="6" style="text-align: center;">No hay Tier Lists de la comunidad.</td>
                 </tr>
                 @endforelse
             </tbody>
         </table>
 
-        <!-- Paginación de Laravel -->
+        <!-- Paginación -->
         <div style="margin-top: 30px;" class="d-flex justify-content-center">
-            @if(method_exists($items, 'links'))
-                {{ $items->links('pagination::bootstrap-4') }}
+            @if(method_exists($tierLists, 'links'))
+                {{ $tierLists->links('pagination::bootstrap-4') }}
             @endif
         </div>
     </div>

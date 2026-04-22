@@ -84,13 +84,16 @@
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
             <h1 class="admin-title" style="margin-bottom: 0;">👑 Panel de Control</h1>
             <div>
-                <a href="{{ route('admin.tierlist-manager') }}" style="background: linear-gradient(90deg, #B965F0, #8E44AD); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-right: 15px; box-shadow: 0 4px 10px rgba(185, 101, 240, 0.4);">
+                <a href="{{ route('admin.tierlist-manager') }}" style="background: linear-gradient(90deg, #B965F0, #8E44AD); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-right: 15px; box-shadow: 0 4px 10px rgba(185, 101, 240, 0.4); display: inline-block; margin-bottom: 10px;">
                     👁️ Panóptico Tier List
                 </a>
-                <a href="{{ route('admin.votes.index') }}" style="background: linear-gradient(90deg, #36d1dc, #5b86e5); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-right: 15px; box-shadow: 0 4px 10px rgba(91, 134, 229, 0.4);">
+                <a href="{{ route('admin.community-tierlists.index') }}" style="background: linear-gradient(90deg, #f1c40f, #e67e22); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-right: 15px; box-shadow: 0 4px 10px rgba(241, 196, 15, 0.4); display: inline-block; margin-bottom: 10px;">
+                    📋 Tier Lists Comunidad
+                </a>
+                <a href="{{ route('admin.votes.index') }}" style="background: linear-gradient(90deg, #36d1dc, #5b86e5); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-right: 15px; box-shadow: 0 4px 10px rgba(91, 134, 229, 0.4); display: inline-block; margin-bottom: 10px;">
                     📊 Gestión de Votos
                 </a>
-                <a href="{{ route('admin.items.create') }}" style="background: linear-gradient(90deg, #ff4b2b, #ff416c); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 10px rgba(255, 65, 108, 0.4);">
+                <a href="{{ route('admin.items.create') }}" style="background: linear-gradient(90deg, #ff4b2b, #ff416c); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 10px rgba(255, 65, 108, 0.4); display: inline-block; margin-bottom: 10px;">
                     ➕ Añadir Ítem
                 </a>
             </div>

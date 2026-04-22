@@ -41,7 +41,9 @@ class GameDataController extends Controller
             $mostVotedRanks[$itemId] = $mostVoted->suggested_rank;
         }
 
-        return view('tierlist', compact('itemsByRank', 'pendingItems', 'mostVotedRanks', 'category', 'sort'));
+        $recentCommunityTierLists = \App\Models\TierList::with(['user', 'rows.item'])->latest()->take(5)->get();
+
+        return view('tierlist', compact('itemsByRank', 'pendingItems', 'mostVotedRanks', 'category', 'sort', 'recentCommunityTierLists'));
     }
 
     public function voteItem(\Illuminate\Http\Request $request, $id)
@@ -82,7 +84,7 @@ class GameDataController extends Controller
         $item = \App\Models\Item::findOrFail($id);
         
         $request->validate([
-            'rank' => 'required|in:S,A,B,C'
+            'rank' => 'required|in:S,A,B,C,D,E,F'
         ]);
         
         $userId = auth()->id();
