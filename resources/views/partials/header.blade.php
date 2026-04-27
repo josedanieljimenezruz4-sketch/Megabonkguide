@@ -31,9 +31,7 @@
                 <div class="dropdown user-dropdown">
                     <div class="profile-header" style="display: flex; align-items: center;">
                         <a href="{{ route('profile') }}" title="Ir a mi perfil">
-                            <!-- Cambiado 'name' por 'username' ya que es el campo utilizado en el modelo User -->
-                            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username ?? 'Usuario') }}&background=B965F0&color=fff&size=64"
-                                alt="Perfil" class="profile-avatar">
+                            <x-user-avatar :user="Auth::user()" size="40" class="profile-avatar" />
                         </a>
                         <span class="dropdown-arrow" onclick="toggleUserDropdown(event)" style="cursor: pointer; margin-left: 8px; padding: 5px;">▼</span>
                     </div>

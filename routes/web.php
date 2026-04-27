@@ -46,6 +46,10 @@ Route::controller(UnlockController::class)->group(function () {
 // Comunidad
 Route::controller(CommunityController::class)->group(function () {
     Route::get('/comunity', 'index')->name('comunity.index');
+    Route::post('/comunity', 'store')->name('comunity.store')->middleware('auth');
+    Route::get('/comunity/{id}', 'show')->name('comunity.show')->where('id', '[0-9]+');
+    Route::post('/comunity/{id}/like', 'like')->name('comunity.like')->middleware('auth');
+    Route::post('/comunity/{id}/comment', 'comment')->name('comunity.comment')->middleware('auth');
     Route::get('/sugerencias', 'suggestions')->name('comunity.suggestions');
 });
 
@@ -73,8 +77,14 @@ Route::controller(\App\Http\Controllers\SocialController::class)->group(function
 // Rutas protegidas (Requieren sesión)
 Route::middleware('auth')->group(function () {
     Route::controller(UserController::class)->group(function () {
-        Route::get('/perfil', 'profile')->name('profile');
+        Route::get('/perfil', 'profile')->name('profile.old');
         Route::get('/cambiar-datos', 'settings')->name('profile.settings');
+    });
+
+    // Perfil Personal
+    Route::controller(\App\Http\Controllers\ProfileController::class)->group(function () {
+        Route::get('/mi-perfil', 'index')->name('profile');
+        Route::post('/mi-perfil/avatar', 'updateAvatar')->name('profile.avatar.update');
     });
 
     // Inventario Unificado

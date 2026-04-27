@@ -9,7 +9,7 @@ class Comment extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'tier_list_id', 'parent_id', 'content'];
+    protected $fillable = ['user_id', 'tier_list_id', 'community_post_id', 'parent_id', 'content'];
 
     public function user()
     {
@@ -21,6 +21,11 @@ class Comment extends Model
         return $this->belongsTo(TierList::class);
     }
 
+    public function communityPost()
+    {
+        return $this->belongsTo(CommunityPost::class);
+    }
+
     public function parent()
     {
         return $this->belongsTo(Comment::class, 'parent_id');
@@ -28,6 +33,6 @@ class Comment extends Model
 
     public function replies()
     {
-        return $this->hasMany(Comment::class, 'parent_id');
+        return $this->hasMany(Comment::class, 'parent_id')->with(['user', 'replies']);
     }
 }

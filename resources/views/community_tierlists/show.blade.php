@@ -17,13 +17,15 @@
 
         <h1 class="page-title">{{ $tierList->titulo }}</h1>
         
-        <p class="intro-text-tierlist" style="text-align: center; color: #ffcf00;">
-            Creada por: <strong>{{ $tierList->user->username ?? 'Usuario Anónimo' }}</strong>
+        <div class="intro-text-tierlist" style="display: flex; align-items: center; justify-content: center; gap: 8px; color: #ffcf00; margin-bottom: 20px;">
+            <span>Creada por:</span>
+            <x-user-avatar :user="$tierList->user" size="30" style="border: 2px solid #333;" />
+            <strong>{{ $tierList->user->username ?? 'Usuario Anónimo' }}</strong>
             @if($tierList->user && $tierList->user->is_admin)
                 <span style="color: #1da1f2; margin-left: 2px;" data-tippy-content="Tier List Oficial de Megabonk Guide">☑️</span>
             @endif
-            | Categoría: {{ ucfirst($tierList->categoria) }}
-        </p>
+            <span style="color: #aaa; margin-left: 10px;">| Categoría: {{ ucfirst($tierList->categoria) }}</span>
+        </div>
 
         @if($tierList->descripcion)
         <div style="background: #2c2f33; padding: 20px; border-radius: 10px; margin-bottom: 30px; margin-inline: auto; max-width: 800px;">
@@ -89,100 +91,7 @@
 
             <div class="comments-list" style="margin-top: 20px;">
                 @forelse($tierList->comments as $comment)
-                    <div class="comment-thread" style="margin-bottom: 15px;">
-                        <div class="comment" style="background: #2c2f33; padding: 15px; border-radius: 8px;">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                                <strong style="color: #ffcf00;">
-                                    {{ $comment->user->username ?? 'Usuario Anónimo' }}
-                                    @if($comment->user && $comment->user->is_admin)
-                                        <span style="color: #1da1f2; margin-left: 2px;" data-tippy-content="Personal Oficial de Megabonk Guide">☑️</span>
-                                    @endif
-                                    @if($comment->user && $comment->user->discord_id)
-                                        <span style="color: #5865F2; margin-left: 4px; display: inline-flex; align-items: center;" data-tippy-content="Miembro de Discord Oficial">
-                                            <svg width="14" height="14" viewBox="0 0 127.14 96.36" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a67.58,67.58,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1,105.25,105.25,0,0,0,32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.56,65.36c-5.36,0-9.8-4.83-9.8-10.74s4.36-10.74,9.8-10.74c5.5,0,9.89,4.83,9.8,10.74C52.36,60.53,48.06,65.36,42.56,65.36Zm42,0c-5.36,0-9.8-4.83-9.8-10.74s4.36-10.74,9.8-10.74c5.5,0,9.89,4.83,9.8,10.74C94.41,60.53,90.1,65.36,84.56,65.36Z"/></svg>
-                                        </span>
-                                    @endif
-                                </strong>
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <span style="color: #aaa; font-size: 0.85em;">{{ $comment->created_at->diffForHumans() }}</span>
-                                    @if(auth()->check() && auth()->user()->is_admin)
-                                        <form action="{{ route('admin.comments.destroy', $comment->id) }}" method="POST" onsubmit="return confirm('¿Seguro de eliminar este comentario?');" style="margin: 0;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" style="background: transparent; border: none; color: #ff4757; cursor: pointer; padding: 0;" title="Eliminar Comentario">🗑️</button>
-                                        </form>
-                                    @endif
-                                </div>
-                            </div>
-                            <p style="margin: 0 0 10px 0; color: #ddd; line-height: 1.4;">{{ $comment->content }}</p>
-                            <div style="display: flex; gap: 15px; align-items: center;">
-                                @auth
-                                    <button type="button" onclick="toggleReplyForm({{ $comment->id }})" style="background: transparent; border: none; color: #ffcf00; cursor: pointer; font-size: 0.85em; padding: 0; display: flex; align-items: center; gap: 5px;">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 10 20 15 15 20"></polyline><path d="M4 4v7a4 4 0 0 0 4 4h12"></path></svg>
-                                        Responder
-                                    </button>
-                                @endauth
-
-                                @if($comment->replies && $comment->replies->count() > 0)
-                                    <button type="button" onclick="toggleReplies({{ $comment->id }})" id="toggle-replies-btn-{{ $comment->id }}" style="background: transparent; border: none; color: #aaa; cursor: pointer; font-size: 0.85em; padding: 0; display: flex; align-items: center; gap: 5px; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#aaa'">
-                                        <span class="arrow-icon" style="transition: transform 0.2s; display: inline-block;">▼</span>
-                                        <span class="btn-text">Ver respuestas ({{ $comment->replies->count() }})</span>
-                                    </button>
-                                @endif
-                            </div>
-                        </div>
-
-                        <!-- Formulario de Respuesta Oculto -->
-                        @auth
-                            <div id="reply-form-{{ $comment->id }}" style="display: none; margin-top: 10px; margin-left: 40px;">
-                                <form action="{{ route('community-tierlists.comment', $tierList->id) }}" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="parent_id" value="{{ $comment->id }}">
-                                    <div style="margin-bottom: 10px;">
-                                        <textarea name="content" rows="2" placeholder="Escribe tu respuesta..." required style="width: 100%; background: #222; border: 1px solid #444; color: white; padding: 10px; border-radius: 8px; font-family: inherit; resize: vertical; box-sizing: border-box;"></textarea>
-                                    </div>
-                                    <div style="display: flex; gap: 10px;">
-                                        <button type="submit" class="btn btn-primary-link" style="border: none; cursor: pointer; padding: 5px 15px; font-size: 0.9em;">Enviar</button>
-                                        <button type="button" onclick="toggleReplyForm({{ $comment->id }})" style="background: transparent; border: 1px solid #444; color: #aaa; cursor: pointer; padding: 5px 15px; font-size: 0.9em; border-radius: 5px;">Cancelar</button>
-                                    </div>
-                                </form>
-                            </div>
-                        @endauth
-
-                        <!-- Respuestas -->
-                        @if($comment->replies && $comment->replies->count() > 0)
-                            <div id="replies-{{ $comment->id }}" class="replies" style="display: none; margin-left: 40px; border-left: 2px solid #444; padding-left: 15px; margin-top: 15px;">
-                                @foreach($comment->replies as $reply)
-                                    <div class="comment reply" style="background: #25272a; padding: 12px; border-radius: 8px; margin-bottom: 10px;">
-                                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                            <strong style="color: #ffcf00; font-size: 0.95em;">
-                                                {{ $reply->user->username ?? 'Usuario Anónimo' }}
-                                                @if($reply->user && $reply->user->is_admin)
-                                                    <span style="color: #1da1f2; margin-left: 2px;" data-tippy-content="Personal Oficial de Megabonk Guide">☑️</span>
-                                                @endif
-                                                @if($reply->user && $reply->user->discord_id)
-                                                    <span style="color: #5865F2; margin-left: 4px; display: inline-flex; align-items: center;" data-tippy-content="Miembro de Discord Oficial">
-                                                        <svg width="14" height="14" viewBox="0 0 127.14 96.36" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a67.58,67.58,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1,105.25,105.25,0,0,0,32.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15ZM42.56,65.36c-5.36,0-9.8-4.83-9.8-10.74s4.36-10.74,9.8-10.74c5.5,0,9.89,4.83,9.8,10.74C52.36,60.53,48.06,65.36,42.56,65.36Zm42,0c-5.36,0-9.8-4.83-9.8-10.74s4.36-10.74,9.8-10.74c5.5,0,9.89,4.83,9.8,10.74C94.41,60.53,90.1,65.36,84.56,65.36Z"/></svg>
-                                                    </span>
-                                                @endif
-                                            </strong>
-                                            <div style="display: flex; align-items: center; gap: 10px;">
-                                                <span style="color: #aaa; font-size: 0.8em;">{{ $reply->created_at->diffForHumans() }}</span>
-                                                @if(auth()->check() && auth()->user()->is_admin)
-                                                    <form action="{{ route('admin.comments.destroy', $reply->id) }}" method="POST" onsubmit="return confirm('¿Seguro de eliminar esta respuesta?');" style="margin: 0;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" style="background: transparent; border: none; color: #ff4757; cursor: pointer; padding: 0; font-size: 0.9em;" title="Eliminar Respuesta">🗑️</button>
-                                                    </form>
-                                                @endif
-                                            </div>
-                                        </div>
-                                        <p style="margin: 0; color: #ccc; line-height: 1.4; font-size: 0.95em;">{{ $reply->content }}</p>
-                                    </div>
-                                @endforeach
-                            </div>
-                        @endif
-                    </div>
+                    @include('community.partials.comment', ['comment' => $comment, 'depth' => 0, 'submitUrl' => route('community-tierlists.comment', $tierList->id)])
                 @empty
                     <p style="color: #aaa; text-align: center; font-style: italic;">No hay comentarios aún. ¡Sé el primero en comentar!</p>
                 @endforelse
@@ -190,8 +99,9 @@
 
             <div class="comment-form" style="margin-top: 30px; border-top: 1px solid #333; padding-top: 20px;">
                 @auth
-                    <form action="{{ route('community-tierlists.comment', $tierList->id) }}" method="POST">
+                    <form action="{{ route('community-tierlists.comment', $tierList->id) }}" method="POST" class="ajax-comment-form">
                         @csrf
+                        <input type="hidden" name="depth" value="0">
                         <div style="margin-bottom: 15px;">
                             <textarea name="content" rows="4" placeholder="Escribe tu comentario aquí..." required style="width: 100%; background: #222; border: 1px solid #444; color: white; padding: 10px; border-radius: 8px; font-family: inherit; resize: vertical; box-sizing: border-box;"></textarea>
                         </div>
@@ -246,13 +156,89 @@
             if (repliesDiv.style.display === 'none' || repliesDiv.style.display === '') {
                 repliesDiv.style.display = 'block';
                 arrow.style.transform = 'rotate(180deg)';
-                btnText.innerText = btnText.innerText.replace('Ver', 'Ocultar');
+                btnText.innerHTML = btnText.innerHTML.replace('Ver', 'Ocultar');
             } else {
                 repliesDiv.style.display = 'none';
                 arrow.style.transform = 'rotate(0deg)';
-                btnText.innerText = btnText.innerText.replace('Ocultar', 'Ver');
+                btnText.innerHTML = btnText.innerHTML.replace('Ocultar', 'Ver');
             }
         }
+
+        document.addEventListener('submit', function(e) {
+            if (e.target && e.target.classList.contains('ajax-comment-form')) {
+                e.preventDefault();
+                const form = e.target;
+                const submitBtn = form.querySelector('.btn-primary-link, .btn-submit');
+                const originalText = submitBtn.innerText;
+                submitBtn.disabled = true;
+                submitBtn.innerText = 'Enviando...';
+                
+                fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = originalText;
+                    
+                    if (data.success) {
+                        form.querySelector('textarea').value = ''; // clear form
+                        
+                        // Close reply form if it's a nested form
+                        const cancelBtn = form.querySelector('.btn-cancel');
+                        if (cancelBtn) cancelBtn.click();
+                        
+                        if (data.parent_id) {
+                            // Append to replies container
+                            const repliesContainer = document.getElementById('replies-' + data.parent_id);
+                            if (repliesContainer) {
+                                repliesContainer.insertAdjacentHTML('beforeend', data.html);
+                                // Ensure container is visible
+                                repliesContainer.style.display = 'block';
+                                
+                                // Update count button
+                                const toggleBtn = document.getElementById('toggle-replies-btn-' + data.parent_id);
+                                if (toggleBtn) {
+                                    toggleBtn.style.display = 'flex'; // make sure it's visible
+                                    const arrow = toggleBtn.querySelector('.arrow-icon');
+                                    arrow.style.transform = 'rotate(180deg)'; // point up
+                                    const btnText = toggleBtn.querySelector('.btn-text');
+                                    // Update number
+                                    const countSpans = document.querySelectorAll('.replies-count-' + data.parent_id);
+                                    countSpans.forEach(span => {
+                                        span.innerText = parseInt(span.innerText || 0) + 1;
+                                    });
+                                    if (btnText.innerHTML.includes('Ver')) {
+                                        btnText.innerHTML = btnText.innerHTML.replace('Ver', 'Ocultar');
+                                    }
+                                }
+                            }
+                        } else {
+                            // Append to root list
+                            const rootContainer = document.querySelector('.comments-list');
+                            if (rootContainer) {
+                                rootContainer.insertAdjacentHTML('beforeend', data.html);
+                            }
+                            
+                            // Remove "No hay comentarios" message if exists
+                            const noMsg = rootContainer.querySelector('p[style*="font-style: italic"]');
+                            if (noMsg) noMsg.remove();
+                        }
+                    } else {
+                        alert('Error al enviar el comentario.');
+                    }
+                })
+                .catch(err => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = originalText;
+                    alert('Hubo un error en la conexión.');
+                });
+            }
+        });
     </script>
 </body>
 </html>

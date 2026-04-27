@@ -24,77 +24,135 @@
         </p>
 
         <section class="community-actions">
-            <a href="#" class="btn-create-post">✍️ Publicar Nuevo Contenido</a>
+            <a href="#" class="btn-create-post" onclick="document.getElementById('createPostModal').style.display='block'; return false;">✍️ Publicar Nuevo Contenido</a>
 
             <div class="filter-controls">
                 <label for="category-filter">Filtrar por:</label>
-                <select id="category-filter" class="custom-select">
-                    <option value="recent">Más Reciente</option>
-                    <option value="popular">Más Popular</option>
-                    <option value="builds">Builds</option>
-                    <option value="meta">Meta & Estrategia</option>
-                    <option value="preguntas">Preguntas</option>
+                <select id="category-filter" class="custom-select" onchange="window.location.href='?filter='+this.value">
+                    <option value="recent" {{ request('filter') == 'recent' ? 'selected' : '' }}>Más Reciente</option>
+                    <option value="oldest" {{ request('filter') == 'oldest' ? 'selected' : '' }}>Más Antiguo</option>
+                    <option value="popular" {{ request('filter') == 'popular' ? 'selected' : '' }}>Más Popular</option>
+                    <option value="build" {{ request('filter') == 'build' ? 'selected' : '' }}>Builds</option>
+                    <option value="meta" {{ request('filter') == 'meta' ? 'selected' : '' }}>Meta & Estrategia</option>
+                    <option value="question" {{ request('filter') == 'question' ? 'selected' : '' }}>Preguntas</option>
+                    <option value="meme" {{ request('filter') == 'meme' ? 'selected' : '' }}>Memes</option>
                 </select>
             </div>
         </section>
 
         <section class="posts-list">
 
-            <div class="post-card">
+            @forelse($posts as $post)
+            <div class="post-card glow-{{ strtolower($post->category) }}">
                 <div class="post-header">
-                    <span class="post-category tag-build">BUILD</span>
-                    <h3>Mi Build de 100% Lifesteal con el Berserker</h3>
-                    <span class="post-meta">Publicado por: **BonkLord** hace 3 horas</span>
+                    <span class="post-category tag-{{ strtolower($post->category) }}">{{ strtoupper($post->category) }}</span>
+                    <h3><a href="{{ route('comunity.show', $post->id) }}" class="post-title-link">{{ $post->title }}</a></h3>
+                    <div class="post-meta" style="display: flex; align-items: center; gap: 10px; margin-top: 10px; color: #aaa; font-size: 0.9em;">
+                        <x-user-avatar :user="$post->user" size="40" class="post-author-avatar" style="border: 2px solid #444;" />
+                        <span>Publicado por <strong style="color: #ffcf00;">{{ $post->user->username ?? 'Desconocido' }}</strong> hace {{ $post->created_at->diffForHumans() }}</span>
+                    </div>
                 </div>
+                
+                @if($post->image_path)
+                    <div style="margin-top: 10px; margin-bottom: 10px; height: 150px; overflow: hidden; border-radius: 6px;">
+                        <img src="{{ asset('storage/' . $post->image_path) }}" alt="Imagen" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8;">
+                    </div>
+                @endif
+
                 <p class="post-summary">
-                    He encontrado una combinación de Item Único y Tomos que permite curar todo el daño que recibes.
-                    Funciona muy bien en Bonk +8, ¡deja un comentario si lo pruebas!
+                    {{ Str::limit($post->content, 150) }}
                 </p>
                 <div class="post-footer">
-                    <span class="stats likes">👍 154</span>
-                    <span class="stats comments">💬 32 Comentarios</span>
-                    <a href="#" class="view-post-link">Ver Discusión →</a>
+                    <span class="stats likes">❤️ {{ $post->likes_count }}</span>
+                    <span class="stats comments">💬 {{ $post->comments_count }} Comentarios</span>
+                    <a href="{{ route('comunity.show', $post->id) }}" class="view-post-link">Ver Discusión →</a>
                 </div>
             </div>
+            @empty
+            <p class="empty-state">No hay publicaciones disponibles.</p>
+            @endforelse
 
-            <div class="post-card">
-                <div class="post-header">
-                    <span class="post-category tag-meta">META</span>
-                    <h3>¿Deberían nerfear el Anillo Crítico en el 3.2?</h3>
-                    <span class="post-meta">Publicado por: **MetaSlave** hace 1 día</span>
-                </div>
-                <p class="post-summary">
-                    Desde el último parche, el escalado de crítico parece demasiado alto. Esto está limitando la
-                    diversidad de builds. ¿Qué opina la comunidad?
-                </p>
-                <div class="post-footer">
-                    <span class="stats likes">👍 89</span>
-                    <span class="stats comments">💬 68 Comentarios</span>
-                    <a href="#" class="view-post-link">Ver Discusión →</a>
-                </div>
-
-            </div>
-
-            <div class="post-card">
-                <div class="post-header">
-                    <span class="post-category tag-question">PREGUNTA</span>
-                    <h3>¿Dónde encuentro el Tomo del Poder?</h3>
-                    <span class="post-meta">Publicado por: **NewBonker** hace 5 días</span>
-                </div>
-                <p class="post-summary">
-                    He estado buscando por todos los mapas y no logro encontrarlo. ¿Alguien tiene alguna pista sobre
-                    dónde se *dropea*?
-                </p>
-                <div class="post-footer">
-                    <span class="stats likes">👍 12</span>
-                    <span class="stats comments">💬 9 Comentarios</span>
-                    <a href="#" class="view-post-link">Ver Discusión →</a>
-                </div>
+            <div class="pagination-wrapper" style="margin-top: 20px;">
+                {{ $posts->appends(['filter' => request('filter')])->links() }}
             </div>
 
         </section>
 
     </main>
+
+    @auth
+    <div id="createPostModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('createPostModal').style.display='none'">&times;</span>
+            <h2>Crear Nueva Publicación</h2>
+            <form action="{{ route('comunity.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="form-group">
+                    <label for="title">Título</label>
+                    <input type="text" id="title" name="title" required class="form-control" maxlength="255">
+                </div>
+                <div class="form-group">
+                    <label for="category">Categoría</label>
+                    <select id="category" name="category" required class="form-control">
+                        <option value="build">Build</option>
+                        <option value="meta">Meta & Estrategia</option>
+                        <option value="question">Pregunta</option>
+                        <option value="meme">Meme</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="image">Adjuntar Imagen (Opcional)</label>
+                    <input type="file" id="image" name="image" class="form-control" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label for="content">Contenido</label>
+                    <textarea id="content" name="content" required class="form-control" rows="5"></textarea>
+                </div>
+                <button type="submit" class="btn-submit">Publicar</button>
+            </form>
+        </div>
+    </div>
+    @else
+    <div id="createPostModal" class="modal">
+        <div class="modal-content text-center">
+            <span class="close" onclick="document.getElementById('createPostModal').style.display='none'">&times;</span>
+            <h2>Debes iniciar sesión</h2>
+            <p>Necesitas una cuenta para publicar en la comunidad.</p>
+            <br>
+            <a href="{{ route('login') }}" class="btn-submit">Ir a Login</a>
+        </div>
+    </div>
+    @endauth
+
+    <style>
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); }
+    .modal-content { background-color: #1e1e2e; margin: 10% auto; padding: 20px; border: 1px solid #333; width: 80%; max-width: 500px; border-radius: 8px; color: #fff; }
+    .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+    .close:hover { color: #fff; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+    .form-control { width: 100%; padding: 10px; background: #2a2a3c; border: 1px solid #444; color: #fff; border-radius: 4px; font-family: inherit; }
+    .btn-submit { background: #e94560; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px; font-weight: bold; display: inline-block; text-decoration: none; transition: 0.2s; }
+    .btn-submit:hover { background: #d03050; }
+    .text-center { text-align: center; }
+    .tag-build { background-color: #2e7d32; }
+    .tag-meta { background-color: #fbc02d; color: #000; }
+    .tag-question { background-color: #e65100; }
+    .tag-meme { background-color: #6a1b9a; }
+    .pagination-wrapper nav { display: flex; justify-content: center; }
+    .pagination-wrapper nav svg { max-width: 20px; }
+    
+    .post-title-link { color: inherit; text-decoration: none; transition: color 0.2s; }
+    .post-title-link:hover { color: #e94560; }
+    
+    .post-card { background: #1e1e2e; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #333; transition: transform 0.2s, box-shadow 0.3s, border-color 0.3s; }
+    .post-card:hover { transform: translateY(-3px); }
+    
+    .glow-build:hover { border-color: #2e7d32; box-shadow: 0 0 15px rgba(46, 125, 50, 0.4); }
+    .glow-meta:hover { border-color: #fbc02d; box-shadow: 0 0 15px rgba(251, 192, 45, 0.4); }
+    .glow-question:hover { border-color: #e65100; box-shadow: 0 0 15px rgba(230, 81, 0, 0.4); }
+    .glow-meme:hover { border-color: #6a1b9a; box-shadow: 0 0 15px rgba(106, 27, 154, 0.4); }
+    </style>
 
     <footer class="main-footer">
         <div class="footer-sections">

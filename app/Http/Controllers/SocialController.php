@@ -48,7 +48,7 @@ class SocialController extends Controller
         } else {
             // Crear nuevo usuario
             $email = $socialUser->getEmail() ?? $socialUser->getId() . '@' . $provider . '.com';
-            
+
             $user = User::create([
                 'username' => $socialUser->getName() ?? $socialUser->getNickname() ?? 'Usuario_' . Str::random(5),
                 'email' => $email,
@@ -61,6 +61,6 @@ class SocialController extends Controller
 
         Auth::login($user, true); // true para "remember me"
 
-        return redirect()->route('dashboard')->with('success', 'Bienvenido, ' . $user->username);
+        return redirect('/')->with('success', 'Bienvenido, ' . $user->username);
     }
 }

@@ -40,8 +40,8 @@
                     <a href="{{ route('community-tierlists.show', $ctl->id) }}" style="text-decoration: none; color: inherit; display: block; height: 100%;">
                         <div style="background: #2c2f33; padding: 15px; border-radius: 8px; border-left: 4px solid #ffcf00; transition: transform 0.2s, background 0.2s; cursor: pointer; height: 100%; box-sizing: border-box;">
                             <h3 style="margin: 0 0 5px 0; font-size: 1.2em; color: #fff;">{{ $ctl->titulo }}</h3>
-                            <div style="display: flex; justify-content: space-between; font-size: 0.9em; color: #aaa; margin-bottom: 15px;">
-                                <span>Por: <strong>{{ $ctl->user->username ?? 'Anónimo' }}</strong></span>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.9em; color: #aaa; margin-bottom: 15px; align-items: center;">
+                                <span style="display: flex; align-items: center; gap: 6px;">Por: <x-user-avatar :user="$ctl->user" size="20" style="border: 1px solid #444;" /> <strong>{{ $ctl->user->username ?? 'Anónimo' }}</strong></span>
                                 <span>Cat: {{ ucfirst($ctl->categoria) }}</span>
                             </div>
                             
