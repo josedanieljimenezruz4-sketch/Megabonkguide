@@ -227,7 +227,7 @@
 
                 <div class="form-section fade-in" style="animation-delay: 0.2s;">
                     <h3 class="section-title">🎭 Identidad Base</h3>
-                    <div class="slot-group">
+                    <div class="slot-group" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
                         <div>
                             <label>Rol Principal</label>
                             <select name="type">
@@ -242,6 +242,15 @@
                                 <option value="">-- Selecciona el Héroe --</option>
                                 @foreach($personajes as $p)
                                     <option value="{{ $p->id }}">{{ $p->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label>Estrategia Meta (Opcional)</label>
+                            <select name="meta_strategy_id">
+                                <option value="">-- Ninguna --</option>
+                                @foreach($strategies as $strategy)
+                                    <option value="{{ $strategy->id }}">{{ $strategy->title }}</option>
                                 @endforeach
                             </select>
                         </div>

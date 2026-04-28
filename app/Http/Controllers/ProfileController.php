@@ -67,4 +67,26 @@ class ProfileController extends Controller
 
         return response()->json(['success' => false, 'message' => 'No se ha subido ninguna imagen.']);
     }
+    public function showPublic($id)
+    {
+        $user = \App\Models\User::findOrFail($id);
+        
+        if (auth()->check() && auth()->id() == $user->id) {
+            return redirect()->route('profile');
+        }
+
+        // Progress Bar Data
+        $totalItems = \App\Models\Item::count();
+        $totalItems = $totalItems > 0 ? $totalItems : 1;
+        $unlocksCount = \Illuminate\Support\Facades\DB::table('user_unlocks')->where('user_id', $user->id)->count();
+        $percentage = round(($unlocksCount / $totalItems) * 100);
+        $progreso = $percentage;
+        $faltantes = $totalItems - $unlocksCount;
+
+        // User Activity Data
+        $builds = \App\Models\Build::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
+        $tierLists = \App\Models\TierList::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
+
+        return view('profile', compact('user', 'totalItems', 'unlocksCount', 'progreso', 'faltantes', 'builds', 'tierLists'));
+    }
 }

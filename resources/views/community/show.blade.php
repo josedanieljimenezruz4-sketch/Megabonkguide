@@ -44,7 +44,17 @@
             <div class="post-detail-header">
                 <span class="tag-{{ strtolower($post->category) }}">{{ strtoupper($post->category) }}</span>
                 <h1>{{ $post->title }}</h1>
-                <p style="color: #888;">Publicado por <strong>{{ $post->user->username }}</strong> el {{ $post->created_at->format('d/m/Y H:i') }}</p>
+                <p style="color: #888; display: flex; align-items: center; gap: 8px;">
+                    Publicado por 
+                    <x-user-avatar :user="$post->user" size="24" style="border: 1px solid #ffcf00;" />
+                    <a href="{{ $post->user ? url('/perfil/' . $post->user->id) : '#' }}" style="color: #ffcf00; font-weight: bold; text-decoration: none;">
+                        {{ $post->user->username ?? 'Desconocido' }}
+                    </a>
+                    @if($post->user && $post->user->is_admin)
+                        <span style="color: #1da1f2;" title="Verificado">☑️</span>
+                    @endif
+                    el {{ $post->created_at->format('d/m/Y H:i') }}
+                </p>
             </div>
             
             <div class="post-detail-content">

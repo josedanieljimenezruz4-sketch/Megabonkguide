@@ -110,7 +110,55 @@ class GameDataController extends Controller
 
     public function meta()
     {
-        return view('meta');
+        $strategies = \App\Models\MetaStrategy::where('is_active', true)->with('votes')->get();
+        $patchNotes = \App\Models\PatchNote::where('is_active', true)->latest()->get();
+
+        // Calcular Tendencias de Personajes (Últimos 7 días)
+        $sevenDaysAgo = now()->subDays(7);
+        $totalBuildsLastWeek = \App\Models\Build::where('created_at', '>=', $sevenDaysAgo)->count();
+        $totalBuildsLastWeek = $totalBuildsLastWeek > 0 ? $totalBuildsLastWeek : 1; // Evitar división por cero
+
+        $trendsRaw = \App\Models\Build::select('character_id', \Illuminate\Support\Facades\DB::raw('count(*) as count'))
+            ->where('created_at', '>=', $sevenDaysAgo)
+            ->groupBy('character_id')
+            ->orderBy('count', 'desc')
+            ->take(5)
+            ->get();
+
+        $trends = [];
+        foreach ($trendsRaw as $trend) {
+            $character = \App\Models\Item::where('id', $trend->character_id)->first();
+            if ($character) {
+                $percentage = round(($trend->count / $totalBuildsLastWeek) * 100);
+                $trends[] = [
+                    'character' => $character,
+                    'count' => $trend->count,
+                    'percentage' => $percentage
+                ];
+            }
+        }
+
+        return view('meta', compact('strategies', 'patchNotes', 'trends'));
+    }
+
+    public function voteMetaStrategy(\Illuminate\Http\Request $request, $id)
+    {
+        $request->validate([
+            'is_meta' => 'required|boolean'
+        ]);
+
+        $userId = auth()->id();
+        $strategy = \App\Models\MetaStrategy::findOrFail($id);
+
+        \App\Models\MetaStrategyVote::updateOrCreate(
+            ['meta_strategy_id' => $id, 'user_id' => $userId],
+            ['is_meta' => $request->is_meta]
+        );
+
+        return response()->json([
+            'success' => true,
+            'confidence' => $strategy->refresh()->confidence_percentage
+        ]);
     }
 
     public function builds(Request $request)

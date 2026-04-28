@@ -41,7 +41,13 @@
                         <div style="background: #2c2f33; padding: 15px; border-radius: 8px; border-left: 4px solid #ffcf00; transition: transform 0.2s, background 0.2s; cursor: pointer; height: 100%; box-sizing: border-box;">
                             <h3 style="margin: 0 0 5px 0; font-size: 1.2em; color: #fff;">{{ $ctl->titulo }}</h3>
                             <div style="display: flex; justify-content: space-between; font-size: 0.9em; color: #aaa; margin-bottom: 15px; align-items: center;">
-                                <span style="display: flex; align-items: center; gap: 6px;">Por: <x-user-avatar :user="$ctl->user" size="20" style="border: 1px solid #444;" /> <strong>{{ $ctl->user->username ?? 'Anónimo' }}</strong></span>
+                                <span style="display: flex; align-items: center; gap: 6px;">
+                                    Por: <x-user-avatar :user="$ctl->user" size="20" style="border: 1px solid #ffcf00;" /> 
+                                    <object><a href="{{ $ctl->user ? url('/perfil/' . $ctl->user->id) : '#' }}" style="color: #ffcf00; font-weight: bold; text-decoration: none;">{{ $ctl->user->username ?? 'Anónimo' }}</a></object>
+                                    @if($ctl->user && $ctl->user->is_admin)
+                                        <span style="color: #1da1f2; margin-left: -2px;" title="Verificado">☑️</span>
+                                    @endif
+                                </span>
                                 <span>Cat: {{ ucfirst($ctl->categoria) }}</span>
                             </div>
                             

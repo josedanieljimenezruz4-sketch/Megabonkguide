@@ -98,7 +98,10 @@
                             <div style="background: #2c2f33; padding: 15px; border-radius: 8px; border-left: 4px solid #ffcf00; transition: transform 0.2s, background 0.2s; cursor: pointer;">
                                 <h3 style="margin: 0 0 5px 0; font-size: 1.1em; color: #fff;">{{ $ctl->titulo }}</h3>
                                 <div style="display: flex; justify-content: space-between; font-size: 0.85em; color: #aaa; margin-bottom: 12px;">
-                                    <span>Por: <strong>{{ $ctl->user->username ?? 'Anónimo' }}</strong>
+                                    <span style="display: flex; align-items: center; gap: 4px;">Por: 
+                                        <object><a href="{{ $ctl->user ? url('/perfil/' . $ctl->user->id) : '#' }}" style="color: #ffcf00; font-weight: bold; text-decoration: none;">
+                                            {{ $ctl->user->username ?? 'Anónimo' }}
+                                        </a></object>
                                         @if($ctl->user && $ctl->user->is_admin)
                                             <span style="color: #1da1f2; margin-left: 2px;" data-tippy-content="Tier List Oficial de Megabonk Guide">☑️</span>
                                         @endif

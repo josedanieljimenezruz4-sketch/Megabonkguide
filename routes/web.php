@@ -98,6 +98,7 @@ Route::middleware('auth')->group(function () {
     // Votes
     Route::post('/items/{id}/vote', [App\Http\Controllers\GameDataController::class, 'voteItem'])->name('items.vote');
     Route::post('/items/{id}/vote-rank', [App\Http\Controllers\GameDataController::class, 'voteRankItem'])->name('items.voteRank');
+    Route::post('/meta-strategies/{id}/vote', [App\Http\Controllers\GameDataController::class, 'voteMetaStrategy'])->name('meta-strategies.vote');
 
     // Community Tier Lists
     Route::get('/community-tierlists/create', [App\Http\Controllers\UserTierListController::class, 'create'])->name('community-tierlists.create');
@@ -108,6 +109,9 @@ Route::middleware('auth')->group(function () {
 // Rutas de visualización pública de listadas de la comunidad (no requieren auth)
 Route::get('/community-tierlists', [App\Http\Controllers\UserTierListController::class, 'index'])->name('community-tierlists.index');
 Route::get('/community-tierlists/{id}', [App\Http\Controllers\UserTierListController::class, 'show'])->name('community-tierlists.show')->where('id', '[0-9]+');
+
+// Perfil Público
+Route::get('/perfil/{id}', [App\Http\Controllers\ProfileController::class, 'showPublic'])->name('profile.public')->where('id', '[0-9]+');
 
 // Rutas de Administrador (Requieren sesión y ser admin)
 Route::middleware(['auth', 'admin'])->name('admin.')->prefix('admin')->group(function () {
@@ -127,4 +131,11 @@ Route::middleware(['auth', 'admin'])->name('admin.')->prefix('admin')->group(fun
     Route::get('/community-tierlists', [AdminController::class, 'communityTierLists'])->name('community-tierlists.index');
     Route::delete('/community-tierlists/{id}', [App\Http\Controllers\UserTierListController::class, 'destroyAdmin'])->name('community-tierlists.destroy');
     Route::delete('/comments/{id}', [App\Http\Controllers\CommentController::class, 'destroyAdmin'])->name('comments.destroy');
+
+    // Gestión del Meta
+    Route::get('/meta', [\App\Http\Controllers\Admin\MetaAdminController::class, 'index'])->name('meta.index');
+    Route::post('/meta/strategies', [\App\Http\Controllers\Admin\MetaAdminController::class, 'storeStrategy'])->name('meta.strategies.store');
+    Route::delete('/meta/strategies/{id}', [\App\Http\Controllers\Admin\MetaAdminController::class, 'destroyStrategy'])->name('meta.strategies.destroy');
+    Route::post('/meta/patch-notes', [\App\Http\Controllers\Admin\MetaAdminController::class, 'storePatchNote'])->name('meta.patch_notes.store');
+    Route::delete('/meta/patch-notes/{id}', [\App\Http\Controllers\Admin\MetaAdminController::class, 'destroyPatchNote'])->name('meta.patch_notes.destroy');
 });

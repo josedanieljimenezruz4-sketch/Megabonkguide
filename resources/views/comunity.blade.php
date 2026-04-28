@@ -48,8 +48,17 @@
                     <span class="post-category tag-{{ strtolower($post->category) }}">{{ strtoupper($post->category) }}</span>
                     <h3><a href="{{ route('comunity.show', $post->id) }}" class="post-title-link">{{ $post->title }}</a></h3>
                     <div class="post-meta" style="display: flex; align-items: center; gap: 10px; margin-top: 10px; color: #aaa; font-size: 0.9em;">
-                        <x-user-avatar :user="$post->user" size="40" class="post-author-avatar" style="border: 2px solid #444;" />
-                        <span>Publicado por <strong style="color: #ffcf00;">{{ $post->user->username ?? 'Desconocido' }}</strong> hace {{ $post->created_at->diffForHumans() }}</span>
+                        <x-user-avatar :user="$post->user" size="40" class="post-author-avatar" style="border: 2px solid #ffcf00;" />
+                        <span style="display: flex; align-items: center; gap: 4px;">
+                            Publicado por 
+                            <a href="{{ $post->user ? url('/perfil/' . $post->user->id) : '#' }}" style="color: #ffcf00; font-weight: bold; text-decoration: none;">
+                                {{ $post->user->username ?? 'Desconocido' }}
+                            </a>
+                            @if($post->user && $post->user->is_admin)
+                                <span style="color: #1da1f2;" title="Verificado">☑️</span>
+                            @endif
+                            hace {{ $post->created_at->diffForHumans() }}
+                        </span>
                     </div>
                 </div>
                 

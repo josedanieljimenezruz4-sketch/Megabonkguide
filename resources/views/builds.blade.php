@@ -96,11 +96,22 @@
                             <div class="star-rating-display" :style="`--rating: ${parseFloat(build.rating).toFixed(1)};`" :title="`${parseFloat(build.rating).toFixed(1)} Estrellas`"></div>
                         </div>
                         <p class="card-details">
-                            **Tipo:** <span x-text="build.type"></span> |
-                            **Autor ID:** <span x-text="build.user_id"></span>
+                            <span>**Tipo:** <span x-text="build.type"></span></span>
                         </p>
                         <p class="card-description" x-text="build.description"></p>
-                        <a :href="'/builds/' + build.id" class="view-build-link">Ver Detalles →</a>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 15px;">
+                            <span style="display: flex; align-items: center; gap: 6px; font-size: 0.85em; color: #aaa;">
+                                Creada por 
+                                <img :src="build.user ? build.user.avatar_url : '{{ asset('images/default-avatar.png') }}'" alt="Avatar" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; border: 1px solid #ffcf00;">
+                                <a :href="build.user ? '/perfil/' + build.user.id : '#'" style="color: #ffcf00; font-weight: bold; text-decoration: none;" x-text="build.user ? build.user.username : 'Anónimo'"></a>
+                                <template x-if="build.user && build.user.is_admin">
+                                    <span style="color: #1da1f2; margin-left: -2px;" title="Verificado">☑️</span>
+                                </template>
+                                <span x-text="build.created_at_human ? 'hace ' + build.created_at_human : ''"></span>
+                            </span>
+                            <a :href="'/builds/' + build.id" class="view-build-link">Ver Detalles →</a>
+                        </div>
                     </div>
                 </template>
 

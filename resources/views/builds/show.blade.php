@@ -169,9 +169,18 @@
             <div class="header-section">
                 <div>
                     <h1 class="build-title">{{ $build->name }}</h1>
-                    <div class="build-meta">
+                    <div class="build-meta" style="align-items: center;">
                         <span class="badge">{{ $build->type ?? 'Híbrido' }}</span>
-                        <span>Forjado por: ID {{ $build->user_id }}</span> <!-- Reemplazar con Auth()->user->name cuando lo tengas -->
+                        <span style="display: flex; align-items: center; gap: 6px;">
+                            Forjado por: 
+                            <x-user-avatar :user="$build->user" size="24" style="border: 1px solid #ffcf00;" />
+                            <a href="{{ $build->user ? url('/perfil/' . $build->user->id) : '#' }}" style="color: #ffcf00; font-weight: bold; text-decoration: none;">
+                                {{ $build->user->username ?? 'Anónimo' }}
+                            </a>
+                            @if($build->user && $build->user->is_admin)
+                                <span style="color: #1da1f2; margin-left: -2px;" title="Verificado">☑️</span>
+                            @endif
+                        </span>
                         <span>Autorizado: {{ $build->created_at->format('d/m/Y') }}</span>
                     </div>
                 </div>

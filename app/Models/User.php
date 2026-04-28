@@ -46,6 +46,23 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    protected $appends = ['avatar_url'];
+
+    public function getAvatarUrlAttribute()
+    {
+        $avatarUrl = asset('images/default-avatar.png');
+        
+        if ($this->avatar) {
+            if (str_starts_with($this->avatar, 'http')) {
+                $avatarUrl = $this->avatar;
+            } else {
+                $avatarUrl = asset('storage/avatars/' . $this->avatar);
+            }
+        }
+        
+        return $avatarUrl;
+    }
+
     /**
      * Get the items that the user has unlocked.
      */

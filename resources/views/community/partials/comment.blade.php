@@ -3,7 +3,9 @@
         <div style="display: flex; align-items: center; gap: 8px;">
             <x-user-avatar :user="$comment->user" size="24" />
             <strong style="color: #ffcf00; font-size: 1.05em; display: flex; align-items: center;">
-                {{ $comment->user->username ?? 'Usuario Anónimo' }}
+                <a href="{{ $comment->user ? url('/perfil/' . $comment->user->id) : '#' }}" style="color: inherit; text-decoration: none;">
+                    {{ $comment->user->username ?? 'Usuario Anónimo' }}
+                </a>
                 @if($comment->user && $comment->user->is_admin)
                     <span style="color: #1da1f2; margin-left: 2px;" title="Personal Oficial">☑️</span>
                 @endif

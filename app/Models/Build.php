@@ -12,9 +12,20 @@ class Build extends Model
     // Permitir asignación masiva para todos los campos pasados
     protected $guarded = [];
 
+    protected $appends = ['created_at_human'];
+
+    public function getCreatedAtHumanAttribute()
+    {
+        return $this->created_at ? $this->created_at->diffForHumans() : '';
+    }
+
     // Relación con el Dueño
     public function user() {
         return $this->belongsTo(User::class);
+    }
+
+    public function metaStrategy() {
+        return $this->belongsTo(MetaStrategy::class);
     }
     
     // Relación con el personaje (Lee de tabla Items)

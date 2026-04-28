@@ -19,8 +19,10 @@
         
         <div class="intro-text-tierlist" style="display: flex; align-items: center; justify-content: center; gap: 8px; color: #ffcf00; margin-bottom: 20px;">
             <span>Creada por:</span>
-            <x-user-avatar :user="$tierList->user" size="30" style="border: 2px solid #333;" />
-            <strong>{{ $tierList->user->username ?? 'Usuario Anónimo' }}</strong>
+            <x-user-avatar :user="$tierList->user" size="30" style="border: 2px solid #ffcf00;" />
+            <a href="{{ $tierList->user ? url('/perfil/' . $tierList->user->id) : '#' }}" style="color: #ffcf00; font-weight: bold; text-decoration: none;">
+                {{ $tierList->user->username ?? 'Usuario Anónimo' }}
+            </a>
             @if($tierList->user && $tierList->user->is_admin)
                 <span style="color: #1da1f2; margin-left: 2px;" data-tippy-content="Tier List Oficial de Megabonk Guide">☑️</span>
             @endif

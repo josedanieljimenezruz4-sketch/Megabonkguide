@@ -10,7 +10,7 @@ class BuildController extends Controller
     public function index(Request $request)
     {
         // Optimizamos N+1 con Eager Loading
-        $query = Build::with(['character', 'items']);
+        $query = Build::with(['character', 'items', 'user']);
 
         // Filtro por Texto en Título
         $query->when($request->filled('search'), function ($q) use ($request) {
@@ -65,8 +65,9 @@ class BuildController extends Controller
         $armas = \App\Models\Item::where('type', 'arma')->get();
         $tomos = \App\Models\Item::where('type', 'tomo')->get();
         $accesorios = \App\Models\Item::where('type', 'item')->get();
+        $strategies = \App\Models\MetaStrategy::where('is_active', true)->get();
 
-        return view('builds.create', compact('personajes', 'armas', 'tomos', 'accesorios'));
+        return view('builds.create', compact('personajes', 'armas', 'tomos', 'accesorios', 'strategies'));
     }
 
     public function store(Request $request)
@@ -78,6 +79,7 @@ class BuildController extends Controller
             'description' => 'nullable|string',
             'rating' => 'integer|min:1|max:5',
             'type' => 'nullable|string',
+            'meta_strategy_id' => 'nullable|exists:meta_strategies,id',
             // Validamos que sea un array los items
             'items' => 'required|array',
             'items.Arma' => 'required|array|max:4',
@@ -93,6 +95,7 @@ class BuildController extends Controller
             'description' => $validated['description'] ?? null,
             'rating' => $validated['rating'] ?? 1,
             'type' => $validated['type'] ?? null,
+            'meta_strategy_id' => $validated['meta_strategy_id'] ?? null,
         ]);
 
         // 2. Adjuntar los Items mediante Sync/Attach
@@ -116,7 +119,7 @@ class BuildController extends Controller
 
     public function show(Build $build)
     {
-        $build->load(['character', 'items']);
+        $build->load(['character', 'items', 'user']);
 
         $userVote = null;
         if (auth()->check()) {
