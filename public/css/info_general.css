@@ -149,3 +149,148 @@
     margin: 0;
     color: var(--color-text-secondary);
 }
+
+/* Wiki specific styles */
+.wiki-search-form {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+.wiki-search-input {
+    width: 60%;
+    padding: 10px 15px;
+    border: 1px solid var(--color-primary-accent);
+    background-color: #1a1a1a;
+    color: white;
+    border-radius: 5px;
+    font-size: 1.1em;
+}
+.wiki-search-input:focus {
+    outline: none;
+    box-shadow: 0 0 10px var(--color-primary-accent);
+}
+.wiki-search-btn, .wiki-clear-btn {
+    padding: 10px 20px;
+    background-color: var(--color-primary-accent);
+    color: black;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+.wiki-search-btn:hover {
+    background-color: var(--color-secondary-accent);
+    color: white;
+}
+.wiki-clear-btn {
+    background-color: #444;
+    color: white;
+}
+.wiki-clear-btn:hover {
+    background-color: #666;
+}
+.wiki-entry {
+    background-color: #222;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    border-left: 4px solid var(--color-secondary-accent);
+}
+.wiki-category.badge {
+    background-color: var(--color-secondary-accent);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+.wiki-content p {
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+.wiki-content strong {
+    color: var(--color-primary-accent);
+}
+
+/* Animations for search */
+.wiki-entry, .faq-item {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.wiki-hidden-anim {
+    opacity: 0 !important;
+    transform: translateY(-10px) scale(0.98);
+    pointer-events: none;
+}
+
+/* Accordion animation */
+.faq-content {
+    transition: height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+    overflow: hidden;
+    transform-origin: top;
+}
+details.faq-item summary {
+    cursor: pointer;
+    list-style: none; /* Hide default arrow */
+    position: relative;
+    padding-right: 20px;
+}
+details.faq-item summary::-webkit-details-marker {
+    display: none;
+}
+details.faq-item summary::after {
+    content: '▼';
+    position: absolute;
+    right: 0;
+    font-size: 0.8em;
+    transition: transform 0.3s ease;
+}
+details[open].faq-item summary::after {
+    transform: rotate(180deg);
+}
+
+/* Read More functionality */
+.wiki-content-clamped {
+    max-height: 120px;
+    overflow: hidden;
+    position: relative;
+    transition: max-height 0.4s ease;
+}
+.wiki-content-clamped::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    background: linear-gradient(transparent, #1e1e24); /* Ajustado al color de fondo de las tarjetas */
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+.wiki-content-expanded {
+    max-height: 3000px; /* Valor arbitrario alto para la animación */
+    transition: max-height 0.4s ease;
+}
+.wiki-content-expanded::after {
+    opacity: 0;
+}
+.read-more-btn {
+    display: inline-block;
+    background: none;
+    border: none;
+    color: var(--neon-cyan, #41E8EF);
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+    padding: 5px 0;
+    font-size: 0.9em;
+    transition: color 0.3s ease;
+}
+.read-more-btn:hover {
+    text-decoration: underline;
+    color: #fff;
+}

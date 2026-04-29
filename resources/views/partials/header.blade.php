@@ -20,7 +20,7 @@
                     </ul>
                 </li>
                 <li><a href="{{ route('meta') }}">META</a></li>
-                <li><a href="{{ route('info.general') }}">INFO GENERAL</a></li>
+                <li><a href="{{ route('wiki.index') }}">INFO GENERAL</a></li>
                 <li><a href="{{ route('info.news') }}">NOVEDADES</a></li>
                 <li><a href="{{ route('leaderboard') }}">LEADERBOARD</a></li>
             </ul>

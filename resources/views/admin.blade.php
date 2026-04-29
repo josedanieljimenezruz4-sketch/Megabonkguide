@@ -93,8 +93,11 @@
                 <a href="{{ route('admin.votes.index') }}" style="background: linear-gradient(90deg, #36d1dc, #5b86e5); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-right: 15px; box-shadow: 0 4px 10px rgba(91, 134, 229, 0.4); display: inline-block; margin-bottom: 10px;">
                     📊 Gestión de Votos
                 </a>
-                <a href="{{ route('admin.items.create') }}" style="background: linear-gradient(90deg, #ff4b2b, #ff416c); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 10px rgba(255, 65, 108, 0.4); display: inline-block; margin-bottom: 10px;">
+                <a href="{{ route('admin.items.create') }}" style="background: linear-gradient(90deg, #ff4b2b, #ff416c); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 10px rgba(255, 65, 108, 0.4); display: inline-block; margin-bottom: 10px; margin-right: 15px;">
                     ➕ Añadir Ítem
+                </a>
+                <a href="{{ route('admin.wiki.index') }}" style="background: linear-gradient(90deg, #00C9FF, #92FE9D); color: #111; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 10px rgba(0, 201, 255, 0.4); display: inline-block; margin-bottom: 10px;">
+                    📚 Gestión Wiki
                 </a>
             </div>
         </div>

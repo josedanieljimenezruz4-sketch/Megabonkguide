@@ -9,6 +9,8 @@ use App\Http\Controllers\InfoController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\WikiController;
+use App\Http\Controllers\Admin\WikiAdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,8 +56,8 @@ Route::controller(CommunityController::class)->group(function () {
 });
 
 // Información y Novedades
+Route::get('/info-general', [WikiController::class, 'index'])->name('wiki.index');
 Route::controller(InfoController::class)->group(function () {
-    Route::get('/info-general', 'general')->name('info.general');
     Route::get('/novedades', 'news')->name('info.news');
 });
 
@@ -138,4 +140,14 @@ Route::middleware(['auth', 'admin'])->name('admin.')->prefix('admin')->group(fun
     Route::delete('/meta/strategies/{id}', [\App\Http\Controllers\Admin\MetaAdminController::class, 'destroyStrategy'])->name('meta.strategies.destroy');
     Route::post('/meta/patch-notes', [\App\Http\Controllers\Admin\MetaAdminController::class, 'storePatchNote'])->name('meta.patch_notes.store');
     Route::delete('/meta/patch-notes/{id}', [\App\Http\Controllers\Admin\MetaAdminController::class, 'destroyPatchNote'])->name('meta.patch_notes.destroy');
+
+    // Wiki Admin
+    Route::get('/wiki', [WikiAdminController::class, 'index'])->name('wiki.index');
+    Route::post('/wiki/game-infos', [WikiAdminController::class, 'storeGameInfo'])->name('wiki.game_infos.store');
+    Route::put('/wiki/game-infos/{id}', [WikiAdminController::class, 'updateGameInfo'])->name('wiki.game_infos.update');
+    Route::delete('/wiki/game-infos/{id}', [WikiAdminController::class, 'destroyGameInfo'])->name('wiki.game_infos.destroy');
+    
+    Route::post('/wiki/faqs', [WikiAdminController::class, 'storeFaq'])->name('wiki.faqs.store');
+    Route::put('/wiki/faqs/{id}', [WikiAdminController::class, 'updateFaq'])->name('wiki.faqs.update');
+    Route::delete('/wiki/faqs/{id}', [WikiAdminController::class, 'destroyFaq'])->name('wiki.faqs.destroy');
 });

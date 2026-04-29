@@ -37,7 +37,7 @@
 
         <section class="action-buttons">
             <a href="{{ route('comunity.suggestions') }}" class="btn btn-sugerencias">📧 Sugerencias</a>
-            <a href="{{ route('info.general') }}" class="btn btn-info">💡 Información General</a>
+            <a href="{{ route('wiki.index') }}" class="btn btn-info">💡 Información General</a>
         </section>
 
     </main>
