@@ -32,7 +32,12 @@ Route::get('/builds/{build}', [\App\Http\Controllers\BuildController::class, 'sh
 Route::controller(GameDataController::class)->group(function () {
     Route::get('/tierlist', 'tierlist')->name('tierlist');
     Route::get('/meta', 'meta')->name('meta');
-    Route::get('/leaderboard', 'leaderboard')->name('leaderboard');
+});
+
+// Leaderboard
+Route::controller(\App\Http\Controllers\LeaderboardController::class)->group(function () {
+    Route::get('/leaderboard', 'index')->name('leaderboard');
+    Route::post('/leaderboard', 'store')->name('leaderboard.store')->middleware('auth');
 });
 
 // Sección UNLOCKS
@@ -140,6 +145,11 @@ Route::middleware(['auth', 'admin'])->name('admin.')->prefix('admin')->group(fun
     Route::delete('/meta/strategies/{id}', [\App\Http\Controllers\Admin\MetaAdminController::class, 'destroyStrategy'])->name('meta.strategies.destroy');
     Route::post('/meta/patch-notes', [\App\Http\Controllers\Admin\MetaAdminController::class, 'storePatchNote'])->name('meta.patch_notes.store');
     Route::delete('/meta/patch-notes/{id}', [\App\Http\Controllers\Admin\MetaAdminController::class, 'destroyPatchNote'])->name('meta.patch_notes.destroy');
+
+    // Leaderboard Admin
+    Route::get('/leaderboard', [AdminController::class, 'leaderboard'])->name('leaderboard.index');
+    Route::post('/leaderboard/{id}/approve', [AdminController::class, 'approveScore'])->name('leaderboard.approve');
+    Route::post('/leaderboard/{id}/reject', [AdminController::class, 'rejectScore'])->name('leaderboard.reject');
 
     // Wiki Admin
     Route::get('/wiki', [WikiAdminController::class, 'index'])->name('wiki.index');

@@ -56,48 +56,38 @@
 
         <section class="news-timeline">
 
-            <div class="timeline-item">
-                <div class="date-tag">9 DIC 2025</div>
-                <div class="news-card current">
-                    <h2>PATCH 3.2: La Furia del Arquitecto</h2>
-                    <span class="news-type tag-patch">Parche Mayor</span>
-                    <p>
-                        ¡El parche 3.2 ya está aquí! Se ha introducido el nuevo Personaje "El Arquitecto" y se han
-                        implementado cambios importantes en el escalado de vida del modo Bonk+. La Meta ha cambiado
-                        drásticamente.
-                    </p>
-                    <ul class="patch-details">
-                        <li class="buff">Nuevo Tomo: "Códice de la Suerte"</li>
-                        <li class="nerf">Nerf al Anillo del Bonk Crítico (probabilidad reducida al 5%).</li>
-                    </ul>
-                    <a href="#" class="read-more">Ver Patch Notes Completas →</a>
-                </div>
-            </div>
+            @foreach ($updates as $update)
+                <div class="timeline-item">
+                    <div class="date-tag">{{ strtoupper(\Carbon\Carbon::parse($update->published_at)->translatedFormat('j M Y')) }}</div>
+                    <div class="news-card {{ $loop->first ? 'current' : '' }}">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <h2>{{ $update->title }}</h2>
+                            @if ($update->source === 'steam')
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 496 512" fill="currentColor" style="opacity: 0.7;">
+                                    <!-- FontAwesome Steam Logo SVG -->
+                                    <path d="M496 256c0 137-111 248-248 248-25.6 0-50.2-3.9-73.4-11.1l-16.3-22.5C186 461 219.7 464 248 464c114.9 0 208-93.1 208-208S362.9 48 248 48 40 141.1 40 256c0 18.2 2.4 35.8 6.8 52.6l-20.7 29.1C8.6 312.3 0 285.2 0 256 0 119 111 8 248 8s248 111 248 248zM140.7 348.6l-37 51c-8.9 12.3-19.1 23.3-30.2 33 24 21.8 55.4 35.5 89.8 35.5 13.9 0 27.2-2.1 39.8-6l-18.7-25.9c-16.7-16-36.8-40.4-43.7-87.6zM248 256c-13.3 0-24 10.7-24 24s10.7 24 24 24 24-10.7 24-24-10.7-24-24-24zm0-64c-48.6 0-88 39.4-88 88s39.4 88 88 88 88-39.4 88-88-39.4-88-88-88zm0 144c-30.9 0-56-25.1-56-56s25.1-56 56-56 56 25.1 56 56-25.1 56-56 56z"/>
+                                </svg>
+                            @endif
+                        </div>
+                        
+                        @if ($update->type === 'patch')
+                            <span class="news-type tag-patch">PARCHE</span>
+                        @else
+                            <span class="news-type tag-event">EVENTO/NOTICIA</span>
+                        @endif
+                        
+                        <p>{{ $update->content }}</p>
 
-            <div class="timeline-item">
-                <div class="date-tag">15 NOV 2025</div>
-                <div class="news-card">
-                    <h2>Evento Especial: El Desafío de Noviembre</h2>
-                    <span class="news-type tag-event">Evento</span>
-                    <p>
-                        ¡El evento de tiempo limitado ha comenzado! Completa la mazmorra especial para obtener el Item
-                        Único "Gema Congelada".
-                    </p>
-                    <a href="#" class="read-more">Detalles del Evento →</a>
+                        @if ($update->url)
+                            <a href="{{ $update->url }}" target="_blank" rel="noopener noreferrer" class="read-more">Ver más en Steam →</a>
+                        @endif
+                    </div>
                 </div>
-            </div>
+            @endforeach
 
-            <div class="timeline-item">
-                <div class="date-tag">28 OCT 2025</div>
-                <div class="news-card">
-                    <h2>PATCH 3.1: Equilibrio y Estabilidad</h2>
-                    <span class="news-type tag-patch">Parche Menor</span>
-                    <p>
-                        Ajustes menores de equilibrio, incluyendo un buff al Berserker y corrección de errores críticos
-                        en el modo Leaderboard.
-                    </p>
-                </div>
-            </div>
+            @if ($updates->isEmpty())
+                <p class="text-center">No hay novedades por el momento.</p>
+            @endif
 
         </section>
 

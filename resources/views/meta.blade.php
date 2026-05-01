@@ -108,30 +108,59 @@
                 </section>
                 @endif
 
-                <h2>Cambios Clave del Parche</h2>
-                <ul class="patch-notes">
-                    @forelse($patchNotes as $note)
-                        <li class="{{ $note->change_type }}">
-                            @if($note->change_type == 'buff') + Mejora 
-                            @elseif($note->change_type == 'nerf') - Debilitamiento 
-                            @else ⭐ Nuevo @endif 
-                            [{{ $note->version }}]: {{ $note->description }}
-                        </li>
-                    @empty
-                        <p style="color: #888; font-style: italic; font-size: 0.9em; padding-left: 20px;">No hay notas registradas.</p>
-                    @endforelse
-                </ul>
+                @if(isset($latestPatch) && $latestPatch)
+                    <h2>Cambios Clave - {{ Str::limit($latestPatch->title, 40) }}</h2>
+                    <div style="background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 6px; border-left: 3px solid #00f0ff; margin-bottom: 20px;">
+                        <p style="color: #ddd; font-size: 0.95em; line-height: 1.6; margin-bottom: 15px;">
+                            {!! nl2br(e(Str::limit(strip_tags($latestPatch->content), 250))) !!}
+                        </p>
+                        <a href="{{ route('info.news') }}" style="color: #00f0ff; text-decoration: none; font-size: 0.9em; font-weight: bold; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#00f0ff'">Ver notas completas en Novedades →</a>
+                    </div>
+                @else
+                    <h2>Cambios Clave del Parche</h2>
+                    <div style="background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 6px; border-left: 3px solid #444; margin-bottom: 20px;">
+                        <p style="color: #888; font-style: italic; font-size: 0.9em;">Aún no se han sincronizado notas de parche recientes.</p>
+                        <a href="{{ route('info.news') }}" style="color: #888; text-decoration: none; font-size: 0.9em;">Ir a Novedades →</a>
+                    </div>
+                @endif
 
                 <h2>Personajes en la Cima</h2>
                 <div class="top-characters">
-                    <p>👑 **La Maestra del Bonk:** Sigue siendo la reina del DPS debido a su escalado crítico. (Ver <a
-                            href="{{ route('unlocks.characters') }}">guía de Personajes</a>)</p>
-                    <p>🛡️ **El Berserker:** Su reciente *buff* de daño base lo ha consolidado como el mejor Tanque
-                        agresivo.</p>
+                    @forelse($topCharacters as $index => $character)
+                        <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 6px; border-left: 3px solid #ff00ff; margin-bottom: 15px; position: relative;">
+                            <span style="position: absolute; top: -10px; right: 10px; background: #ffcf00; color: #000; font-size: 0.7em; font-weight: bold; padding: 3px 8px; border-radius: 12px; box-shadow: 0 0 10px rgba(255, 207, 0, 0.5);">
+                                #{{ $index + 1 }} Popular
+                            </span>
+                            <p style="margin: 0; line-height: 1.5; color: #ddd; font-size: 0.95em;">
+                                @if(strtolower($character->role) === 'tanque' || strtolower($character->role) === 'tank')
+                                    🛡️
+                                @elseif(strtolower($character->role) === 'support' || strtolower($character->role) === 'soporte')
+                                    ⚕️
+                                @else
+                                    👑
+                                @endif
+                                <strong style="color: #fff; font-size: 1.1em;">{{ $character->name }}:</strong> 
+                                {{ Str::limit($character->description, 100, '...') }} 
+                                <br>
+                                <a href="{{ route('wiki.index') }}" style="color: #00f0ff; text-decoration: none; font-size: 0.85em; transition: 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#00f0ff'">(Ver guía en Wiki)</a>
+                            </p>
+                        </div>
+                    @empty
+                        <div style="background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 6px; border-left: 3px solid #ffcf00; margin-bottom: 20px; animation: pulse 2s infinite;">
+                            <p style="color: #ffcf00; font-style: italic; font-weight: bold; margin: 0;">¡Sé el primero en crear una build para este personaje!</p>
+                        </div>
+                    @endforelse
                 </div>
 
-                <a href="{{ route('tierlist') }}" class="btn-tierlist-cta">Ver la Tier List Completa →</a>
+                <a href="{{ route('wiki.index') }}" class="btn-tierlist-cta">Ver todos los personajes en la Wiki →</a>
             </aside>
+            <style>
+                @keyframes pulse {
+                    0% { box-shadow: 0 0 0 0 rgba(255, 207, 0, 0.4); }
+                    70% { box-shadow: 0 0 0 10px rgba(255, 207, 0, 0); }
+                    100% { box-shadow: 0 0 0 0 rgba(255, 207, 0, 0); }
+                }
+            </style>
 
         </div>
     </main>

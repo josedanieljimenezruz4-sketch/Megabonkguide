@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Models\Update;
+
 class InfoController extends Controller
 {
     public function general()
@@ -13,6 +15,7 @@ class InfoController extends Controller
 
     public function news()
     {
-        return view('novedades');
+        $updates = Update::orderBy('published_at', 'desc')->get();
+        return view('novedades', compact('updates'));
     }
 }

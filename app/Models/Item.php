@@ -19,4 +19,9 @@ class Item extends Model
                     ->withPivot('slot_type')
                     ->withTimestamps();
     }
+
+    public function characterBuilds()
+    {
+        return $this->hasMany(Build::class, 'character_id');
+    }
 }

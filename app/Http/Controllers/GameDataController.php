@@ -138,7 +138,15 @@ class GameDataController extends Controller
             }
         }
 
-        return view('meta', compact('strategies', 'patchNotes', 'trends'));
+        $latestPatch = \App\Models\Update::where('type', 'patch')->latest('published_at')->first();
+
+        $topCharacters = \App\Models\Item::where('type', 'personaje')
+            ->withCount('characterBuilds')
+            ->orderBy('character_builds_count', 'desc')
+            ->take(3)
+            ->get();
+
+        return view('meta', compact('strategies', 'patchNotes', 'trends', 'latestPatch', 'topCharacters'));
     }
 
     public function voteMetaStrategy(\Illuminate\Http\Request $request, $id)
@@ -226,8 +234,4 @@ class GameDataController extends Controller
         return view('buscador_builds');
     }
 
-    public function leaderboard()
-    {
-        return view('leaderboard');
-    }
 }

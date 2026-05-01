@@ -80,4 +80,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(CommunityPost::class);
     }
+
+    public function builds()
+    {
+        return $this->hasMany(Build::class);
+    }
 }

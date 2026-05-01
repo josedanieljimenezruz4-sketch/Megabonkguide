@@ -60,4 +60,40 @@ class AdminController extends Controller
         $tierLists = \App\Models\TierList::with('user')->latest()->paginate(15);
         return view('admin.community_tierlists', compact('tierLists'));
     }
+
+    public function leaderboard()
+    {
+        $pendingScores = \App\Models\Score::with(['user', 'character', 'build'])
+            ->where('status', 'pending')
+            ->oldest()
+            ->get();
+            
+        return view('admin.leaderboard', compact('pendingScores'));
+    }
+
+    public function approveScore($id)
+    {
+        $score = \App\Models\Score::findOrFail($id);
+        
+        // Al aprobar un score, buscamos si este usuario tenía otro score aprobado para la misma categoría (dificultad + personaje)
+        // y lo borramos o rechazamos, porque solo puede haber 1 por categoría.
+        \App\Models\Score::where('user_id', $score->user_id)
+            ->where('character_id', $score->character_id)
+            ->where('difficulty', $score->difficulty)
+            ->where('status', 'approved')
+            ->where('id', '!=', $score->id)
+            ->delete();
+
+        $score->update(['status' => 'approved']);
+
+        return back()->with('success', 'Puntuación aprobada correctamente. Ha reemplazado los récords anteriores del usuario en esta categoría si existían.');
+    }
+
+    public function rejectScore($id)
+    {
+        $score = \App\Models\Score::findOrFail($id);
+        $score->update(['status' => 'rejected']);
+
+        return back()->with('success', 'Puntuación rechazada.');
+    }
 }
