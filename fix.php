@@ -1,0 +1,1 @@
+<?php $file = "resources/views/welcome.blade.php"; $content = file_get_contents($file); $content = preg_replace("/^\xEF\xBB\xBF/", "", $content); $fixed = mb_convert_encoding($content, "Windows-1252", "UTF-8"); file_put_contents($file."_fixed", $fixed); if (strpos($fixed, "Información") !== false) { echo "Fix worked!"; } else { echo "Fix failed!"; } ?>

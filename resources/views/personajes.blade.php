@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Personajes | UNLOCKS | MEGABONK GUIDE</title>
-    <link rel="stylesheet" href="{{ asset('css/estilos.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/estilos.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('css/unlocks_catalogo.css') }}">
     <link rel="icon" href="iconotlabaho.webp" type="image/x-icon">
 </head>
