@@ -10,7 +10,8 @@
     <!-- Espacio para inyectar CSS específicos por vista -->
     @stack('styles')
     
-    <link rel="icon" href="iconotlabaho.webp" type="image/x-icon">
+    <link rel="icon" href="{{ asset('images/iconotlabaho.webp') }}?v=1" type="image/webp">
+    <link rel="shortcut icon" href="{{ asset('images/iconotlabaho.webp') }}">
     <!-- CSS Global Atmosférico -->
     <style>
         body {

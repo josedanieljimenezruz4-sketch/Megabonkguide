@@ -1,17 +1,17 @@
 <header class="main-header">
     <div class="header-content">
-        <a href="{{ route('home') }}" class="site-title">
-            <img src="iconotlabaho.webp" alt="Logo MEGABONK GUIDE" id="header-logo">
-            <a href="{{ route('home') }}" class="site-title">MEGABONK GUIDE</a>
+        <a href="{{ route('home') }}" class="site-title" style="display: flex; align-items: center; gap: 10px; text-decoration: none; white-space: nowrap;">
+            <img src="{{ asset('images/iconotlabaho.webp') }}" alt="Logo MEGABONK GUIDE" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+            <span style="font-size: 1.4rem; font-weight: bold; letter-spacing: 1px;">MEGABONK GUIDE</span>
         </a>
 
         <nav class="main-nav">
             <ul>
-                <li><a href="{{ route('tierlist') }}">TIERLIST</a></li>
-                <li><a href="{{ route('builds.index') }}">BUILDS</a></li>
-                <li><a href="{{ route('comunity.index') }}">COMMUNITY</a></li>
+                <li><a href="{{ route('tierlist') }}" class="{{ request()->routeIs('tierlist*') ? 'active-link' : '' }}">TIERLIST</a></li>
+                <li><a href="{{ route('builds.index') }}" class="{{ request()->routeIs('builds.*') ? 'active-link' : '' }}">BUILDS</a></li>
+                <li><a href="{{ route('comunity.index') }}" class="{{ request()->routeIs('comunity.*') ? 'active-link' : '' }}">COMMUNITY</a></li>
                 <li class="dropdown">
-                    <a href="{{ route('unlocks.index') }}">UNLOCKS ▼</a>
+                    <a href="{{ route('unlocks.index') }}" class="{{ request()->routeIs('unlocks.*') ? 'active-link' : '' }}">UNLOCKS <span class="arrow">▼</span></a>
                     <ul class="dropdown-menu">
                         <li><a href="{{ route('unlocks.weapons') }}">Armas</a></li>
                         <li><a href="{{ route('unlocks.tomes') }}">Tomos</a></li>
@@ -19,10 +19,10 @@
                         <li><a href="{{ route('unlocks.characters') }}">Personajes</a></li>
                     </ul>
                 </li>
-                <li><a href="{{ route('meta') }}">META</a></li>
-                <li><a href="{{ route('wiki.index') }}">INFO GENERAL</a></li>
-                <li><a href="{{ route('info.news') }}">NOVEDADES</a></li>
-                <li><a href="{{ route('leaderboard') }}">LEADERBOARD</a></li>
+                <li><a href="{{ route('meta') }}" class="{{ request()->routeIs('meta*') ? 'active-link' : '' }}">META</a></li>
+                <li><a href="{{ route('wiki.index') }}" class="{{ request()->routeIs('wiki.*') ? 'active-link' : '' }}">INFO GENERAL</a></li>
+                <li><a href="{{ route('info.news') }}" class="{{ request()->routeIs('info.news') ? 'active-link' : '' }}">NOVEDADES</a></li>
+                <li><a href="{{ route('leaderboard') }}" class="{{ request()->routeIs('leaderboard*') ? 'active-link' : '' }}">LEADERBOARD</a></li>
             </ul>
         </nav>
         <div class="user-auth-links">

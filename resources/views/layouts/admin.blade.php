@@ -9,7 +9,8 @@
     <link rel="stylesheet" href="{{ asset('css/estilos.css') }}?v={{ time() }}">
     @stack('styles')
     
-    <link rel="icon" href="/iconotlabaho.webp" type="image/x-icon">
+    <link rel="icon" href="{{ asset('images/iconotlabaho.webp') }}?v=1" type="image/webp">
+    <link rel="shortcut icon" href="{{ asset('images/iconotlabaho.webp') }}">
     
     <!-- Tailwind CSS (CDN para Admin) -->
     <script src="https://cdn.tailwindcss.com"></script>
