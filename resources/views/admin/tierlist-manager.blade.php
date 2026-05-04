@@ -1,19 +1,15 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión Master Tier List | Administrador</title>
-    <link rel="stylesheet" href="{{ asset('css/estilos.css') }}?v={{ time() }}">
-    <link rel="stylesheet" href="{{ asset('css/tierlist.css') }}?v={{ time() }}">
-    <link rel="icon" href="/iconotlabaho.webp" type="image/x-icon">
-</head>
-<body>
-    @include('partials.header')
+@extends('layouts.admin')
 
-    <main class="main-content-tierlist">
-        <h1 class="page-title" style="color: #ff4757;">Admin Tier List Manager</h1>
-        <p class="intro-text-tierlist" style="margin-bottom: 20px;">
+@section('title', 'Gestión Master Tier List | Administrador')
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/tierlist.css') }}?v={{ time() }}">
+@endpush
+
+@section('content')
+    <div class="main-content-tierlist" style="margin-top: 0; padding-top: 0;">
+        <h1 class="page-title" style="color: #ff4757; text-align: left; margin-top: 0;">Admin Tier List Manager</h1>
+        <p class="intro-text-tierlist" style="margin-bottom: 20px; text-align: left;">
             En esta vista puedes gestionar masivamente TODOS los ítems de la Tier List.
             Selecciona ítems, elige un rango de destino y aplícalo (incluso puedes mandar unidades de vuelta al Laboratorio al usar 'PENDIENTES').
         </p>
@@ -43,11 +39,11 @@
             </label>
         </div>
 
-        <div class="tierlist-container">
-            <table>
+        <div class="tierlist-container" style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 15px;">
+            <table style="width: 100%;">
                 <thead>
                     <tr>
-                        <th class="tier-rank">RANGO</th>
+                        <th class="tier-rank" style="width: 80px;">RANGO</th>
                         <th>ÍTEMS CONSOLIDADOS</th>
                     </tr>
                 </thead>
@@ -60,7 +56,7 @@
                         @if(isset($itemsByRank[$rank]) && $itemsByRank[$rank]->count() > 0)
                             <tr class="tier-{{ strtolower($rank) }}">
                                 <td class="tier-rank">{{ $rank }}</td>
-                                <td>
+                                <td style="padding: 10px;">
                                     <div class="tier-items-list" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
                                         @foreach($itemsByRank[$rank] as $item)
                                             <div class="tier-item admin-select-item" id="admin-item-{{ $item->id }}" data-tippy-content="{{ $item->name }}"
@@ -91,9 +87,9 @@
             </table>
         </div>
 
-        <section class="meta-links" style="margin-top: 30px;">
+        <section class="meta-links" style="margin-top: 30px; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 20px;">
             <h2 style="color: #ff4757;">🧪 Laboratorio de la Comunidad (Pendientes)</h2>
-            <div class="tier-items-list" style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 20px;">
+            <div class="tier-items-list" style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 20px;">
                 @if(isset($pendingItems) && $pendingItems->count() > 0)
                     @foreach($pendingItems as $item)
                         <div class="tier-item admin-select-item pending-item" id="admin-item-{{ $item->id }}" data-tippy-content="{{ $item->description ?? 'Sin descripción disponible.' }}"
@@ -120,9 +116,10 @@
                 @endif
             </div>
         </section>
-    </main>
+    </div>
+@endsection
 
-    <!-- Scripts -->
+@push('scripts')
     <script src="https://unpkg.com/@popperjs/core@2"></script>
     <script src="https://unpkg.com/tippy.js@6"></script>
     <script>
@@ -204,7 +201,7 @@
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ ids: ids, rank: rank }) /* PENDING is automatically correctly handled by controller */
+                body: JSON.stringify({ ids: ids, rank: rank })
             })
             .then(res => {
                 if(res.status === 401) {
@@ -224,5 +221,4 @@
             .catch(error => console.error('Error in bulk approve:', error));
         }
     </script>
-</body>
-</html>
+@endpush

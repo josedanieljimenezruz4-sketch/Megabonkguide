@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Añadir Ítem | Admin | MEGABONK GUIDE')
 

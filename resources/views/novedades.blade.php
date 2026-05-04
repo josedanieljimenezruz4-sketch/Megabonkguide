@@ -1,50 +1,12 @@
-<!DOCTYPE html>
-<html lang="es">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Novedades | MEGABONK GUIDE</title>
-    <link rel="stylesheet" href="{{ asset('css/estilos.css') }}?v={{ time() }}">
+@section('title', 'Novedades | MEGABONK GUIDE')
+
+@push('styles')
     <link rel="stylesheet" href="{{ asset('css/novedades.css') }}">
-    <link rel="icon" href="iconotlabaho.webp" type="image/x-icon">
-</head>
+@endpush
 
-<body>
-
-    <header class="main-header">
-        <div class="header-content">
-            <a href="{{ route('home') }}" class="site-title">
-                <img src="iconotlabaho.webp" alt="Logo MEGABONK GUIDE" id="header-logo">
-                <a href="{{ route('home') }}" class="site-title">MEGABONK GUIDE</a>
-
-                <nav class="main-nav">
-                    <ul>
-                        <li><a href="{{ route('tierlist') }}">TIERLIST</a></li>
-                        <li><a href="{{ route('builds.index') }}">BUILDS</a></li>
-                        <li><a href="{{ route('comunity.index') }}">COMMUNITY</a></li>
-                        <li class="dropdown">
-                            <a href="{{ route('unlocks.index') }}">UNLOCKS ▼</a>
-                            <ul class="dropdown-menu">
-                                <li><a href="{{ route('unlocks.weapons') }}">Armas</a></li>
-                                <li><a href="{{ route('unlocks.tomes') }}">Tomos</a></li>
-                                <li><a href="{{ route('unlocks.items') }}">Items</a></li>
-                                <li><a href="{{ route('unlocks.characters') }}">Personajes</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="{{ route('meta') }}">META</a></li>
-                        <li><a href="{{ route('wiki.index') }}">INFO GENERAL</a></li>
-                        <li><a href="{{ route('info.news') }}">NOVEDADES</a></li>
-                        <li><a href="{{ route('leaderboard') }}">LEADERBOARD</a></li>
-                    </ul>
-                </nav>
-                <div class="user-auth-links">
-                    <a href="{{ route('login') }}" class="auth-link">Login</a> |
-                    <a href="{{ route('register') }}" class="auth-link">Registro</a>
-                </div>
-        </div>
-    </header>
-
+@section('content')
     <main class="main-content-news">
 
         <h1 class="page-title">📣 Últimas Novedades de MEGABONK</h1>
@@ -96,36 +58,4 @@
         </div>
 
     </main>
-
-    <footer class="main-footer">
-        <div class="footer-sections">
-            <div>
-                <h3>Enlaces Rápidos</h3>
-                <ul>
-                    <li><a href="{{ route('tierlist') }}">TIERLIST</a></li>
-                    <li><a href="{{ route('meta') }}">META</a></li>
-                    <li><a href="{{ route('info.news') }}">NOVEDADES</a></li>
-                </ul>
-            </div>
-            <div>
-                <h3>Soporte</h3>
-                <ul>
-                    <li><a href="#">Contáctanos</a></li>
-                    <li><a href="{{ route('comunity.suggestions') }}">Sugerencias</a></li>
-                    <li><a href="#">Preguntas Frecuentes</a></li>
-                </ul>
-            </div>
-            <div>
-                <h3>Legal</h3>
-                <ul>
-                    <li><a href="#">Términos y Condiciones</a></li>
-                    <li><a href="#">Política de Privacidad</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-copy">&copy; 2025 MEGABONK GUIDE. Todos los derechos reservados.</div>
-    </footer>
-
-</body>
-
-</html>
+@endsection

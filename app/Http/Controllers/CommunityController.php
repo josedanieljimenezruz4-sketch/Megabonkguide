@@ -131,4 +131,22 @@ class CommunityController extends Controller
     {
         return view('sugerencias');
     }
+
+    public function storeSuggestion(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'subject' => 'required|string|max:255',
+            'content' => 'required|string',
+        ]);
+
+        \App\Models\Suggestion::create([
+            'user_id' => Auth::id(), // Puede ser null si no está logueado
+            'name' => $request->name,
+            'subject' => $request->subject,
+            'content' => $request->content,
+        ]);
+
+        return redirect()->back()->with('success', '¡Gracias por tu sugerencia! Ha sido enviada a los administradores.');
+    }
 }

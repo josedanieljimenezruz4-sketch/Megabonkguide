@@ -1,20 +1,18 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Panel de Administración | MEGABONK GUIDE')
 
 @push('styles')
     <style>
         .admin-dashboard {
-            max-width: 1000px;
-            margin: 40px auto;
+            max-width: 100% !important; /* It's inside a main container now */
+            margin: 0;
             padding: 20px;
-            background-color: #1e1e24; /* Tono oscuro alineado al sitio */
-            border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+            background-color: transparent !important;
+            box-shadow: none !important;
             color: #fff;
         }
         .admin-title {
-            text-align: center;
             color: #ff4b2b;
             margin-bottom: 30px;
             font-size: 2rem;
@@ -27,11 +25,16 @@
             margin-bottom: 40px;
         }
         .admin-stat-card {
-            background-color: #2c2f33;
+            background-color: rgba(44, 47, 51, 0.8);
+            backdrop-filter: blur(5px);
             padding: 20px;
             border-radius: 8px;
             text-align: center;
             border-left: 4px solid #ff416c;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         .admin-stat-card h3 {
             margin: 0;
@@ -47,18 +50,19 @@
         .admin-users-table {
             width: 100%;
             border-collapse: collapse;
-            background-color: #2c2f33;
+            background-color: rgba(44, 47, 51, 0.8);
             border-radius: 8px;
             overflow: hidden;
             margin-top: 15px;
+            backdrop-filter: blur(5px);
         }
         .admin-users-table th, .admin-users-table td {
             padding: 15px;
             text-align: left;
-            border-bottom: 1px solid #3f4247;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
         .admin-users-table th {
-            background-color: #1a1a20;
+            background-color: rgba(26, 26, 32, 0.9);
             color: #ff416c;
             text-transform: uppercase;
             font-size: 0.9rem;
@@ -69,41 +73,21 @@
             border-radius: 12px;
             font-size: 0.8rem;
             font-weight: bold;
+            color: white;
         }
         .badge-user {
             background-color: #555;
             padding: 4px 10px;
             border-radius: 12px;
             font-size: 0.8rem;
+            color: white;
         }
     </style>
 @endpush
 
 @section('content')
     <div class="admin-dashboard">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-            <h1 class="admin-title" style="margin-bottom: 0;">👑 Panel de Control</h1>
-            <div>
-                <a href="{{ route('admin.tierlist-manager') }}" style="background: linear-gradient(90deg, #B965F0, #8E44AD); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-right: 15px; box-shadow: 0 4px 10px rgba(185, 101, 240, 0.4); display: inline-block; margin-bottom: 10px;">
-                    👁️ Panóptico Tier List
-                </a>
-                <a href="{{ route('admin.community-tierlists.index') }}" style="background: linear-gradient(90deg, #f1c40f, #e67e22); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-right: 15px; box-shadow: 0 4px 10px rgba(241, 196, 15, 0.4); display: inline-block; margin-bottom: 10px;">
-                    📋 Tier Lists Comunidad
-                </a>
-                <a href="{{ route('admin.votes.index') }}" style="background: linear-gradient(90deg, #36d1dc, #5b86e5); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-right: 15px; box-shadow: 0 4px 10px rgba(91, 134, 229, 0.4); display: inline-block; margin-bottom: 10px;">
-                    📊 Gestión de Votos
-                </a>
-                <a href="{{ route('admin.items.create') }}" style="background: linear-gradient(90deg, #ff4b2b, #ff416c); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 10px rgba(255, 65, 108, 0.4); display: inline-block; margin-bottom: 10px; margin-right: 15px;">
-                    ➕ Añadir Ítem
-                </a>
-                <a href="{{ route('admin.wiki.index') }}" style="background: linear-gradient(90deg, #00C9FF, #92FE9D); color: #111; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 10px rgba(0, 201, 255, 0.4); display: inline-block; margin-bottom: 10px; margin-right: 15px;">
-                    📚 Gestión Wiki
-                </a>
-                <a href="{{ route('admin.leaderboard.index') }}" style="background: linear-gradient(90deg, #FAD961, #F76B1C); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 10px rgba(247, 107, 28, 0.4); display: inline-block; margin-bottom: 10px;">
-                    🏆 Moderar Leaderboard
-                </a>
-            </div>
-        </div>
+        <h1 class="admin-title">👑 Dashboard</h1>
 
         <div class="admin-stats-grid">
             <div class="admin-stat-card" style="border-left-color: #00d2ff;">

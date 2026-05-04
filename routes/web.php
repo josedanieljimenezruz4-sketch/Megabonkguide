@@ -58,6 +58,7 @@ Route::controller(CommunityController::class)->group(function () {
     Route::post('/comunity/{id}/like', 'like')->name('comunity.like')->middleware('auth');
     Route::post('/comunity/{id}/comment', 'comment')->name('comunity.comment')->middleware('auth');
     Route::get('/sugerencias', 'suggestions')->name('comunity.suggestions');
+    Route::post('/sugerencias', 'storeSuggestion')->name('comunity.suggestions.store');
 });
 
 // Información y Novedades
@@ -134,22 +135,33 @@ Route::middleware(['auth', 'admin'])->name('admin.')->prefix('admin')->group(fun
     Route::post('/votes/reset-all', [AdminController::class, 'resetAllVotes'])->name('votes.resetAll');
     Route::post('/votes/{id}/reset', [AdminController::class, 'resetItemVotes'])->name('votes.resetItem');
 
-    // Moderación
+    // Moderación Antigua
     Route::get('/community-tierlists', [AdminController::class, 'communityTierLists'])->name('community-tierlists.index');
     Route::delete('/community-tierlists/{id}', [App\Http\Controllers\UserTierListController::class, 'destroyAdmin'])->name('community-tierlists.destroy');
     Route::delete('/comments/{id}', [App\Http\Controllers\CommentController::class, 'destroyAdmin'])->name('comments.destroy');
 
+    // Nueva Moderación (Builds y Tierlists)
+    Route::get('/moderation', [\App\Http\Controllers\Admin\ModerationController::class, 'index'])->name('moderation.index');
+    Route::delete('/moderation/builds/{id}', [\App\Http\Controllers\Admin\ModerationController::class, 'destroyBuild'])->name('moderation.builds.destroy');
+    Route::get('/moderation/builds/{build}/edit', [\App\Http\Controllers\Admin\ModerationController::class, 'editBuild'])->name('moderation.builds.edit');
+    Route::put('/moderation/builds/{build}', [\App\Http\Controllers\Admin\ModerationController::class, 'updateBuild'])->name('moderation.builds.update');
+    Route::delete('/moderation/tierlists/{id}', [\App\Http\Controllers\Admin\ModerationController::class, 'destroyTierList'])->name('moderation.tierlists.destroy');
+
     // Gestión del Meta
     Route::get('/meta', [\App\Http\Controllers\Admin\MetaAdminController::class, 'index'])->name('meta.index');
     Route::post('/meta/strategies', [\App\Http\Controllers\Admin\MetaAdminController::class, 'storeStrategy'])->name('meta.strategies.store');
+    Route::put('/meta/strategies/{id}', [\App\Http\Controllers\Admin\MetaAdminController::class, 'updateStrategy'])->name('meta.strategies.update');
     Route::delete('/meta/strategies/{id}', [\App\Http\Controllers\Admin\MetaAdminController::class, 'destroyStrategy'])->name('meta.strategies.destroy');
     Route::post('/meta/patch-notes', [\App\Http\Controllers\Admin\MetaAdminController::class, 'storePatchNote'])->name('meta.patch_notes.store');
+    Route::put('/meta/patch-notes/{id}', [\App\Http\Controllers\Admin\MetaAdminController::class, 'updatePatchNote'])->name('meta.patch_notes.update');
     Route::delete('/meta/patch-notes/{id}', [\App\Http\Controllers\Admin\MetaAdminController::class, 'destroyPatchNote'])->name('meta.patch_notes.destroy');
 
     // Leaderboard Admin
     Route::get('/leaderboard', [AdminController::class, 'leaderboard'])->name('leaderboard.index');
     Route::post('/leaderboard/{id}/approve', [AdminController::class, 'approveScore'])->name('leaderboard.approve');
     Route::post('/leaderboard/{id}/reject', [AdminController::class, 'rejectScore'])->name('leaderboard.reject');
+    Route::post('/leaderboard/reset-global', [AdminController::class, 'resetGlobalLeaderboard'])->name('leaderboard.resetGlobal');
+    Route::delete('/leaderboard/{id}/reset', [AdminController::class, 'resetUserScore'])->name('leaderboard.resetUser');
 
     // Wiki Admin
     Route::get('/wiki', [WikiAdminController::class, 'index'])->name('wiki.index');
@@ -160,4 +172,15 @@ Route::middleware(['auth', 'admin'])->name('admin.')->prefix('admin')->group(fun
     Route::post('/wiki/faqs', [WikiAdminController::class, 'storeFaq'])->name('wiki.faqs.store');
     Route::put('/wiki/faqs/{id}', [WikiAdminController::class, 'updateFaq'])->name('wiki.faqs.update');
     Route::delete('/wiki/faqs/{id}', [WikiAdminController::class, 'destroyFaq'])->name('wiki.faqs.destroy');
+
+    // Sugerencias
+    Route::get('/suggestions', [\App\Http\Controllers\Admin\SuggestionController::class, 'index'])->name('suggestions.index');
+    Route::post('/suggestions/{id}/mark-read', [\App\Http\Controllers\Admin\SuggestionController::class, 'markRead'])->name('suggestions.markRead');
+    Route::post('/suggestions/{id}/status', [\App\Http\Controllers\Admin\SuggestionController::class, 'updateStatus'])->name('suggestions.updateStatus');
+    Route::delete('/suggestions/{id}', [\App\Http\Controllers\Admin\SuggestionController::class, 'destroy'])->name('suggestions.destroy');
+
+    // Gestión de Usuarios
+    Route::get('/users', [\App\Http\Controllers\Admin\UserAdminController::class, 'index'])->name('users.index');
+    Route::post('/users/{id}/ban', [\App\Http\Controllers\Admin\UserAdminController::class, 'ban'])->name('users.ban');
+    Route::delete('/users/{id}', [\App\Http\Controllers\Admin\UserAdminController::class, 'destroy'])->name('users.destroy');
 });

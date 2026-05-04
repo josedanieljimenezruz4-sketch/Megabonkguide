@@ -1,151 +1,76 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Tier Lists de la Comunidad | MEGABONK GUIDE')
 
-@push('styles')
-    <style>
-        .admin-dashboard {
-            max-width: 1000px;
-            margin: 40px auto;
-            padding: 20px;
-            background-color: #1e1e24; /* Tono oscuro alineado al sitio */
-            border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
-            color: #fff;
-        }
-        .admin-title {
-            text-align: center;
-            color: #36d1dc;
-            margin-bottom: 30px;
-            font-size: 2rem;
-            text-transform: uppercase;
-        }
-        .admin-users-table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: #2c2f33;
-            border-radius: 8px;
-            overflow: hidden;
-            margin-top: 15px;
-        }
-        .admin-users-table th, .admin-users-table td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #3f4247;
-        }
-        .admin-users-table th {
-            background-color: #1a1a20;
-            color: #ff416c;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-        }
-        .btn-delete {
-            background-color: #ff4757;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .btn-delete:hover {
-            background-color: #ff6b81;
-        }
-        .alert-success {
-            background-color: #2ecc71;
-            color: white;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            font-weight: bold;
-            text-align: center;
-        }
-        .pagination {
-            display: flex;
-            justify-content: center;
-            list-style: none;
-            margin-top: 20px;
-            padding: 0;
-            gap: 10px;
-        }
-        .pagination .page-item .page-link {
-            padding: 8px 12px;
-            background: #2c2f33;
-            color: white;
-            border-radius: 5px;
-            text-decoration: none;
-        }
-        .pagination .page-item.active .page-link {
-            background: #ff416c;
-            border-color: #ff416c;
-        }
-    </style>
-@endpush
-
 @section('content')
-    <div class="admin-dashboard">
-        <h1 class="admin-title">📋 Tier Lists de la Comunidad</h1>
-        
-        <div style="margin-bottom: 20px;">
-             <a href="{{ route('admin.dashboard') }}" style="color: #36d1dc; text-decoration: none; font-weight: bold;">&larr; Volver al Panel Principal</a>
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-white flex items-center gap-3">📋 Tier Lists de la Comunidad</h1>
+        <a href="{{ route('admin.dashboard') }}" class="text-purple-400 hover:text-purple-300 font-bold transition-colors">&larr; Volver al Panel</a>
+    </div>
+
+    @if(session('success'))
+        <div class="bg-green-500/20 border-l-4 border-green-500 p-4 mb-8 text-white rounded shadow-[0_0_15px_rgba(34,197,94,0.2)]">
+            {{ session('success') }}
         </div>
+    @endif
 
-        @if(session('success'))
-            <div class="alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        <table class="admin-users-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Título</th>
-                    <th>Autor</th>
-                    <th>Categoría</th>
-                    <th>Fecha</th>
-                    <th>Acción</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($tierLists as $tl)
-                <tr>
-                    <td style="font-weight: bold; color: #ffcf00;">#{{ $tl->id }}</td>
-                    <td>
-                        <a href="{{ route('community-tierlists.show', $tl->id) }}" style="color: white; text-decoration: none; font-weight: bold;" target="_blank">
-                            {{ Str::limit($tl->titulo, 40) }}
-                        </a>
-                    </td>
-                    <td>{{ $tl->user->username ?? 'Anónimo' }}</td>
-                    <td><span style="background: rgba(255,255,255,0.1); padding: 3px 8px; border-radius: 12px; font-size: 0.8em; text-transform: uppercase;">{{ $tl->categoria }}</span></td>
-                    <td style="color: #aaa; font-size: 0.9em;">{{ $tl->created_at->format('d/m/Y H:i') }}</td>
-                    <td>
-                        <form action="{{ route('admin.community-tierlists.destroy', $tl->id) }}" method="POST" onsubmit="return confirm('¿Seguro de eliminar permanentemente la Tier List: {{ addslashes($tl->titulo) }}?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn-delete" title="Eliminar Tier List">
-                                🗑️ Eliminar
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="6" style="text-align: center;">No hay Tier Lists de la comunidad.</td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
-
-        <!-- Paginación -->
-        <div style="margin-top: 30px;" class="d-flex justify-content-center">
+    <div class="glass-card p-6 rounded-2xl mb-8 bg-gray-900/40 backdrop-blur-xl border border-white/10 shadow-[0_8px_30px_rgba(0,0,0,0.5)]">
+        <h2 class="text-xl text-purple-400 font-bold mb-6 flex items-center gap-2 border-b border-white/5 pb-4">🛡️ Gestión de Tier Lists</h2>
+        
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-black/60 text-xs uppercase tracking-wider text-purple-400">
+                    <tr>
+                        <th class="p-4 rounded-tl-lg font-semibold">ID</th>
+                        <th class="p-4 font-semibold">Título</th>
+                        <th class="p-4 font-semibold">Autor</th>
+                        <th class="p-4 font-semibold">Categoría</th>
+                        <th class="p-4 font-semibold">Fecha</th>
+                        <th class="p-4 text-center rounded-tr-lg font-semibold">Acción</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm text-gray-300">
+                    @forelse($tierLists as $tl)
+                    <tr class="border-b border-white/5 hover:bg-white/5 transition-colors group">
+                        <td class="p-4 font-bold text-purple-500">#{{ $tl->id }}</td>
+                        <td class="p-4">
+                            <a href="{{ route('community-tierlists.show', $tl->id) }}" class="text-white font-semibold hover:text-purple-400 transition-colors" target="_blank">
+                                {{ Str::limit($tl->titulo, 40) }}
+                            </a>
+                        </td>
+                        <td class="p-4 text-gray-400">{{ $tl->user->username ?? 'Anónimo' }}</td>
+                        <td class="p-4"><span class="bg-white/10 px-3 py-1 rounded-full text-xs uppercase border border-white/10">{{ $tl->categoria }}</span></td>
+                        <td class="p-4 text-gray-500">{{ $tl->created_at->format('d/m/Y H:i') }}</td>
+                        <td class="p-4 text-center">
+                            <div class="flex items-center justify-center gap-3">
+                                <a href="{{ route('community-tierlists.show', $tl->id) }}" target="_blank" class="bg-gray-800/50 hover:bg-gray-700 text-gray-300 hover:text-white px-4 py-1.5 rounded-full inline-flex items-center gap-2 transition-all font-medium text-xs">
+                                    👁️ Ver
+                                </a>
+                                <form action="{{ route('admin.community-tierlists.destroy', $tl->id) }}" method="POST" onsubmit="return confirm('¿Seguro de eliminar permanentemente la Tier List: {{ addslashes($tl->titulo) }}?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="border border-red-500/50 text-red-400 hover:bg-red-500 hover:text-white hover:shadow-[0_0_15px_rgba(239,68,68,0.5)] px-4 py-1.5 rounded-full inline-flex items-center gap-2 transition-all font-semibold text-xs">
+                                        🗑️ Eliminar
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="6" class="p-10 text-center text-gray-500 italic">No hay Tier Lists de la comunidad registradas.</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="mt-8 flex justify-center">
             @if(method_exists($tierLists, 'links'))
                 {{ $tierLists->links('pagination::bootstrap-4') }}
             @endif
         </div>
     </div>
+</div>
 @endsection

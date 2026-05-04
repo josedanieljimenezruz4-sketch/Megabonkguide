@@ -29,11 +29,12 @@
             @auth
                 <!-- Si el usuario está logueado -->
                 <div class="dropdown user-dropdown">
-                    <div class="profile-header" style="display: flex; align-items: center;">
-                        <a href="{{ route('profile') }}" title="Ir a mi perfil">
+                    <div class="profile-header" style="display: flex; align-items: center; gap: 10px;">
+                        <a href="{{ route('profile') }}" title="Ir a mi perfil" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
                             <x-user-avatar :user="Auth::user()" size="40" class="profile-avatar" />
+                            <span style="color: #36d1dc; font-weight: bold; text-shadow: 0 0 8px rgba(54, 209, 220, 0.6); font-size: 1rem; text-transform: uppercase;">{{ Auth::user()->username ?? Auth::user()->name }}</span>
                         </a>
-                        <span class="dropdown-arrow" onclick="toggleUserDropdown(event)" style="cursor: pointer; margin-left: 8px; padding: 5px;">▼</span>
+                        <span class="dropdown-arrow" onclick="toggleUserDropdown(event)" style="cursor: pointer; margin-left: 4px; padding: 5px;">▼</span>
                     </div>
                     <ul class="dropdown-menu dropdown-menu-right" id="userDropdownMenu">
                         @if(Auth::user()->is_admin)

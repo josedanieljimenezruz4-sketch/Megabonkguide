@@ -68,7 +68,25 @@ class AdminController extends Controller
             ->oldest()
             ->get();
             
-        return view('admin.leaderboard', compact('pendingScores'));
+        $approvedScores = \App\Models\Score::with(['user', 'character', 'build'])
+            ->where('status', 'approved')
+            ->latest()
+            ->paginate(15);
+            
+        return view('admin.leaderboard', compact('pendingScores', 'approvedScores'));
+    }
+
+    public function resetGlobalLeaderboard()
+    {
+        \App\Models\Score::where('status', 'approved')->delete();
+        return redirect()->back()->with('success', 'LEADERBOARD GLOBAL REINICIADO. Todas las puntuaciones han sido archivadas de forma segura.');
+    }
+
+    public function resetUserScore($id)
+    {
+        $score = \App\Models\Score::findOrFail($id);
+        $score->delete();
+        return redirect()->back()->with('success', 'Puntuación individual reseteada correctamente.');
     }
 
     public function approveScore($id)

@@ -36,6 +36,26 @@ class MetaAdminController extends Controller
         return redirect()->back()->with('success', 'Estrategia creada exitosamente.');
     }
 
+    public function updateStrategy(Request $request, $id)
+    {
+        $strategy = MetaStrategy::findOrFail($id);
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'build_type' => 'nullable|string|max:255',
+            'is_active' => 'boolean'
+        ]);
+
+        $strategy->update([
+            'title' => $request->title,
+            'description' => $request->description,
+            'build_type' => $request->build_type,
+            'is_active' => $request->input('is_active', true),
+        ]);
+
+        return redirect()->back()->with('success', 'Estrategia actualizada.');
+    }
+
     public function destroyStrategy($id)
     {
         MetaStrategy::findOrFail($id)->delete();
@@ -59,6 +79,26 @@ class MetaAdminController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Nota del parche añadida.');
+    }
+
+    public function updatePatchNote(Request $request, $id)
+    {
+        $note = PatchNote::findOrFail($id);
+        $request->validate([
+            'version' => 'nullable|string|max:50',
+            'change_type' => 'required|in:buff,nerf,new',
+            'description' => 'required|string',
+            'is_active' => 'boolean'
+        ]);
+
+        $note->update([
+            'version' => $request->version,
+            'change_type' => $request->change_type,
+            'description' => $request->description,
+            'is_active' => $request->input('is_active', true),
+        ]);
+
+        return redirect()->back()->with('success', 'Nota del parche actualizada.');
     }
 
     public function destroyPatchNote($id)

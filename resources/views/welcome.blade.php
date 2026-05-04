@@ -137,7 +137,13 @@
                 <h2 class="text-2xl font-bold text-white mb-2 uppercase italic">Enviar Sugerencia</h2>
                 <p class="text-gray-400 text-sm mb-6">¿Tienes alguna idea para mejorar la guía? ¡Te escuchamos!</p>
                 
-                <form action="/sugerencias" method="POST" onsubmit="event.preventDefault(); alert('¡Gracias por tu sugerencia! (Demo)'); toggleModal();">
+                @if(session('success'))
+                    <div class="bg-green-500/20 border border-green-500 text-green-300 p-3 rounded mb-4 text-sm">
+                        {{ session('success') }}
+                    </div>
+                @endif
+                
+                <form action="{{ route('comunity.suggestions.store') }}" method="POST">
                     @csrf
                     <label class="block text-gray-300 text-sm font-bold mb-2">Nombre de Usuario</label>
                     <input type="text" name="name" value="{{ auth()->check() ? auth()->user()->name : '' }}" class="w-full bg-black/50 border border-gray-700 rounded-lg p-3 text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none mb-4 transition-all" placeholder="Tu nombre..." required>
@@ -168,6 +174,10 @@
                         toggleModal();
                     }
                 });
+                
+                @if(session('success'))
+                    toggleModal();
+                @endif
             });
         </script>
         <!-- FIN CÓDIGO DEL USUARIO -->
