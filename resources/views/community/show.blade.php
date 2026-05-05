@@ -40,12 +40,12 @@
     @include('partials.header')
 
     <main class="main-content-community">
-        <div class="post-detail">
+        <div class="post-detail overflow-hidden">
             <a href="{{ route('comunity.index') }}" class="back-link">← Volver a la Comunidad</a>
             <div class="post-detail-header">
                 <span class="tag-{{ strtolower($post->category) }}">{{ strtoupper($post->category) }}</span>
-                <h1>{{ $post->title }}</h1>
-                <p style="color: #888; display: flex; align-items: center; gap: 8px;">
+                <h1 class="break-all block max-w-full" style="word-break: break-all; overflow-wrap: break-word; white-space: pre-wrap; width: 100%;">{{ $post->title }}</h1>
+                <p style="color: #888; display: flex; align-items: center; gap: 8px; font-size: 0.8rem;">
                     Publicado por 
                     <x-user-avatar :user="$post->user" size="24" style="border: 1px solid #ffcf00;" />
                     <a href="{{ $post->user ? url('/perfil/' . $post->user->id) : '#' }}" style="color: #ffcf00; font-weight: bold; text-decoration: none;">
@@ -58,12 +58,11 @@
                 </p>
             </div>
             
-            <div class="post-detail-content">
-                {{ $post->content }}
+            <div class="post-detail-content break-all block max-w-full" style="word-break: break-all; overflow-wrap: break-word; white-space: pre-line; width: 100%;">{{ $post->content }}</div>
                 
                 @if($post->image_path)
                     <div style="margin-top: 20px; text-align: center;">
-                        <img src="{{ asset('storage/' . $post->image_path) }}" alt="Imagen adjunta" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.5);">
+                        <img src="{{ asset('storage/' . $post->image_path) }}" alt="Imagen adjunta" class="w-full max-w-4xl mx-auto" style="border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.5);">
                     </div>
                 @endif
             </div>

@@ -77,8 +77,8 @@
             <div class="post-card glow-{{ strtolower($post->category) }}">
                 <div class="post-header">
                     <span class="post-category tag-{{ strtolower($post->category) }}">{{ strtoupper($post->category) }}</span>
-                    <h3><a href="{{ route('comunity.show', $post->id) }}" class="post-title-link">{{ $post->title }}</a></h3>
-                    <div class="post-meta" style="display: flex; align-items: center; gap: 10px; margin-top: 10px; color: #aaa; font-size: 0.9em;">
+                    <h3><a href="{{ route('comunity.show', $post->id) }}" class="post-title-link break-words whitespace-normal max-w-full" style="display: block;">{{ $post->title }}</a></h3>
+                    <div class="post-meta" style="display: flex; align-items: center; gap: 10px; margin-top: 10px; color: #aaa; font-size: 0.8rem;">
                         <x-user-avatar :user="$post->user" size="40" class="post-author-avatar" style="border: 2px solid #ffcf00;" />
                         <span style="display: flex; align-items: center; gap: 4px;">
                             Publicado por 
@@ -99,8 +99,8 @@
                     </div>
                 @endif
 
-                <p class="post-summary">
-                    {{ Str::limit($post->content, 150) }}
+                <p class="post-summary break-words whitespace-normal max-w-full" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                    {{ $post->content }}
                 </p>
                 <div class="post-footer">
                     <span class="stats likes">❤️ {{ $post->likes_count }}</span>
