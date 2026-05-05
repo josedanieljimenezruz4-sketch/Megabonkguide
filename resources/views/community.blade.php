@@ -13,10 +13,17 @@
 
 <body>
 
+    <!-- =======================
+         HEADER GLOBAL
+    ======================= -->
     @include('partials.header')
 
+    <!-- =======================
+         CONTENIDO PRINCIPAL
+    ======================= -->
     <main class="main-content-community">
 
+        <!-- Notificaciones de Error y Éxito -->
         @if ($errors->any())
             <div class="alert alert-danger" style="background: #ff4c4c; color: white; padding: 10px; margin-bottom: 20px; border-radius: 5px;">
                 <ul style="margin: 0; padding-left: 20px;">
@@ -33,6 +40,7 @@
             </div>
         @endif
 
+        <!-- Título de la Página -->
         <h1 class="page-title">🗣️ Portal de la Comunidad</h1>
 
         <p class="intro-text-community">
@@ -40,6 +48,9 @@
             contribuye a la guía!
         </p>
 
+        <!-- =======================
+             FILTROS Y ACCIONES
+        ======================= -->
         <section class="community-actions">
             <a href="#" class="btn-create-post" onclick="document.getElementById('createPostModal').style.display='block'; return false;">✍️ Publicar Nuevo Contenido</a>
 
@@ -57,6 +68,9 @@
             </div>
         </section>
 
+        <!-- =======================
+             LISTADO DE POSTS
+        ======================= -->
         <section class="posts-list">
 
             @forelse($posts as $post)
@@ -98,6 +112,9 @@
             <p class="empty-state">No hay publicaciones disponibles.</p>
             @endforelse
 
+            <!-- =======================
+                 PAGINACIÓN
+            ======================= -->
             <div class="pagination-wrapper" style="margin-top: 20px;">
                 {{ $posts->appends(['filter' => request('filter')])->links() }}
             </div>
@@ -106,6 +123,9 @@
 
     </main>
 
+    <!-- =======================
+         MODAL CREAR POST
+    ======================= -->
     @auth
     <div id="createPostModal" class="modal">
         <div class="modal-content">
@@ -180,6 +200,9 @@
     .glow-meme:hover { border-color: #6a1b9a; box-shadow: 0 0 15px rgba(106, 27, 154, 0.4); }
     </style>
 
+    <!-- =======================
+         FOOTER
+    ======================= -->
     <footer class="main-footer">
         <div class="footer-sections">
             <div>

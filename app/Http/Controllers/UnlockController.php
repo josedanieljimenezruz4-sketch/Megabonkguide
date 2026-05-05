@@ -8,7 +8,8 @@ use App\Models\Item;
 
 class UnlockController extends Controller
 {
-    public function toggleUnlock(Request $request)
+    // Añade o elimina un objeto del inventario del usuario según su estado.
+    public function alternarEstadoDesbloqueo(Request $request)
     {
         try {
             $request->validate([
@@ -39,7 +40,7 @@ class UnlockController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            \Log::error('Error en toggleUnlock: ' . $e->getMessage());
+            \Log::error('Error en alternarEstadoDesbloqueo: ' . $e->getMessage());
             return response()->json([
                 'status' => 'error',
                 'message' => 'Hubo un problema al actualizar el estado: ' . $e->getMessage()
@@ -47,21 +48,24 @@ class UnlockController extends Controller
         }
     }
 
-    private function getUnlockedItems()
+    // Devuelve un array con los IDs de los elementos que el usuario posee.
+    private function obtenerElementosDesbloqueados()
     {
         return auth()->check() 
             ? DB::table('user_unlocks')->where('user_id', auth()->id())->pluck('item_id')->toArray() 
             : [];
     }
 
-    public function index()
+    // Muestra la vista principal de la sección de desbloqueos.
+    public function mostrarIndiceUnlocks()
     {
         return view('unlocks');
     }
 
-    private function getFilteredItems(Request $request, $type)
+    // Filtra los objetos de la base de datos según si están bloqueados/desbloqueados y su tipo.
+    private function obtenerElementosFiltrados(Request $request, $type)
     {
-        $unlockedItems = $this->getUnlockedItems();
+        $unlockedItems = $this->obtenerElementosDesbloqueados();
         $query = Item::where('type', $type);
 
         if ($request->filter === 'completed') {
@@ -76,41 +80,46 @@ class UnlockController extends Controller
         return $query->get();
     }
 
-    public function weapons(Request $request)
+    // Carga la vista con la lista de armas disponibles y el estado del usuario.
+    public function mostrarArmas(Request $request)
     {
         return view('armas', [
-            'unlockedItems' => $this->getUnlockedItems(),
-            'items' => $this->getFilteredItems($request, 'arma')
+            'unlockedItems' => $this->obtenerElementosDesbloqueados(),
+            'items' => $this->obtenerElementosFiltrados($request, 'arma')
         ]);
     }
 
-    public function tomes(Request $request)
+    // Carga la vista con la lista de tomos disponibles y el estado del usuario.
+    public function mostrarTomos(Request $request)
     {
         return view('tomos', [
-            'unlockedItems' => $this->getUnlockedItems(),
-            'items' => $this->getFilteredItems($request, 'tomo')
+            'unlockedItems' => $this->obtenerElementosDesbloqueados(),
+            'items' => $this->obtenerElementosFiltrados($request, 'tomo')
         ]);
     }
 
-    public function items(Request $request)
+    // Carga la vista con la lista de objetos disponibles y el estado del usuario.
+    public function mostrarObjetos(Request $request)
     {
         return view('items', [
-            'unlockedItems' => $this->getUnlockedItems(),
-            'items' => $this->getFilteredItems($request, 'item')
+            'unlockedItems' => $this->obtenerElementosDesbloqueados(),
+            'items' => $this->obtenerElementosFiltrados($request, 'item')
         ]);
     }
 
-    public function characters(Request $request)
+    // Carga la vista con la lista de personajes disponibles y el estado del usuario.
+    public function mostrarPersonajes(Request $request)
     {
         return view('personajes', [
-            'unlockedItems' => $this->getUnlockedItems(),
-            'items' => $this->getFilteredItems($request, 'personaje')
+            'unlockedItems' => $this->obtenerElementosDesbloqueados(),
+            'items' => $this->obtenerElementosFiltrados($request, 'personaje')
         ]);
     }
 
-    public function inventory()
+    // Muestra todos los elementos desbloqueados agrupados en el inventario personal.
+    public function mostrarInventarioUnificado()
     {
-        $unlockedIds = $this->getUnlockedItems();
+        $unlockedIds = $this->obtenerElementosDesbloqueados();
         
         // Carga los Items de la BD cuyo 'id' esté en el array del usuario
         // Trae Personajes, Armas, Tomos e Items indistintamente ordenados.

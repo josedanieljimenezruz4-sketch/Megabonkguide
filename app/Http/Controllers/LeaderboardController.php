@@ -8,7 +8,8 @@ use App\Models\Item;
 
 class LeaderboardController extends Controller
 {
-    public function index(Request $request)
+    // Carga los 50 mejores puntajes aprobados filtrados por dificultad y personaje.
+    public function mostrarTablaDeClasificacion(Request $request)
     {
         $difficulty = $request->get('difficulty', 'bonk10');
         $characterId = $request->get('character', 'all');
@@ -27,7 +28,8 @@ class LeaderboardController extends Controller
         return view('leaderboard', compact('scores', 'characters', 'difficulty', 'characterId'));
     }
 
-    public function store(Request $request)
+    // Registra una nueva puntuación si supera el récord anterior del usuario.
+    public function guardarNuevaPuntuacion(Request $request)
     {
         $request->validate([
             'character_id' => 'required|string|exists:items,id',

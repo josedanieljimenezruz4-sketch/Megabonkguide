@@ -13,12 +13,21 @@
 
 <body>
 
+    <!-- =======================
+         HEADER GLOBAL
+    ======================= -->
     @include('partials.header')
 
+    <!-- =======================
+         CONTENIDO PRINCIPAL
+    ======================= -->
     <main class="main-content-leaderboard">
 
+        <!-- Título -->
         <h1 class="page-title">🏆 Leaderboard Global: Bonk +10</h1>
-
+        <!-- =======================
+             CONTROLES Y FILTROS
+        ======================= -->
         <div class="leaderboard-controls">
             <p>Clasificación basada en la puntuación más alta por Dificultad y Personaje.</p>
             
@@ -62,6 +71,9 @@
             </div>
         @endif
 
+        <!-- =======================
+             TABLA DE CLASIFICACIÓN
+        ======================= -->
         <div class="leaderboard-table-container">
             <table>
                 <thead>
@@ -113,6 +125,9 @@
             </table>
         </div>
 
+        <!-- =======================
+             MODAL DE SUBIDA DE PUNTUACIÓN
+        ======================= -->
         @auth
         <!-- Modal de Subida de Puntuación -->
         <style>
@@ -218,6 +233,9 @@
             </div>
         </div>
         
+        <!-- =======================
+             SCRIPT DE VALIDACIÓN FORMULARIO
+        ======================= -->
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const form = document.getElementById('scoreForm');
@@ -315,6 +333,9 @@
 
     </main>
 
+    <!-- =======================
+         FOOTER
+    ======================= -->
     <footer class="main-footer">
         <div class="footer-sections">
             <div>

@@ -13,17 +13,27 @@
 
 <body>
 
+    <!-- =======================
+         HEADER GLOBAL
+    ======================= -->
     @include('partials.header')
 
+    <!-- =======================
+         CONTENIDO PRINCIPAL
+    ======================= -->
     <main class="main-content-catalogo">
 
-        <h1 class="page-title">👤 Todos los Personajes Desbloqueables</h1>
+        <!-- Título y Descripción -->
+        <h1 class="page-title">👾 Catálogo de Personajes Desbloqueables</h1>
 
         <p class="catalogo-intro">
             A continuación, encontrarás el listado completo de todos los héroes jugables en MEGABONK, sus clases y cómo
             obtenerlos.
         </p>
 
+        <!-- =======================
+             FILTROS DE BÚSQUEDA
+        ======================= -->
         <div class="filters-panel" style="background:#1e1e24; padding:15px; border-radius:8px; display:flex; gap:15px; margin-bottom:20px; align-items:center; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
             <p style="margin:0; font-weight:bold; color:#ff416c;">Filtros Instantáneos:</p>
             <div style="display:flex; gap:10px; width:100%;">
@@ -39,6 +49,9 @@
             </div>
         </div>
 
+        <!-- =======================
+             SCRIPT DE FILTROS LOCALES
+        ======================= -->
         <script>
             document.addEventListener("DOMContentLoaded", () => {
                 const filterStatus = document.getElementById('filter-status');
@@ -83,6 +96,9 @@
             });
         </script>
 
+        <!-- =======================
+             LISTADO DE PERSONAJES
+        ======================= -->
         <section class="catalogo-grid">
 
             @foreach($items as $item)
@@ -126,6 +142,9 @@
 
     </main>
 
+    <!-- =======================
+         FOOTER
+    ======================= -->
     <footer class="main-footer">
         <div class="footer-sections">
             <div>
@@ -155,6 +174,9 @@
         <div class="footer-copy">&copy; 2025 MEGABONK GUIDE. Todos los derechos reservados.</div>
     </footer>
 
+    <!-- =======================
+         SCRIPT DE SINCRONIZACIÓN
+    ======================= -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const checkboxes = document.querySelectorAll('.unlock-checkbox input[type="checkbox"]');

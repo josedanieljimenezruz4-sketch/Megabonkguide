@@ -36,29 +36,29 @@ Route::controller(GameDataController::class)->group(function () {
 
 // Leaderboard
 Route::controller(\App\Http\Controllers\LeaderboardController::class)->group(function () {
-    Route::get('/leaderboard', 'index')->name('leaderboard');
-    Route::post('/leaderboard', 'store')->name('leaderboard.store')->middleware('auth');
+    Route::get('/leaderboard', 'mostrarTablaDeClasificacion')->name('leaderboard');
+    Route::post('/leaderboard', 'guardarNuevaPuntuacion')->name('leaderboard.store')->middleware('auth');
 });
 
 // Sección UNLOCKS
 Route::controller(UnlockController::class)->group(function () {
-    Route::get('/unlocks', 'index')->name('unlocks.index');
-    Route::get('/armas', 'weapons')->name('unlocks.weapons');
-    Route::get('/tomos', 'tomes')->name('unlocks.tomes');
-    Route::get('/items', 'items')->name('unlocks.items');
-    Route::get('/personajes', 'characters')->name('unlocks.characters');
-    Route::post('/unlocks/toggle', 'toggleUnlock')->name('unlocks.toggle')->middleware('auth');
+    Route::get('/unlocks', 'mostrarIndiceUnlocks')->name('unlocks.index');
+    Route::get('/armas', 'mostrarArmas')->name('unlocks.weapons');
+    Route::get('/tomos', 'mostrarTomos')->name('unlocks.tomes');
+    Route::get('/items', 'mostrarObjetos')->name('unlocks.items');
+    Route::get('/personajes', 'mostrarPersonajes')->name('unlocks.characters');
+    Route::post('/unlocks/toggle', 'alternarEstadoDesbloqueo')->name('unlocks.toggle')->middleware('auth');
 });
 
 // Comunidad
 Route::controller(CommunityController::class)->group(function () {
-    Route::get('/comunity', 'index')->name('comunity.index');
-    Route::post('/comunity', 'store')->name('comunity.store')->middleware('auth');
-    Route::get('/comunity/{id}', 'show')->name('comunity.show')->where('id', '[0-9]+');
-    Route::post('/comunity/{id}/like', 'like')->name('comunity.like')->middleware('auth');
-    Route::post('/comunity/{id}/comment', 'comment')->name('comunity.comment')->middleware('auth');
-    Route::get('/sugerencias', 'suggestions')->name('comunity.suggestions');
-    Route::post('/sugerencias', 'storeSuggestion')->name('comunity.suggestions.store');
+    Route::get('/community', 'mostrarListaDePublicaciones')->name('comunity.index');
+    Route::post('/community', 'guardarNuevaPublicacion')->name('comunity.store')->middleware('auth');
+    Route::get('/community/{id}', 'mostrarPublicacionDetallada')->name('comunity.show')->where('id', '[0-9]+');
+    Route::post('/community/{id}/like', 'alternarMeGusta')->name('comunity.like')->middleware('auth');
+    Route::post('/community/{id}/comment', 'guardarNuevoComentario')->name('comunity.comment')->middleware('auth');
+    Route::get('/sugerencias', 'mostrarFormularioSugerencias')->name('comunity.suggestions');
+    Route::post('/sugerencias', 'guardarNuevaSugerencia')->name('comunity.suggestions.store');
 });
 
 // Información y Novedades

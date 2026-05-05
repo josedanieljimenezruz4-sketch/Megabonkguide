@@ -10,16 +10,17 @@ use Illuminate\Support\Facades\Storage;
 
 class CommunityController extends Controller
 {
-    public function index(Request $request)
+    // Recupera y muestra la lista paginada de publicaciones de la comunidad.
+    public function mostrarListaDePublicaciones(Request $request)
     {
-        // Consulta simplificada para depurar
         $posts = CommunityPost::with('user')->latest()->paginate(10);
         
-        $filter = 'recent'; // Añadido para que no falle la vista al quitar el dd()
-        return view('comunity', compact('posts', 'filter'));
+        $filter = 'recent';
+        return view('community', compact('posts', 'filter'));
     }
 
-    public function show($id)
+    // Carga una publicación específica junto con sus comentarios y respuestas.
+    public function mostrarPublicacionDetallada($id)
     {
         $post = CommunityPost::with(['user', 'comments' => function($query) {
             $query->whereNull('parent_id')->with(['user', 'replies']);
@@ -28,7 +29,8 @@ class CommunityController extends Controller
         return view('community.show', compact('post'));
     }
 
-    public function store(Request $request)
+    // Valida y guarda una nueva publicación en la base de datos, procesando imágenes si existen.
+    public function guardarNuevaPublicacion(Request $request)
     {
         $request->validate([
             'title' => 'required|string|max:255',
@@ -43,7 +45,7 @@ class CommunityController extends Controller
         }
 
         CommunityPost::create([
-            'user_id' => Auth::id(),
+            'user_id' => auth()->id(),
             'title' => $request->title,
             'content' => $request->content,
             'category' => $request->category,
@@ -53,7 +55,8 @@ class CommunityController extends Controller
         return redirect()->route('comunity.index')->with('success', 'Publicación creada exitosamente.');
     }
 
-    public function like($id, Request $request)
+    // Añade o quita el 'me gusta' de un usuario en una publicación específica.
+    public function alternarMeGusta($id, Request $request)
     {
         $post = CommunityPost::findOrFail($id);
         $user = Auth::user();
@@ -79,7 +82,8 @@ class CommunityController extends Controller
         return redirect()->back();
     }
 
-    public function comment(Request $request, $id)
+    // Guarda un nuevo comentario o respuesta asociado a una publicación.
+    public function guardarNuevoComentario(Request $request, $id)
     {
         $request->validate([
             'content' => 'required|string|max:1000',
@@ -115,12 +119,14 @@ class CommunityController extends Controller
         return redirect()->route('comunity.show', $post->id)->with('success', 'Comentario añadido.');
     }
 
-    public function suggestions()
+    // Muestra la vista para enviar nuevas sugerencias de la comunidad.
+    public function mostrarFormularioSugerencias()
     {
         return view('sugerencias');
     }
 
-    public function storeSuggestion(Request $request)
+    // Valida y guarda una sugerencia enviada por un usuario.
+    public function guardarNuevaSugerencia(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
