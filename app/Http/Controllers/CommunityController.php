@@ -12,22 +12,10 @@ class CommunityController extends Controller
 {
     public function index(Request $request)
     {
-        $query = CommunityPost::with('user')->withCount('comments');
+        // Consulta simplificada para depurar
+        $posts = CommunityPost::with('user')->latest()->paginate(10);
         
-        $filter = $request->get('filter', 'recent');
-        
-        if ($filter == 'popular') {
-            $query->orderBy('likes_count', 'desc');
-        } elseif ($filter == 'oldest') {
-            $query->orderBy('created_at', 'asc');
-        } elseif (in_array($filter, ['build', 'meta', 'question', 'meme'])) {
-            $query->where('category', $filter)->orderBy('created_at', 'desc');
-        } else {
-            $query->orderBy('created_at', 'desc');
-        }
-
-        $posts = $query->paginate(15);
-        
+        $filter = 'recent'; // Añadido para que no falle la vista al quitar el dd()
         return view('comunity', compact('posts', 'filter'));
     }
 

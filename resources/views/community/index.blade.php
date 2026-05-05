@@ -2,36 +2,24 @@
 <html lang="es">
 
 <head>
+    <!-- Metadatos y Título del Foro -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Comunidad | MEGABONK GUIDE</title>
+    
+    <!-- Estilos Globales y Específicos -->
     <link rel="stylesheet" href="{{ asset('css/estilos.css') }}?v={{ time() }}">
-    <link rel="stylesheet" href="{{ asset('css/comunity.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/community.css') }}">
     <link rel="icon" href="{{ asset('images/iconotlabaho.webp') }}?v=1" type="image/webp">
     <link rel="shortcut icon" href="{{ asset('images/iconotlabaho.webp') }}">
 </head>
 
 <body>
 
+    <!-- Header Principal -->
     @include('partials.header')
 
     <main class="main-content-community">
-
-        @if ($errors->any())
-            <div class="alert alert-danger" style="background: #ff4c4c; color: white; padding: 10px; margin-bottom: 20px; border-radius: 5px;">
-                <ul style="margin: 0; padding-left: 20px;">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-        @if (session('success'))
-            <div class="alert alert-success" style="background: #2e7d32; color: white; padding: 10px; margin-bottom: 20px; border-radius: 5px; text-align: center; font-weight: bold;">
-                {{ session('success') }}
-            </div>
-        @endif
 
         <h1 class="page-title">🗣️ Portal de la Comunidad</h1>
 
@@ -40,6 +28,7 @@
             contribuye a la guía!
         </p>
 
+        <!-- Bloque de Acciones: Publicar y Filtros -->
         <section class="community-actions">
             <a href="#" class="btn-create-post" onclick="document.getElementById('createPostModal').style.display='block'; return false;">✍️ Publicar Nuevo Contenido</a>
 
@@ -57,21 +46,24 @@
             </div>
         </section>
 
+        <!-- Listado de Publicaciones (Grid de Tarjetas) -->
         <section class="posts-list">
 
             @forelse($posts as $post)
             <div class="post-card glow-{{ strtolower($post->category) }}">
                 <div class="post-header">
                     <span class="post-category tag-{{ strtolower($post->category) }}">{{ strtoupper($post->category) }}</span>
-                    <h3><a href="{{ route('comunity.show', $post->id) }}" class="post-title-link">{{ $post->title }}</a></h3>
+                    <h3><a href="{{ route('community.show', $post->id) }}" class="post-title-link">{{ $post->title }}</a></h3>
+                    
+                    <!-- Meta información del autor -->
                     <div class="post-meta" style="display: flex; align-items: center; gap: 10px; margin-top: 10px; color: #aaa; font-size: 0.9em;">
-                        <x-user-avatar :user="$post->user" size="40" class="post-author-avatar" style="border: 2px solid #ffcf00;" />
+                        <x-user-avatar :user="$post->autorDelPost" size="40" class="post-author-avatar" style="border: 2px solid #ffcf00;" />
                         <span style="display: flex; align-items: center; gap: 4px;">
                             Publicado por 
-                            <a href="{{ $post->user ? url('/perfil/' . $post->user->id) : '#' }}" style="color: #ffcf00; font-weight: bold; text-decoration: none;">
-                                {{ $post->user->username ?? 'Desconocido' }}
+                            <a href="{{ $post->autorDelPost ? url('/perfil/' . $post->autorDelPost->id) : '#' }}" style="color: #ffcf00; font-weight: bold; text-decoration: none;">
+                                {{ $post->autorDelPost->username ?? 'Desconocido' }}
                             </a>
-                            @if($post->user && $post->user->is_admin)
+                            @if($post->autorDelPost && $post->autorDelPost->is_admin)
                                 <span style="color: #1da1f2;" title="Verificado">☑️</span>
                             @endif
                             hace {{ $post->created_at->diffForHumans() }}
@@ -79,25 +71,29 @@
                     </div>
                 </div>
                 
+                <!-- Imagen adjunta (si existe) -->
                 @if($post->image_path)
                     <div style="margin-top: 10px; margin-bottom: 10px; height: 150px; overflow: hidden; border-radius: 6px;">
-                        <img src="{{ asset('storage/' . $post->image_path) }}" alt="Imagen" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8;">
+                        <img src="{{ asset('storage/' . $post->image_path) }}" alt="Imagen de la publicación" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8;">
                     </div>
                 @endif
 
                 <p class="post-summary">
                     {{ Str::limit($post->content, 150) }}
                 </p>
+
+                <!-- Footer de la Tarjeta (Estadísticas) -->
                 <div class="post-footer">
-                    <span class="stats likes">❤️ {{ $post->likes_count }}</span>
-                    <span class="stats comments">💬 {{ $post->comments_count }} Comentarios</span>
-                    <a href="{{ route('comunity.show', $post->id) }}" class="view-post-link">Ver Discusión →</a>
+                    <span class="stats likes">❤️ {{ $post->usuarios_que_le_dan_like_count }}</span>
+                    <span class="stats comments">💬 {{ $post->comentarios_del_post_count }} Comentarios</span>
+                    <a href="{{ route('community.show', $post->id) }}" class="view-post-link">Ver Discusión →</a>
                 </div>
             </div>
             @empty
-            <p class="empty-state">No hay publicaciones disponibles.</p>
+            <p class="empty-state">No hay publicaciones disponibles en esta categoría.</p>
             @endforelse
 
+            <!-- Paginación con parámetros de filtro preservados -->
             <div class="pagination-wrapper" style="margin-top: 20px;">
                 {{ $posts->appends(['filter' => request('filter')])->links() }}
             </div>
@@ -106,12 +102,13 @@
 
     </main>
 
+    <!-- Modal para Crear Publicación -->
     @auth
     <div id="createPostModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="document.getElementById('createPostModal').style.display='none'">&times;</span>
             <h2>Crear Nueva Publicación</h2>
-            <form action="{{ route('comunity.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('community.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group">
                     <label for="title">Título</label>
@@ -139,6 +136,7 @@
         </div>
     </div>
     @else
+    <!-- Modal Informativo para Usuarios No Autenticados -->
     <div id="createPostModal" class="modal">
         <div class="modal-content text-center">
             <span class="close" onclick="document.getElementById('createPostModal').style.display='none'">&times;</span>
@@ -151,6 +149,7 @@
     @endauth
 
     <style>
+    /* Estilos del Modal y Tarjetas */
     .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); }
     .modal-content { background-color: #1e1e2e; margin: 10% auto; padding: 20px; border: 1px solid #333; width: 80%; max-width: 500px; border-radius: 8px; color: #fff; }
     .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
@@ -180,12 +179,13 @@
     .glow-meme:hover { border-color: #6a1b9a; box-shadow: 0 0 15px rgba(106, 27, 154, 0.4); }
     </style>
 
+    <!-- Footer -->
     <footer class="main-footer">
         <div class="footer-sections">
             <div>
                 <h3>Enlaces Rápidos</h3>
                 <ul>
-                    <li><a href="{{ route('tierlist') }}">TIERLIST</a></li>
+                    <li><a href="{{ route('tierlist.index') }}">TIERLIST</a></li>
                     <li><a href="{{ route('meta') }}">META</a></li>
                     <li><a href="{{ route('info.news') }}">NOVEDADES</a></li>
                 </ul>
@@ -194,7 +194,7 @@
                 <h3>Soporte</h3>
                 <ul>
                     <li><a href="#">Contáctanos</a></li>
-                    <li><a href="{{ route('comunity.suggestions') }}">Sugerencias</a></li>
+                    <li><a href="{{ route('community.suggestions') }}">Sugerencias</a></li>
                     <li><a href="#">Preguntas Frecuentes</a></li>
                 </ul>
             </div>

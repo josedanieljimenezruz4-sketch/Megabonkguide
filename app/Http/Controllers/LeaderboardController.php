@@ -42,32 +42,25 @@ class LeaderboardController extends Controller
         $difficulty = $request->difficulty;
         $newPoints = $request->points;
 
-        // Comprobar si hay un score antiguo o pendiente mejor
-        $existingBest = Score::where('user_id', $userId)
+        $existingScore = Score::where('user_id', $userId)
             ->where('character_id', $characterId)
             ->where('difficulty', $difficulty)
-            ->whereIn('status', ['approved', 'pending'])
-            ->orderBy('points', 'desc')
             ->first();
 
-        if ($existingBest && $existingBest->points >= $newPoints) {
-            return back()->with('error', 'Ya tienes un récord (aprobado o pendiente) con igual o mayor puntuación (' . $existingBest->points . ') en esta categoría.');
+        if ($existingScore) {
+            if ($newPoints > $existingScore->points) {
+                $existingScore->update([
+                    'points' => $newPoints,
+                    'time' => $request->time,
+                    'build_id' => $request->build_id,
+                    'status' => 'approved'
+                ]);
+                return back()->with('success', '¡Nuevo récord personal establecido!');
+            } else {
+                return back()->with('error', '¡Buen intento! Pero tu récord actual sigue siendo el mejor');
+            }
         }
 
-        if ($existingBest && !$request->has('confirm_override')) {
-            return back()->withInput()->with('requires_confirmation', true)
-                         ->with('confirmation_msg', "Tienes un récord previo de {$existingBest->points}. ¿Deseas enviar este nuevo de {$newPoints} para que sustituya al anterior?");
-        }
-
-        // Si llegó hasta aquí, borramos el viejo récord si existía (ya que vamos a crear uno mejor)
-        if ($existingBest) {
-            Score::where('user_id', $userId)
-                ->where('character_id', $characterId)
-                ->where('difficulty', $difficulty)
-                ->delete();
-        }
-
-        // Crear el nuevo score directamente como approved
         Score::create([
             'user_id' => $userId,
             'character_id' => $characterId,
@@ -78,6 +71,6 @@ class LeaderboardController extends Controller
             'status' => 'approved'
         ]);
 
-        return back()->with('success', '¡Puntuación enviada y publicada con éxito en el Leaderboard!');
+        return back()->with('success', '¡Nuevo récord personal establecido!');
     }
 }
