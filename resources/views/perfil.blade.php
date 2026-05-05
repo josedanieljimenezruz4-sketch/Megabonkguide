@@ -7,7 +7,8 @@
     <title>Perfil de Usuario | MEGABONK GUIDE</title>
     <link rel="stylesheet" href="{{ asset('css/estilos.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('css/perfil.css') }}">
-    <link rel="icon" href="iconotlabaho.webp" type="image/x-icon">
+    <link rel="icon" href="{{ asset('images/iconotlabaho.webp') }}?v=1" type="image/webp">
+    <link rel="shortcut icon" href="{{ asset('images/iconotlabaho.webp') }}">
     <style>
         .progress-bar-container {
             width: 100%;

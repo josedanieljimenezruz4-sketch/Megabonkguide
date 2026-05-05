@@ -1,17 +1,11 @@
-/* Paleta de colores (copiada para referencia local) */
+/* Paleta de colores */
 :root {
     --color-primary-accent: #41E8EF;
-    /* Azul/Cian */
     --color-secondary-accent: #B965F0;
-    /* Púrpura */
     --color-text-secondary: #6D6D6D;
-    /* Gris Oscuro */
     --color-background-dark: #000000;
-    /* Negro */
     --color-text-light: #EAEAEA;
-    /* Blanco roto */
     --color-background-body: #121212;
-    /* Gris muy oscuro suave */
 }
 
 /* --- Estilos Generales de Contenido --- */
@@ -39,173 +33,208 @@
     border-bottom: 1px dashed var(--color-secondary-accent);
 }
 
-/* --- Rejilla y Tarjetas --- */
+/* --- Rejilla y Tarjetas Pro Glassmorphism --- */
 .catalogo-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    /* 3 o 4 columnas en desktop */
-    gap: 30px;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
     margin-bottom: 60px;
 }
 
-.item-card {
-    display: block;
+.item-card, .glass-card {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding: 20px;
+    border-radius: 16px;
+    background: rgba(15, 15, 15, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s ease;
     text-decoration: none;
-    padding: 30px;
-    border-radius: 12px;
-    background-color: #1a1a1a;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
-    text-align: center;
-    border: 2px solid transparent;
+    text-align: left;
+    overflow: hidden !important;
 }
 
 .item-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
 }
 
-.item-card h2 {
-    color: var(--color-text-light);
-    font-size: 1.6em;
-    margin-top: 10px;
-    margin-bottom: 10px;
+/* Colores Dinámicos de Borde al Hover */
+.item-card.card-arma:hover { border-color: rgba(65, 232, 239, 0.5); box-shadow: 0 10px 30px rgba(65, 232, 239, 0.15); }
+.item-card.card-personaje:hover { border-color: rgba(185, 101, 240, 0.5); box-shadow: 0 10px 30px rgba(185, 101, 240, 0.15); }
+.item-card.card-tomo:hover { border-color: rgba(255, 195, 0, 0.5); box-shadow: 0 10px 30px rgba(255, 195, 0, 0.15); }
+.item-card.card-item:hover { border-color: rgba(218, 112, 214, 0.5); box-shadow: 0 10px 30px rgba(218, 112, 214, 0.15); }
+
+/* --- Estados Lock/Unlock --- */
+.item-card.locked {
+    filter: grayscale(80%);
+    opacity: 0.55;
+}
+.item-card.locked:hover {
+    opacity: 0.8;
+}
+.item-card.unlocked {
+    opacity: 1;
+    filter: none;
 }
 
-.item-card p {
-    color: var(--color-text-secondary);
-    font-size: 0.95em;
+/* Icono de Candado */
+.locked-padlock {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    color: rgba(255, 255, 255, 0.3);
+    pointer-events: none;
+    z-index: 10;
+    display: none;
+}
+.item-card.locked .locked-padlock {
+    display: block;
+}
+
+/* --- Estructura Interna --- */
+.item-header {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    text-align: center;
     margin-bottom: 5px;
 }
 
-.item-card .unlock-req {
-    color: var(--color-primary-accent);
-    font-weight: bold;
-    font-size: 0.9em;
-    margin-top: 15px;
+.item-image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 192px; /* h-48 equivalent */
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden !important;
+    margin-bottom: 15px;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
+}
+
+.item-image-wrapper img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.8));
 }
 
 .card-icon {
-    font-size: 3em;
-    display: block;
-    margin-bottom: 10px;
-    transition: color 0.3s;
-}
-
-/* Colores Específicos de Borde al Hacer Hover */
-
-.card-personaje:hover {
-    border-color: var(--color-secondary-accent);
-    /* Púrpura */
-}
-
-.card-arma:hover {
-    border-color: var(--color-primary-accent);
-    /* Cian */
-}
-
-.card-tomo:hover {
-    border-color: #FFC300;
-    /* Dorado */
-}
-
-.card-item:hover {
-    border-color: #DA70D6;
-    /* Magenta */
-}
-
-/* Colores de Texto y Icono por defecto (se usan en el HTML con iconos emoji) */
-.card-personaje .card-icon {
-    color: var(--color-secondary-accent);
-}
-
-.card-arma .card-icon {
-    color: var(--color-primary-accent);
-}
-
-.card-tomo .card-icon {
-    color: #FFC300;
-}
-
-.card-item .card-icon {
-    color: #DA70D6;
-}
-
-/* --- CAMBIOS PARA EL CHECKBOX DE UNLOCKS --- */
-
-.item-card {
-    position: relative;
-    /* Necesario para posicionar el checkbox de forma absoluta */
-    text-align: left;
-    /* Alineamos todo el texto a la izquierda */
-    padding-top: 50px;
-    /* Añadimos espacio arriba para el checkbox */
-}
-
-.item-card .card-icon {
-    position: absolute;
-    /* Hacemos que el icono flote */
-    top: 15px;
-    left: 20px;
     font-size: 2.5em;
 }
 
-.item-card h2 {
-    margin-top: 0;
-    margin-left: 70px;
-    /* Desplaza el título a la derecha del icono */
-    font-size: 1.4em;
+/* --- Información --- */
+.item-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.item-card p {
-    margin-left: 70px;
-    /* Desplaza el texto a la derecha del icono */
+.item-name {
+    font-size: 1.3em;
+    font-weight: 800;
+    margin: 0 0 5px 0;
+    line-height: 1.2;
+}
+.card-arma .item-name { color: var(--color-primary-accent); }
+.card-personaje .item-name { color: var(--color-secondary-accent); }
+.card-tomo .item-name { color: #FFC300; }
+.card-item .item-name { color: #DA70D6; }
+
+.item-stats {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    font-size: 0.85em;
+    color: #aaa;
+    margin-bottom: 0;
+}
+.item-stats span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
-.item-card .unlock-req {
-    margin-left: 70px;
-    font-size: 0.8em;
+.item-desc {
+    font-size: 0.9em;
+    color: #cfcfcf;
+    margin-top: 12px;
+    line-height: 1.5;
+    text-align: center;
 }
 
+/* Badge de Requisito */
+.item-req-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 15px;
+    background: rgba(255, 165, 0, 0.1);
+    border: 1px solid rgba(255, 165, 0, 0.3);
+    color: #FFC300;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 600;
+    align-self: center;
+    text-shadow: 0 0 5px rgba(255, 165, 0, 0.3);
+}
+
+/* --- Checkbox Absoluto --- */
 .unlock-checkbox {
     position: absolute;
     top: 15px;
     right: 15px;
+    z-index: 20;
 }
 
 .unlock-checkbox input[type="checkbox"] {
-    /* Ocultar el checkbox nativo */
     display: none;
 }
 
 .checkbox-label {
     display: block;
-    width: 25px;
-    height: 25px;
-    border: 3px solid var(--color-secondary-accent);
-    /* Borde Púrpura */
-    border-radius: 4px;
+    width: 28px;
+    height: 28px;
+    border: 2px solid rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.5);
+    border-radius: 6px;
     cursor: pointer;
-    transition: border-color 0.3s, background-color 0.3s;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(4px);
 }
 
-.unlock-checkbox input[type="checkbox"]:checked+.checkbox-label {
+.unlock-checkbox input[type="checkbox"]:checked + .checkbox-label {
     background-color: var(--color-primary-accent);
-    /* Fondo Cian si está marcado */
     border-color: var(--color-primary-accent);
-    /* Añadir un checkmark (símbolo de verificación) con CSS */
-    content: '✓';
-    color: var(--color-background-dark);
-    font-size: 20px;
-    line-height: 25px;
-    text-align: center;
+    box-shadow: 0 0 10px rgba(65, 232, 239, 0.6);
 }
 
-.unlock-checkbox input[type="checkbox"]:checked+.checkbox-label::before {
+.unlock-checkbox input[type="checkbox"]:checked + .checkbox-label::after {
     content: '✓';
-    color: var(--color-background-dark);
+    color: #000;
     font-size: 20px;
-    line-height: 23px;
-    text-align: center;
-    display: block;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
 }

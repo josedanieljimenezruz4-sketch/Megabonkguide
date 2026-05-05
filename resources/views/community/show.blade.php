@@ -7,7 +7,8 @@
     <title>{{ $post->title }} | Comunidad</title>
     <link rel="stylesheet" href="{{ asset('css/estilos.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('css/comunity.css') }}">
-    <link rel="icon" href="/iconotlabaho.webp" type="image/x-icon">
+    <link rel="icon" href="{{ asset('images/iconotlabaho.webp') }}?v=1" type="image/webp">
+    <link rel="shortcut icon" href="{{ asset('images/iconotlabaho.webp') }}">
     <style>
         .post-detail { max-width: 800px; margin: 40px auto; background: #1e1e2e; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
         .post-detail-header { border-bottom: 1px solid #333; padding-bottom: 20px; margin-bottom: 20px; }
@@ -275,3 +276,4 @@
     </script>
 </body>
 </html>
+

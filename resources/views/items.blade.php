@@ -6,8 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Items | UNLOCKS | MEGABONK GUIDE</title>
     <link rel="stylesheet" href="{{ asset('css/estilos.css') }}?v={{ time() }}">
-    <link rel="stylesheet" href="{{ asset('css/unlocks_catalogo.css') }}">
-    <link rel="icon" href="iconotlabaho.webp" type="image/x-icon">
+    <link rel="stylesheet" href="{{ asset('css/unlocks_catalogo.css') }}?v={{ time() }}">
+    <link rel="icon" href="{{ asset('images/iconotlabaho.webp') }}?v=1" type="image/webp">
+    <link rel="shortcut icon" href="{{ asset('images/iconotlabaho.webp') }}">
 </head>
 
 <body>
@@ -15,10 +16,10 @@
 
     <main class="main-content-catalogo">
 
-        <h1 class="page-title">💎 Colección de Ítems</h1>
+        <h1 class="page-title">💎 Inventario de Items</h1>
 
         <p class="catalogo-intro">
-            Los Ítems ofrecen poderosos efectos pasivos. Aquí están las guías para obtener cada uno.
+            Guías sobre los items legendarios, raros y de uso único. ¡No te pierdas ninguno!
         </p>
 
         <div class="filters-panel" style="background:#1e1e24; padding:15px; border-radius:8px; display:flex; gap:15px; margin-bottom:20px; align-items:center; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
@@ -61,8 +62,8 @@
                     });
                     
                     cards.sort((a, b) => {
-                        const nameA = a.querySelector('h2').innerText.trim().toLowerCase();
-                        const nameB = b.querySelector('h2').innerText.trim().toLowerCase();
+                        const nameA = a.querySelector('.item-name').innerText.trim().toLowerCase();
+                        const nameB = b.querySelector('.item-name').innerText.trim().toLowerCase();
                         return order === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
                     });
                     
@@ -72,7 +73,6 @@
                 filterStatus.addEventListener('change', applyFilters);
                 filterOrder.addEventListener('change', applyFilters);
 
-                // Auto-refresh when completing/uncompleting an item
                 grid.addEventListener('change', (e) => {
                     if(e.target.matches('input[type="checkbox"]')) {
                         setTimeout(applyFilters, 50);
@@ -83,25 +83,41 @@
 
         <section class="catalogo-grid">
 
-            <!-- Ítems cargados desde la Base de Datos -->
-
             @foreach($items as $item)
-            <a href="#" class="item-card">
+            @php $isUnlocked = in_array($item->id, $unlockedItems ?? []); @endphp
+            <div class="item-card glass-card card-item {{ $isUnlocked ? 'unlocked' : 'locked' }}">
                 <div class="unlock-checkbox">
-                    <input type="checkbox" id="unl-{{ $item->id }}" name="unl-{{ $item->id }}" data-item-id="{{ $item->id }}" {{ in_array($item->id, $unlockedItems ?? []) ? 'checked' : '' }}>
-                    <label for="unl-{{ $item->id }}" class="checkbox-label"></label>
+                    <input type="checkbox" id="unl-{{ $item->id }}" name="unl-{{ $item->id }}" data-item-id="{{ $item->id }}" {{ $isUnlocked ? 'checked' : '' }}>
+                    <label for="unl-{{ $item->id }}" class="checkbox-label" title="Marcar como desbloqueado"></label>
                 </div>
-                @if($item->image_path)
-                    <img src="{{ asset('storage/' . $item->image_path) }}" alt="{{ $item->name }}" style="width: 60px; height: 60px; object-fit: contain; margin-bottom: 15px; border-radius: 6px; background-color: #1a1a20; padding: 4px; box-shadow: inset 0 0 5px rgba(0,0,0,0.5);">
-                @else
-                    <span class="card-icon">💎</span>
-                @endif
-                <h2>{{ $item->name }}</h2>
-                <p>{!! nl2br(e($item->description)) !!}</p>
+                
+                <div class="locked-padlock">🔒</div>
+
+                <div class="item-image-wrapper">
+                    @if($item->image_path)
+                        <img src="{{ asset('storage/' . $item->image_path) }}" alt="{{ $item->name }}">
+                    @else
+                        <span class="card-icon">💎</span>
+                    @endif
+                </div>
+                
+                <div class="item-header">
+                    <div class="item-info">
+                        <h2 class="item-name">{{ $item->name }}</h2>
+                        <div class="item-stats">
+                            <span>💎 Utilidad</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="item-desc">{!! nl2br(e($item->description)) !!}</p>
+                
                 @if($item->requirement)
-                <p class="unlock-req">{{ $item->requirement }}</p>
+                <div class="item-req-badge">
+                    <span>🏆</span> {{ $item->requirement }}
+                </div>
                 @endif
-            </a>
+            </div>
             @endforeach
 
         </section>
@@ -142,39 +158,72 @@
             
             checkboxes.forEach(chk => {
                 chk.addEventListener('change', async function(e) {
-                    e.stopImmediatePropagation();
-                    
                     const checkbox = this;
                     const isChecked = checkbox.checked;
+                    const card = checkbox.closest('.item-card');
                     
-                    let itemId = checkbox.dataset.itemId || checkbox.value;
-                    if (!itemId || itemId === 'on') {
-                        itemId = checkbox.id.replace('unl-', '');
-                    }
+                    // Deshabilitar temporalmente para evitar peticiones múltiples
+                    checkbox.disabled = true;
+                    
+                    let itemId = checkbox.dataset.itemId || checkbox.id.replace('unl-', '');
                     
                     try {
                         const response = await fetch('{{ route('unlocks.toggle') }}', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
+                                'Accept': 'application/json',
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
                             },
                             body: JSON.stringify({ item_id: itemId, is_checked: isChecked })
                         });
                         
+                        // Verificar si la respuesta es JSON (si es redirección a login, no lo será)
+                        const contentType = response.headers.get("content-type");
+                        if (!contentType || !contentType.includes("application/json")) {
+                            throw new Error('Sesión expirada o error de servidor. Por favor, recarga la página.');
+                        }
+
                         const data = await response.json();
                         
                         if (!response.ok || data.status !== 'success') {
-                            throw new Error('Respuesta fallida del servidor');
+                            throw new Error(data.message || 'Error al sincronizar con el servidor');
                         }
                         
                         console.log('Unlock sincronizado:', data);
-                        if (typeof window.showToast === 'function') {
-                            window.showToast(isChecked ? '✨ Ítem desbloqueado' : '❌ Ítem bloqueado');
+                        
+                        // Actualizar UI visualmente
+                        if (card) {
+                            if (isChecked) {
+                                card.classList.remove('locked');
+                                card.classList.add('unlocked');
+                            } else {
+                                card.classList.remove('unlocked');
+                                card.classList.add('locked');
+                            }
                         }
+                        
+                        if (typeof window.showToast === 'function') {
+                            window.showToast(data.message);
+                        }
+
                     } catch (err) {
                         console.error('Error sincronizando unlock:', err);
-                        checkbox.checked = !isChecked; // Revertir en caso de error
+                        alert(err.message); // Alerta al usuario del error real
+                        checkbox.checked = !isChecked; // Revertir estado visual
+                        
+                        // Re-sincronizar clases si falló
+                        if (card) {
+                            if (checkbox.checked) {
+                                card.classList.remove('locked');
+                                card.classList.add('unlocked');
+                            } else {
+                                card.classList.remove('unlocked');
+                                card.classList.add('locked');
+                            }
+                        }
+                    } finally {
+                        checkbox.disabled = false;
                     }
                 });
             });

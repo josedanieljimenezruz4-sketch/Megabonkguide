@@ -7,7 +7,8 @@
     <!-- Tailwind CSS (CDN o local según tu setup, si no funciona añade CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ asset('css/estilos.css') }}?v={{ time() }}">
-    <link rel="icon" href="iconotlabaho.webp" type="image/x-icon">
+    <link rel="icon" href="{{ asset('images/iconotlabaho.webp') }}?v=1" type="image/webp">
+    <link rel="shortcut icon" href="{{ asset('images/iconotlabaho.webp') }}">
 </head>
 <body class="text-white flex flex-col min-h-screen">
     
@@ -216,3 +217,4 @@
 
 </body>
 </html>
+

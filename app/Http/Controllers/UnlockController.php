@@ -10,24 +10,41 @@ class UnlockController extends Controller
 {
     public function toggleUnlock(Request $request)
     {
-        $request->validate([
-            'item_id' => 'required',
-            'is_checked' => 'required|boolean',
-        ]);
+        try {
+            $request->validate([
+                'item_id' => 'required|string',
+                'is_checked' => 'required|boolean',
+            ]);
 
-        $user = $request->user();
-        
-        if ($request->is_checked) {
-            $user->unlocks()->syncWithoutDetaching([$request->item_id]);
-        } else {
-            $user->unlocks()->detach($request->item_id);
+            $user = $request->user();
+            if (!$user) {
+                return response()->json(['status' => 'error', 'message' => 'Debes estar autenticado'], 401);
+            }
+
+            $itemId = $request->item_id;
+            
+            if ($request->is_checked) {
+                // syncWithoutDetaching evita duplicados y asegura que esté en la tabla
+                $user->unlocks()->syncWithoutDetaching([$itemId]);
+                $message = '✨ Desbloqueado correctamente';
+            } else {
+                $user->unlocks()->detach($itemId);
+                $message = '❌ Bloqueado correctamente';
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'message' => $message,
+                'is_checked' => $request->is_checked
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Error en toggleUnlock: ' . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Hubo un problema al actualizar el estado: ' . $e->getMessage()
+            ], 500);
         }
-
-        return response()->json([
-            'status' => 'success',
-            'attached' => $request->is_checked,
-            'detached' => !$request->is_checked
-        ]);
     }
 
     private function getUnlockedItems()
