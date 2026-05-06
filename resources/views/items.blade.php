@@ -213,7 +213,8 @@
                             throw new Error(data.message || 'Error al sincronizar con el servidor');
                         }
                         
-                        console.log('Unlock sincronizado:', data);
+                        // Descomentar para debug local si es necesario
+                        // console.log('Unlock sincronizado:', data);
                         
                         // Actualizar UI visualmente
                         if (card) {
@@ -231,7 +232,7 @@
                         }
 
                     } catch (err) {
-                        console.error('Error sincronizando unlock:', err);
+                        // console.error('Error sincronizando unlock:', err);
                         alert(err.message); // Alerta al usuario del error real
                         checkbox.checked = !isChecked; // Revertir estado visual
                         

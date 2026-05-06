@@ -18,7 +18,7 @@ class MetaStrategy extends Model
     {
         $totalVotes = $this->votes->count();
         if ($totalVotes === 0) {
-            return null; // indicates no votes yet
+            return null; // indica que aún no hay votos
         }
         $yesVotes = $this->votes->where('is_meta', true)->count();
         return round(($yesVotes / $totalVotes) * 100);

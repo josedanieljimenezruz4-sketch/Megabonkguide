@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Middleware;
 
@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class AdminMiddleware
 {
     /**
-     * Handle an incoming request.
+     * Manejar una solicitud entrante.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next

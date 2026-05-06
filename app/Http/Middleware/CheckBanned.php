@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Middleware;
 
@@ -10,7 +10,7 @@ use Carbon\Carbon;
 class CheckBanned
 {
     /**
-     * Handle an incoming request.
+     * Manejar una solicitud entrante.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
@@ -22,7 +22,7 @@ class CheckBanned
             $user = Auth::user();
             if ($user->banned_until && Carbon::parse($user->banned_until)->isFuture()) {
                 $bannedUntil = Carbon::parse($user->banned_until);
-                $message = 'Tu cuenta está suspendida hasta el ' . $bannedUntil->format('d/m/Y H:i') . '.';
+                $message = 'Tu cuenta estÃ¡ suspendida hasta el ' . $bannedUntil->format('d/m/Y H:i') . '.';
                 if ($bannedUntil->diffInYears(Carbon::now()) > 50) {
                     $message = 'Tu cuenta ha sido suspendida permanentemente.';
                 }

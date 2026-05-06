@@ -14,7 +14,7 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
+     * Los atributos que se pueden asignar de forma masiva.
      *
      * @var array<int, string>
      */
@@ -28,7 +28,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
+     * Los atributos que deben ocultarse para la serialización.
      *
      * @var array<int, string>
      */
@@ -38,7 +38,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be cast.
+     * Los atributos que deben ser casteados.
      *
      * @var array<string, string>
      */
@@ -64,7 +64,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the items that the user has unlocked.
+     * Obtener los ítems que el usuario ha desbloqueado.
      */
     public function unlocks()
     {

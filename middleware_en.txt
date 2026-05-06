@@ -1,0 +1,52 @@
+﻿AdminMiddleware.php: *
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
+     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
+Authenticate.php: *
+     * Get the path the user should be redirected to when they are not authenticated.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return string|null
+CheckBanned.php: *
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
+     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
+EncryptCookies.php: *
+     * The names of the cookies that should not be encrypted.
+     *
+     * @var array<int, string>
+PreventRequestsDuringMaintenance.php: *
+     * The URIs that should be reachable while maintenance mode is enabled.
+     *
+     * @var array<int, string>
+RedirectIfAuthenticated.php: *
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
+     * @param  string|null  ...$guards
+     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
+TrimStrings.php: *
+     * The names of the attributes that should not be trimmed.
+     *
+     * @var array<int, string>
+TrustHosts.php: *
+     * Get the host patterns that should be trusted.
+     *
+     * @return array<int, string|null>
+TrustProxies.php: *
+     * The trusted proxies for this application.
+     *
+     * @var array<int, string>|string|null
+TrustProxies.php: *
+     * The headers that should be used to detect proxies.
+     *
+     * @var int
+VerifyCsrfToken.php: *
+     * The URIs that should be excluded from CSRF verification.
+     *
+     * @var array<int, string>

@@ -40,21 +40,8 @@ class GameDataController extends Controller
         $elementosPorRango = $todosLosElementos->whereNotNull('rank')->groupBy('rank');
         $elementosPendientes = $todosLosElementos->whereNull('rank');
 
-        // Obtener los votos de rango para los ítems pendientes
-        $idsPendientes = $elementosPendientes->pluck('id')->toArray();
-        $votosDeRango = DB::table('user_rank_votes')
-            ->select('item_id', 'suggested_rank', DB::raw('count(*) as total'))
-            ->whereIn('item_id', $idsPendientes)
-            ->groupBy('item_id', 'suggested_rank')
-            ->get();
-            
-        // Determinar el rango más votado para cada ítem pendiente
-        $rangosMasVotados = [];
-        $votosAgrupados = collect($votosDeRango)->groupBy('item_id');
-        foreach ($votosAgrupados as $itemId => $votos) {
-            $masVotado = $votos->sortByDesc('total')->first();
-            $rangosMasVotados[$itemId] = $masVotado->suggested_rank;
-        }
+        // Determinar el rango sugerido por la comunidad para cada ítem pendiente
+        $rangosMasVotados = $this->obtenerRangosMasVotados($elementosPendientes->pluck('id')->toArray());
 
         // Obtener las últimas Tier Lists de la comunidad para mostrar en el sidebar
         $tierListsRecientes = TierList::with(['user', 'rows.item'])->latest()->take(5)->get();
@@ -67,6 +54,31 @@ class GameDataController extends Controller
             'sort' => $ordenar,
             'recentCommunityTierLists' => $tierListsRecientes,
         ]);
+    }
+
+    /**
+     * Calcula y devuelve el rango más votado para un array de IDs de ítems.
+     */
+    private function obtenerRangosMasVotados(array $idsPendientes): array
+    {
+        if (empty($idsPendientes)) {
+            return [];
+        }
+
+        $votosDeRango = DB::table('user_rank_votes')
+            ->select('item_id', 'suggested_rank', DB::raw('count(*) as total'))
+            ->whereIn('item_id', $idsPendientes)
+            ->groupBy('item_id', 'suggested_rank')
+            ->get();
+            
+        $rangosMasVotados = [];
+        $votosAgrupados = collect($votosDeRango)->groupBy('item_id');
+        foreach ($votosAgrupados as $itemId => $votos) {
+            $masVotado = $votos->sortByDesc('total')->first();
+            $rangosMasVotados[$itemId] = $masVotado->suggested_rank;
+        }
+        
+        return $rangosMasVotados;
     }
 
     /**

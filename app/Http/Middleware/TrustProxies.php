@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Middleware;
 
@@ -8,14 +8,14 @@ use Illuminate\Http\Request;
 class TrustProxies extends Middleware
 {
     /**
-     * The trusted proxies for this application.
+     * Los proxies confiables para esta aplicación.
      *
      * @var array<int, string>|string|null
      */
     protected $proxies;
 
     /**
-     * The headers that should be used to detect proxies.
+     * Las cabeceras que se deben usar para detectar proxies.
      *
      * @var int
      */
