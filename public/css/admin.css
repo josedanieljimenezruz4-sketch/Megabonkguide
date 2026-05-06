@@ -1,72 +1,579 @@
+/* Estilos extraidos de admin.blade.php */
+.admin-dashboard {
+    max-width: 100% !important;
+    margin: 0;
+    padding: 20px;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    color: #fff;
+}
 
-/* Estilos extraídos de admin.blade.php */
-.admin-dashboard { max-width: 100% !important; margin: 0; padding: 20px; background-color: transparent !important; box-shadow: none !important; color: #fff; }
-.admin-title { color: #ff4b2b; margin-bottom: 30px; font-size: 2rem; text-transform: uppercase; }
-.admin-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px; }
-.admin-stat-card { background-color: rgba(44, 47, 51, 0.8); backdrop-filter: blur(5px); padding: 20px; border-radius: 8px; text-align: center; border-left: 4px solid #ff416c; border-top: 1px solid rgba(255,255,255,0.05); border-right: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-.admin-stat-card h3 { margin: 0; color: #aaa; font-size: 1rem; }
-.admin-stat-card .stat-value { font-size: 2.5rem; font-weight: bold; margin: 10px 0 0; color: #fff; }
-.admin-users-table { width: 100%; border-collapse: collapse; background-color: rgba(44, 47, 51, 0.8); border-radius: 8px; overflow: hidden; margin-top: 15px; backdrop-filter: blur(5px); }
-.admin-users-table th, .admin-users-table td { padding: 15px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
-.admin-users-table th { background-color: rgba(26, 26, 32, 0.9); color: #ff416c; text-transform: uppercase; font-size: 0.9rem; }
-.badge-admin { background: linear-gradient(90deg, #ff4b2b, #ff416c); padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; color: white; }
-.badge-user { background-color: #555; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; color: white; }
+.admin-title {
+    color: #ff4b2b;
+    margin-bottom: 30px;
+    font-size: 2rem;
+    text-transform: uppercase;
+}
 
-/* Estilos extraídos de admin/tierlist-manager.blade.php */
-.tierlist-manager-content { margin-top: 0; padding-top: 0; }
-.tierlist-manager-title { color: #ff4757; text-align: left; margin-top: 0; }
-.tierlist-manager-intro { margin-bottom: 20px; text-align: left; }
-.bulk-action-bar { position: sticky; top: 100px; z-index: 100; background: rgba(255, 71, 87, 0.95); backdrop-filter: blur(5px); border: 1px dashed #fff; padding: 15px; border-radius: 8px; margin-bottom: 25px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-.bulk-action-label { font-weight: bold; color: #fff; margin-right: 15px; text-transform: uppercase; }
-.bulk-rank-select { padding: 10px; border-radius: 6px; background: #222; color: white; border: 2px solid transparent; outline: none; cursor: pointer; font-weight: bold; }
-.btn-submit-bulk { padding: 10px 25px; font-size: 0.95em; margin-left: 10px; cursor: pointer; background-color: #ff4757; color: white; font-weight: bold; border: 2px solid #fff; border-radius: 6px; transition: 0.3s; }
-.btn-submit-bulk:hover { opacity: 0.9; }
-.select-all-container { text-align: right; margin-bottom: 20px; width: 100%; }
-.select-all-label { cursor: pointer; color: #ff4757; font-weight: bold; display: inline-flex; align-items: center; gap: 8px; background: rgba(255,71,87,0.1); padding: 8px 15px; border-radius: 6px; border: 1px solid #ff4757; }
-.select-all-checkbox { transform: scale(1.3); cursor: pointer; }
-.tierlist-table-container { background: rgba(0,0,0,0.3); border-radius: 12px; padding: 15px; }
-.tierlist-table { width: 100%; }
-.tier-items-list { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-.tier-item-admin { position: relative; display: flex; flex-direction: column; align-items: center; width: 70px; text-align: center; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 8px; transition: all 0.3s ease; box-shadow: 0 0 0 2px transparent; }
-.admin-item-checkbox-input { position: absolute; top: 4px; right: 4px; cursor: pointer; transform: scale(1.2); z-index: 10; }
-.tier-item-admin-img { width: 40px; height: 40px; object-fit: contain; border-radius: 5px; background: #222; margin-top: 5px; }
-.tier-item-admin-name { font-size: 0.65em; margin-top: 5px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
-.pending-section { margin-top: 30px; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 20px; }
-.pending-title { color: #ff4757; }
-.pending-items-list { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 20px; }
-.pending-item-admin { position: relative; display: flex; flex-direction: column; align-items: center; width: 100px; text-align: center; background: #2c2f33; padding: 10px; border-radius: 8px; transition: all 0.3s ease; box-shadow: 0 0 0 2px transparent; }
-.pending-item-checkbox { position: absolute; top: 8px; right: 8px; cursor: pointer; transform: scale(1.3); z-index: 10; }
-.pending-item-img { width: 50px; height: 50px; object-fit: contain; border-radius: 5px; background: #222; }
-.pending-item-name { font-size: 0.8em; margin: 8px 0; line-height: 1.1; }
-.empty-pending-msg { color: #aaa; width: 100%; text-align: center; }
+.admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
 
-/* Estilos extraídos de admin/wiki/index.blade.php */
-.admin-wiki-container { max-width: 1000px; margin: 40px auto; padding: 20px; background-color: #1e1e24; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.4); color: #fff; }
-.admin-wiki-title { text-align: center; color: #ff4b2b; margin-bottom: 30px; font-size: 2rem; text-transform: uppercase; }
-.admin-wiki-alert { background: rgba(0, 255, 128, 0.2); color: #0f8; padding: 10px; border-radius: 5px; margin-bottom: 20px; }
-.admin-wiki-grid { display: grid; grid-template-columns: 1fr; gap: 40px; }
-.admin-wiki-card-info { background: #111; padding: 20px; border-radius: 10px; border-left: 4px solid var(--neon-cyan, #41E8EF); }
-.admin-wiki-card-faq { background: #111; padding: 20px; border-radius: 10px; border-left: 4px solid var(--neon-purple, #B965F0); }
-.admin-wiki-form { margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px; background: #000; padding: 15px; border-radius: 8px; }
-.admin-wiki-input { padding: 10px; background: #222; border: 1px solid #444; color: white; }
-.admin-wiki-textarea { padding: 10px; background: #222; border: 1px solid #444; color: white; resize: vertical; }
-.admin-wiki-btn-info { align-self: flex-start; background: #41E8EF; color: black; border: none; padding: 10px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; }
-.admin-wiki-btn-faq { align-self: flex-start; background: #B965F0; color: white; border: none; padding: 10px 15px; border-radius: 5px; font-weight: bold; cursor: pointer; }
-.admin-wiki-table { width: 100%; border-collapse: collapse; text-align: left; }
-.admin-wiki-table thead tr { border-bottom: 2px solid #333; }
-.admin-wiki-table th { padding: 10px; }
-.admin-wiki-table tbody tr { border-bottom: 1px solid #222; }
-.admin-wiki-table td { padding: 10px; }
-.admin-wiki-actions { display: flex; gap: 5px; }
-.admin-wiki-btn-edit { background: #36d1dc; color: #000; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; font-weight: bold; }
-.admin-wiki-btn-delete { background: red; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; }
-.admin-wiki-modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center; }
-.admin-wiki-modal-info { background: #1e1e24; padding: 30px; border-radius: 12px; width: 90%; max-width: 600px; border: 1px solid #41E8EF; box-shadow: 0 0 20px rgba(65, 232, 239, 0.2); }
-.admin-wiki-modal-faq { background: #1e1e24; padding: 30px; border-radius: 12px; width: 90%; max-width: 600px; border: 1px solid #B965F0; box-shadow: 0 0 20px rgba(185, 101, 240, 0.2); }
-.admin-wiki-modal-title-info { color: #41E8EF; margin-top: 0; }
-.admin-wiki-modal-title-faq { color: #B965F0; margin-top: 0; }
-.admin-wiki-modal-form { display: flex; flex-direction: column; gap: 10px; }
-.admin-wiki-modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
-.admin-wiki-btn-cancel { padding: 10px; background: #555; color: white; border: none; border-radius: 5px; cursor: pointer; }
-.admin-wiki-btn-save-info { padding: 10px; background: #41E8EF; color: black; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; }
-.admin-wiki-btn-save-faq { padding: 10px; background: #B965F0; color: white; font-weight: bold; border: none; border-radius: 5px; cursor: pointer; }
+.admin-stat-card {
+    background-color: rgba(44, 47, 51, 0.8);
+    backdrop-filter: blur(5px);
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    border-left: 4px solid #ff416c;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.admin-stat-card h3 {
+    margin: 0;
+    color: #aaa;
+    font-size: 1rem;
+}
+
+.admin-stat-card .stat-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 10px 0 0;
+    color: #fff;
+}
+
+.admin-users-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: rgba(44, 47, 51, 0.8);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 15px;
+    backdrop-filter: blur(5px);
+}
+
+.admin-users-table th,
+.admin-users-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.admin-users-table th {
+    background-color: rgba(26, 26, 32, 0.9);
+    color: #ff416c;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+.badge-admin {
+    background: linear-gradient(90deg, #ff4b2b, #ff416c);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: white;
+}
+
+.badge-user {
+    background-color: #555;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    color: white;
+}
+
+/* Estilos extraidos de admin/tierlist-manager.blade.php */
+.tierlist-manager-content {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.tierlist-manager-title {
+    color: #ff4757;
+    text-align: left;
+    margin-top: 0;
+}
+
+.tierlist-manager-intro {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.bulk-action-bar {
+    position: sticky;
+    top: 100px;
+    z-index: 100;
+    background: rgba(255, 71, 87, 0.95);
+    backdrop-filter: blur(5px);
+    border: 1px dashed #fff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.bulk-action-label {
+    font-weight: bold;
+    color: #fff;
+    margin-right: 15px;
+    text-transform: uppercase;
+}
+
+.bulk-rank-select {
+    padding: 10px;
+    border-radius: 6px;
+    background: #222;
+    color: white;
+    border: 2px solid transparent;
+    outline: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-submit-bulk {
+    padding: 10px 25px;
+    font-size: 0.95em;
+    margin-left: 10px;
+    cursor: pointer;
+    background-color: #ff4757;
+    color: white;
+    font-weight: bold;
+    border: 2px solid #fff;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+.btn-submit-bulk:hover {
+    opacity: 0.9;
+}
+
+.select-all-container {
+    text-align: right;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.select-all-label {
+    cursor: pointer;
+    color: #ff4757;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 71, 87, 0.1);
+    padding: 8px 15px;
+    border-radius: 6px;
+    border: 1px solid #ff4757;
+}
+
+.select-all-checkbox {
+    transform: scale(1.3);
+    cursor: pointer;
+}
+
+.tierlist-table-container {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    padding: 15px;
+}
+
+.tierlist-table {
+    width: 100%;
+}
+
+.tier-items-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.tier-item-admin {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 70px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 5px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 0 2px transparent;
+}
+
+.admin-item-checkbox-input {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    cursor: pointer;
+    transform: scale(1.2);
+    z-index: 10;
+}
+
+.tier-item-admin-img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    border-radius: 5px;
+    background: #222;
+    margin-top: 5px;
+}
+
+.tier-item-admin-name {
+    font-size: 0.65em;
+    margin-top: 5px;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.pending-section {
+    margin-top: 30px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.pending-title {
+    color: #ff4757;
+}
+
+.pending-items-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.pending-item-admin {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100px;
+    text-align: center;
+    background: #2c2f33;
+    padding: 10px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 0 2px transparent;
+}
+
+.pending-item-checkbox {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    cursor: pointer;
+    transform: scale(1.3);
+    z-index: 10;
+}
+
+.pending-item-img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    border-radius: 5px;
+    background: #222;
+}
+
+.pending-item-name {
+    font-size: 0.8em;
+    margin: 8px 0;
+    line-height: 1.1;
+}
+
+.empty-pending-msg {
+    color: #aaa;
+    width: 100%;
+    text-align: center;
+}
+
+/* Estilos extraidos de admin/wiki/index.blade.php */
+.admin-wiki-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #1e1e24;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    color: #fff;
+}
+
+.admin-wiki-title {
+    text-align: center;
+    color: #ff4b2b;
+    margin-bottom: 30px;
+    font-size: 2rem;
+    text-transform: uppercase;
+}
+
+.admin-wiki-alert {
+    background: rgba(0, 255, 128, 0.2);
+    color: #0f8;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.admin-wiki-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+}
+
+.admin-wiki-card-info {
+    background: #111;
+    padding: 20px;
+    border-radius: 10px;
+    border-left: 4px solid var(--neon-cyan, #41E8EF);
+}
+
+.admin-wiki-card-faq {
+    background: #111;
+    padding: 20px;
+    border-radius: 10px;
+    border-left: 4px solid var(--neon-purple, #B965F0);
+}
+
+.admin-wiki-form {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #000;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.admin-wiki-input {
+    padding: 10px;
+    background: #222;
+    border: 1px solid #444;
+    color: white;
+}
+
+.admin-wiki-textarea {
+    padding: 10px;
+    background: #222;
+    border: 1px solid #444;
+    color: white;
+    resize: vertical;
+}
+
+.admin-wiki-btn-info {
+    align-self: flex-start;
+    background: #41E8EF;
+    color: black;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.admin-wiki-btn-faq {
+    align-self: flex-start;
+    background: #B965F0;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.admin-wiki-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.admin-wiki-table thead tr {
+    border-bottom: 2px solid #333;
+}
+
+.admin-wiki-table th {
+    padding: 10px;
+}
+
+.admin-wiki-table tbody tr {
+    border-bottom: 1px solid #222;
+}
+
+.admin-wiki-table td {
+    padding: 10px;
+}
+
+.admin-wiki-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.admin-wiki-btn-edit {
+    background: #36d1dc;
+    color: #000;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.admin-wiki-btn-delete {
+    background: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.admin-wiki-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-wiki-modal-info {
+    background: #1e1e24;
+    padding: 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    border: 1px solid #41E8EF;
+    box-shadow: 0 0 20px rgba(65, 232, 239, 0.2);
+}
+
+.admin-wiki-modal-faq {
+    background: #1e1e24;
+    padding: 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    border: 1px solid #B965F0;
+    box-shadow: 0 0 20px rgba(185, 101, 240, 0.2);
+}
+
+.admin-wiki-modal-title-info {
+    color: #41E8EF;
+    margin-top: 0;
+}
+
+.admin-wiki-modal-title-faq {
+    color: #B965F0;
+    margin-top: 0;
+}
+
+.admin-wiki-modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.admin-wiki-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.admin-wiki-btn-cancel {
+    padding: 10px;
+    background: #555;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.admin-wiki-btn-save-info {
+    padding: 10px;
+    background: #41E8EF;
+    color: black;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.admin-wiki-btn-save-faq {
+    padding: 10px;
+    background: #B965F0;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+/* Estilos extraidos de admin/users/index.blade.php */
+.admin-header { margin-bottom: 30px; }
+
+.admin-card {
+    background-color: rgba(44, 47, 51, 0.8);
+    backdrop-filter: blur(5px);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.admin-table { width: 100%; border-collapse: collapse; }
+.admin-table th, .admin-table td {
+    padding: 15px; text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.05); color: #eee;
+}
+.admin-table th { color: #ff416c; text-transform: uppercase; font-size: 0.9rem; background: rgba(0,0,0,0.3); }
+
+.admin-btn { padding: 8px 15px; border-radius: 6px; color: #fff; font-weight: bold; border: none; cursor: pointer; transition: all 0.3s; font-size: 0.85rem; }
+.btn-ban { background: linear-gradient(90deg, #f7b733, #fc4a1a); box-shadow: 0 4px 10px rgba(252, 74, 26, 0.4); }
+.btn-ban:hover { opacity: 0.9; }
+.btn-unban { background: linear-gradient(90deg, #a8ff78, #78ffd6); color: #000; box-shadow: 0 4px 10px rgba(168, 255, 120, 0.4); }
+.btn-unban:hover { opacity: 0.9; }
+.btn-delete { background: linear-gradient(90deg, #ff4b2b, #ff416c); box-shadow: 0 4px 10px rgba(255, 65, 108, 0.4); }
+.btn-delete:hover { opacity: 0.9; }
+
+.modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(5px);
+}
+.modal-content {
+    background: #1e1e24; border: 1px solid rgba(255, 65, 108, 0.3); box-shadow: 0 0 20px rgba(255, 65, 108, 0.2);
+    border-radius: 12px; width: 90%; max-width: 500px; padding: 30px; position: relative; color: white;
+}
+.modal-close { position: absolute; top: 15px; right: 15px; background: none; border: none; color: #ff4757; font-size: 1.5rem; cursor: pointer; }
+
+.banned-status { color: #f7b733; font-weight: bold; }
+.active-status { color: #a8ff78; }
+
+select.ban-select {
+    background: rgba(15, 15, 15, 0.8);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: white; padding: 8px; border-radius: 6px; outline: none; margin-bottom: 15px; width: 100%;
+}
+.ban-select option { background-color: #121212; color: #fff; }
+
+/* Estilos extraidos de admin/items/create.blade.php */
+.admin-form-card { max-width: 600px; margin: 40px auto; background: #1e1e24; padding: 30px; border-radius: 12px; color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+.admin-form-title { text-align: center; color: #ff4b2b; margin-bottom: 20px; }
+.form-group label { display: block; margin-bottom: 8px; color: #ff416c; font-weight: bold; }
+.form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #3f4247; background: #2c2f33; color: white; margin-bottom: 15px; }
+.btn-submit { background: linear-gradient(90deg, #ff4b2b, #ff416c); color: white; border: none; padding: 10px 20px; font-size: 1rem; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; }
+.alert-success { background-color: rgba(40, 167, 69, 0.2); color: #4eff7a; border: 1px solid #28a745; padding: 15px; border-radius: 6px; margin-bottom: 20px; text-align: center; font-weight:bold; }

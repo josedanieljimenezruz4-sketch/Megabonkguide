@@ -9,6 +9,10 @@ class Update extends Model
 {
     use HasFactory;
 
+    /**
+     * ASIGNACIÓN MASIVA:
+     * Estos campos reciben los datos de las novedades / noticias externas.
+     */
     protected $fillable = [
         'external_id',
         'title',
