@@ -1,0 +1,391 @@
+/* ====================================================
+   BUILDS — Estilos consolidados
+   Archivo: builds.css
+   Incluye estilos para: listado, detalle y creación
+   ==================================================== */
+
+/* --- Valoración de Estrellas (Listado) --- */
+.valoracion-estrellas {
+    display: inline-block;
+    font-size: 1.2rem;
+    position: relative;
+    color: #444; /* Estrellas vacías oscuras */
+    letter-spacing: 2px;
+}
+.valoracion-estrellas::before {
+    content: "★★★★★";
+}
+.valoracion-estrellas::after {
+    content: "★★★★★";
+    color: #FFD700; /* Oro vibrante */
+    position: absolute;
+    left: 0;
+    top: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    width: calc(var(--rating) * 20%);
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+}
+
+/* --- Detalle de Build --- */
+.contenedor-detalle-build {
+    max-width: 900px;
+    margin: 100px auto 50px;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.seccion-cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.titulo-build {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin: 0 0 10px 0;
+    background: linear-gradient(135deg, #fff, #B965F0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.meta-build {
+    font-size: 1rem;
+    color: #a0a0b0;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.insignia {
+    background: rgba(185, 101, 240, 0.2);
+    color: #d8b4fe;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: 1px solid rgba(185, 101, 240, 0.3);
+}
+
+/* Widget de votación interactiva */
+.widget-votacion {
+    text-align: right;
+    background: rgba(0,0,0,0.3);
+    padding: 15px 25px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.estrellas-interactivas {
+    font-size: 2rem;
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    color: #333;
+    letter-spacing: 2px;
+    user-select: none;
+}
+
+.estrellas-interactivas .relleno-estrellas {
+    position: absolute;
+    top: 0; left: 0;
+    color: #FFD700;
+    overflow: hidden;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: width 0.1s ease;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+}
+
+/* Secciones de grid (armas, tomos, items) */
+.seccion-grid {
+    margin-bottom: 40px;
+}
+
+.seccion-grid h3 {
+    font-size: 1.5rem;
+    border-left: 4px solid #ff416c;
+    padding-left: 10px;
+    margin-bottom: 20px;
+}
+
+.grid-elementos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.tarjeta-elemento {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.tarjeta-elemento:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(185, 101, 240, 0.2);
+    border-color: rgba(185, 101, 240, 0.4);
+}
+
+.tarjeta-elemento h4 {
+    margin: 0;
+    color: #fff;
+    font-size: 1.1rem;
+}
+
+.tarjeta-elemento .imagen-elemento {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    background: rgba(0,0,0,0.4);
+    padding: 5px;
+}
+
+.tarjeta-elemento .imagen-personaje {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    filter: drop-shadow(0 0 10px rgba(185,101,240,0.5));
+}
+
+.caja-descripcion {
+    background: rgba(255, 255, 255, 0.02);
+    padding: 20px;
+    border-radius: 12px;
+    color: #ddd;
+    line-height: 1.6;
+    margin-top: 10px;
+}
+
+/* --- Formulario de Creación de Build --- */
+.contenedor-premium {
+    max-width: 850px;
+    margin: 60px auto;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
+.titulo-pagina-build {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 40px;
+    background: linear-gradient(135deg, #B965F0, #ff416c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0px 4px 20px rgba(185, 101, 240, 0.3);
+}
+
+.seccion-formulario {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.seccion-formulario:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    border-color: rgba(185, 101, 240, 0.3);
+}
+
+.titulo-seccion {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #fff;
+    margin-top: 0;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.grupo-ranuras {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+/* Campos del formulario de creación */
+.contenedor-premium label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #a0a0b0;
+    margin-bottom: 8px;
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.contenedor-premium select,
+.contenedor-premium input[type="text"],
+.contenedor-premium input[type="number"],
+.contenedor-premium textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    font-size: 15px;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    transition: all 0.3s ease;
+}
+
+.contenedor-premium select option {
+    background-color: #1a1a2e;
+    color: #fff;
+}
+
+.contenedor-premium select:focus,
+.contenedor-premium input:focus {
+    outline: none;
+    border-color: #B965F0;
+    box-shadow: 0 0 15px rgba(185, 101, 240, 0.3);
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.contenedor-premium select option:disabled {
+    color: #555;
+    background-color: #111;
+}
+
+.cabecera-dinamica {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.cabecera-dinamica h3 {
+    margin: 0;
+}
+
+.cabecera-dinamica .selector-cantidad {
+    width: 160px;
+}
+
+.btn-enviar-build {
+    background: linear-gradient(135deg, #B965F0, #ff416c);
+    color: #fff;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 10px;
+}
+
+.btn-enviar-build:hover {
+    transform: translateY(-3px) scale(1.01);
+    box-shadow: 0 10px 25px rgba(255, 65, 108, 0.5);
+}
+
+.alerta-exito {
+    background: rgba(40, 167, 69, 0.1);
+    color: #4ade80;
+    padding: 18px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    border: 1px solid rgba(40, 167, 69, 0.2);
+    font-weight: 600;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.1);
+}
+
+/* Animación de aparición suave */
+.aparicion-suave { animation: aparicionSuave 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+@keyframes aparicionSuave {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Información del autor en tarjetas --- */
+.info-autor {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85em;
+    color: #aaa;
+}
+
+.info-autor .avatar-autor {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #ffcf00;
+}
+
+.info-autor .nombre-autor {
+    color: #ffcf00;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.icono-verificado {
+    color: #1da1f2;
+    margin-left: -2px;
+}
+
+/* Enlace de resultados */
+.cabecera-resultados {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.texto-vacio {
+    color: #777;
+}
+
+.info-votacion {
+    font-size: 0.85rem;
+    color: #aaa;
+    margin-bottom: 5px;
+}
+
+.puntuacion-global {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.puntuacion-global .separador {
+    font-size: 0.9rem;
+    color: #888;
+}
+
+.mensaje-voto {
+    color: #4ade80;
+    font-size: 0.8rem;
+    margin-top: 5px;
+}

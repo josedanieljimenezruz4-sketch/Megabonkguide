@@ -548,3 +548,117 @@ a {
     background-color: rgba(65, 232, 239, 0.2);
     margin: 5px 0;
 }
+
+/* --- Notificación Toast Global (extraído de header) --- */
+.notificacion-toast {
+    visibility: hidden;
+    min-width: 250px;
+    background: linear-gradient(90deg, #ff4b2b, #ff416c);
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 16px;
+    position: fixed;
+    z-index: 9999;
+    right: 30px;
+    bottom: 30px;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.notificacion-toast.show {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* --- Clases de utilidad para el header (extraídas de style="" inline) --- */
+.enlace-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.imagen-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.texto-logo {
+    font-size: 1.4rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.enlace-perfil-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.nombre-usuario-header {
+    color: #36d1dc;
+    font-weight: bold;
+    text-shadow: 0 0 8px rgba(54, 209, 220, 0.6);
+    font-size: 1rem;
+    text-transform: uppercase;
+}
+
+.flecha-desplegable {
+    cursor: pointer;
+    margin-left: 4px;
+    padding: 5px;
+}
+
+.enlace-admin {
+    color: #ff416c;
+    font-weight: bold;
+}
+
+/* Estilos de autor (usados en múltiples vistas) */
+.avatar-autor-dorado {
+    border: 2px solid #ffcf00;
+}
+
+.avatar-autor-dorado-sm {
+    border: 1px solid #ffcf00;
+}
+
+.nombre-autor-dorado {
+    color: #ffcf00;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.icono-verificado {
+    color: #1da1f2;
+}
+
+/* Meta de publicación */
+.meta-publicacion {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    color: #aaa;
+    font-size: 0.8rem;
+}
+
+.meta-publicacion .info-autor-inline {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Información del admin en admin layout */
+.nombre-usuario-admin {
+    color: #41E8EF;
+}

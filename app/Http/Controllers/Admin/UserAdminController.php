@@ -9,38 +9,47 @@ use Carbon\Carbon;
 
 class UserAdminController extends Controller
 {
-    public function index()
+    /**
+     * Muestra la lista paginada de usuarios registrados.
+     */
+    public function mostrarUsuarios()
     {
-        $users = User::orderBy('created_at', 'desc')->paginate(20);
-        return view('admin.users.index', compact('users'));
+        $usuarios = User::orderBy('created_at', 'desc')->paginate(20);
+        return view('admin.users.index', ['users' => $usuarios]);
     }
 
-    public function ban(Request $request, $id)
+    /**
+     * Banea temporalmente o permanentemente a un usuario, o retira el baneo.
+     */
+    public function gestionarBaneo(Request $request, $id)
     {
         $request->validate([
             'duration' => 'required|string'
         ]);
 
-        $user = User::findOrFail($id);
+        $usuario = User::findOrFail($id);
 
         if ($request->duration === 'unban') {
-            $user->banned_until = null;
+            $usuario->banned_until = null;
         } elseif ($request->duration === 'permanent') {
-            $user->banned_until = Carbon::now()->addYears(100);
+            $usuario->banned_until = Carbon::now()->addYears(100);
         } else {
-            $hours = (int) $request->duration;
-            $user->banned_until = Carbon::now()->addHours($hours);
+            $horas = (int) $request->duration;
+            $usuario->banned_until = Carbon::now()->addHours($horas);
         }
 
-        $user->save();
+        $usuario->save();
 
         return redirect()->back()->with('success', 'Estado de baneo actualizado.');
     }
 
-    public function destroy($id)
+    /**
+     * Elimina permanentemente una cuenta de usuario.
+     */
+    public function eliminarUsuario($id)
     {
-        $user = User::findOrFail($id);
-        $user->delete();
+        $usuario = User::findOrFail($id);
+        $usuario->delete();
 
         return redirect()->back()->with('success', 'Usuario eliminado correctamente.');
     }

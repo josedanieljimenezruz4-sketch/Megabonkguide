@@ -7,17 +7,17 @@
 @endpush
 
 @section('content')
-    <div class="main-content-tierlist" style="margin-top: 0; padding-top: 0;">
-        <h1 class="page-title" style="color: #ff4757; text-align: left; margin-top: 0;">Admin Tier List Manager</h1>
-        <p class="intro-text-tierlist" style="margin-bottom: 20px; text-align: left;">
+    <div class="main-content-tierlist tierlist-manager-content">
+        <h1 class="page-title tierlist-manager-title">Admin Tier List Manager</h1>
+        <p class="intro-text-tierlist tierlist-manager-intro">
             En esta vista puedes gestionar masivamente TODOS los ítems de la Tier List.
             Selecciona ítems, elige un rango de destino y aplícalo (incluso puedes mandar unidades de vuelta al Laboratorio al usar 'PENDIENTES').
         </p>
 
         <!-- Barra de Acciones Masivas FIJA (Sticky) para tenerla siempre accesible si hay selección -->
-        <div id="bulk-action-bar" style="display: none; position: sticky; top: 100px; z-index: 100; background: rgba(255, 71, 87, 0.95); backdrop-filter: blur(5px); border: 1px dashed #fff; padding: 15px; border-radius: 8px; margin-bottom: 25px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
-            <span style="font-weight: bold; color: #fff; margin-right: 15px; text-transform: uppercase;">⚡ Acciones Masivas:</span>
-            <select id="bulk-rank-select" style="padding: 10px; border-radius: 6px; background: #222; color: white; border: 2px solid transparent; outline: none; cursor: pointer; font-weight: bold;">
+        <div id="bulk-action-bar" class="bulk-action-bar" style="display: none;">
+            <span class="bulk-action-label">⚡ Acciones Masivas:</span>
+            <select id="bulk-rank-select" class="bulk-rank-select">
                 <option value="">Seleccionar Acción...</option>
                 <option value="S">Clase S</option>
                 <option value="A">Clase A</option>
@@ -28,19 +28,19 @@
                 <option value="F">Clase F</option>
                 <option value="PENDING">🔄 Mover a Pendientes (Reset)</option>
             </select>
-            <button id="submit-bulk-btn" class="btn" style="padding: 10px 25px; font-size: 0.95em; margin-left: 10px; cursor: pointer; background-color: #ff4757; color: white; font-weight: bold; border: 2px solid #fff; border-radius: 6px; transition: 0.3s;" onclick="submitBulkApprove()">
+            <button id="submit-bulk-btn" class="btn btn-submit-bulk" onclick="submitBulkApprove()">
                 MOVER SELECCIONADOS
             </button>
         </div>
 
-        <div style="text-align: right; margin-bottom: 20px; width: 100%;">
-            <label style="cursor: pointer; color: #ff4757; font-weight: bold; display: inline-flex; align-items: center; gap: 8px; background: rgba(255,71,87,0.1); padding: 8px 15px; border-radius: 6px; border: 1px solid #ff4757;">
-                <input type="checkbox" id="select-all-master" onchange="toggleAllMaster()" style="transform: scale(1.3); cursor: pointer;"> SELECCIONAR ABSOLUTAMENTE TODOS
+        <div class="select-all-container">
+            <label class="select-all-label">
+                <input type="checkbox" id="select-all-master" onchange="toggleAllMaster()" class="select-all-checkbox"> SELECCIONAR ABSOLUTAMENTE TODOS
             </label>
         </div>
 
-        <div class="tierlist-container" style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 15px;">
-            <table style="width: 100%;">
+        <div class="tierlist-container tierlist-table-container">
+            <table class="tierlist-table">
                 <thead>
                     <tr>
                         <th class="tier-rank" style="width: 80px;">RANGO</th>
@@ -53,29 +53,26 @@
                     @endphp
 
                     @foreach($ranksOrder as $rank)
-                        @if(isset($itemsByRank[$rank]) && $itemsByRank[$rank]->count() > 0)
+                        @if(isset($elementosPorRango[$rank]) && $elementosPorRango[$rank]->count() > 0)
                             <tr class="tier-{{ strtolower($rank) }}">
                                 <td class="tier-rank">{{ $rank }}</td>
-                                <td style="padding: 10px;">
-                                    <div class="tier-items-list" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
-                                        @foreach($itemsByRank[$rank] as $item)
-                                            <div class="tier-item admin-select-item" id="admin-item-{{ $item->id }}" data-tippy-content="{{ $item->name }}"
-                                                style="position: relative; display: flex; flex-direction: column; align-items: center; width: 70px; text-align: center; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 8px; transition: all 0.3s ease; box-shadow: 0 0 0 2px transparent;">
+                                <td>
+                                    <div class="tier-items-list">
+                                        @foreach($elementosPorRango[$rank] as $item)
+                                            <div class="tier-item admin-select-item tier-item-admin" id="admin-item-{{ $item->id }}" data-tippy-content="{{ $item->name }}">
                                                 
-                                                <input type="checkbox" class="admin-item-checkbox" value="{{ $item->id }}" onchange="toggleItemSelection('{{ $item->id }}')" style="position: absolute; top: 4px; right: 4px; cursor: pointer; transform: scale(1.2); z-index: 10;">
+                                                <input type="checkbox" class="admin-item-checkbox admin-item-checkbox-input" value="{{ $item->id }}" onchange="toggleItemSelection('{{ $item->id }}')">
                                                 
                                                 @php
                                                     $imgSrc = asset('images/' . $item->image_path);
                                                     if (\Illuminate\Support\Str::startsWith($item->image_path, 'items/')) $imgSrc = asset('storage/' . $item->image_path);
                                                 @endphp
                                                 @if($item->image_path)
-                                                    <img src="{{ $imgSrc }}" alt="{{ $item->name }}" onerror="this.onerror=null; this.src='{{ asset('images/placeholder.png') }}';"
-                                                        style="width: 40px; height: 40px; object-fit: contain; border-radius: 5px; background: #222; margin-top: 5px;">
+                                                    <img src="{{ $imgSrc }}" alt="{{ $item->name }}" onerror="this.onerror=null; this.src='{{ asset('images/placeholder.png') }}';" class="tier-item-admin-img">
                                                 @else
-                                                    <img src="{{ asset('images/placeholder.png') }}" alt="{{ $item->name }}"
-                                                        style="width: 40px; height: 40px; object-fit: contain; border-radius: 5px; background: #222; margin-top: 5px;">
+                                                    <img src="{{ asset('images/placeholder.png') }}" alt="{{ $item->name }}" class="tier-item-admin-img">
                                                 @endif
-                                                <span style="font-size: 0.65em; margin-top: 5px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;">{{ $item->name }}</span>
+                                                <span class="tier-item-admin-name">{{ $item->name }}</span>
                                             </div>
                                         @endforeach
                                     </div>
@@ -87,32 +84,29 @@
             </table>
         </div>
 
-        <section class="meta-links" style="margin-top: 30px; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 20px;">
-            <h2 style="color: #ff4757;">🧪 Laboratorio de la Comunidad (Pendientes)</h2>
-            <div class="tier-items-list" style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 20px;">
-                @if(isset($pendingItems) && $pendingItems->count() > 0)
-                    @foreach($pendingItems as $item)
-                        <div class="tier-item admin-select-item pending-item" id="admin-item-{{ $item->id }}" data-tippy-content="{{ $item->description ?? 'Sin descripción disponible.' }}"
-                            style="position: relative; display: flex; flex-direction: column; align-items: center; width: 100px; text-align: center; background: #2c2f33; padding: 10px; border-radius: 8px; transition: all 0.3s ease; box-shadow: 0 0 0 2px transparent;">
+        <section class="meta-links pending-section">
+            <h2 class="pending-title">🧪 Laboratorio de la Comunidad (Pendientes)</h2>
+            <div class="tier-items-list pending-items-list">
+                @if(isset($elementosPendientes) && $elementosPendientes->count() > 0)
+                    @foreach($elementosPendientes as $item)
+                        <div class="tier-item admin-select-item pending-item pending-item-admin" id="admin-item-{{ $item->id }}" data-tippy-content="{{ $item->description ?? 'Sin descripción disponible.' }}">
                             
-                            <input type="checkbox" class="admin-item-checkbox" value="{{ $item->id }}" onchange="toggleItemSelection('{{ $item->id }}')" style="position: absolute; top: 8px; right: 8px; cursor: pointer; transform: scale(1.3); z-index: 10;">
+                            <input type="checkbox" class="admin-item-checkbox pending-item-checkbox" value="{{ $item->id }}" onchange="toggleItemSelection('{{ $item->id }}')">
                             
                             @php
                                 $imgSrcP = asset('images/' . $item->image_path);
                                 if (\Illuminate\Support\Str::startsWith($item->image_path, 'items/')) $imgSrcP = asset('storage/' . $item->image_path);
                             @endphp
                             @if($item->image_path)
-                                <img src="{{ $imgSrcP }}" alt="{{ $item->name }}" onerror="this.onerror=null; this.src='{{ asset('images/placeholder.png') }}';"
-                                    style="width: 50px; height: 50px; object-fit: contain; border-radius: 5px; background: #222;">
+                                <img src="{{ $imgSrcP }}" alt="{{ $item->name }}" onerror="this.onerror=null; this.src='{{ asset('images/placeholder.png') }}';" class="pending-item-img">
                             @else
-                                <img src="{{ asset('images/placeholder.png') }}"
-                                    style="width: 50px; height: 50px; object-fit: contain; border-radius: 5px; background: #222;">
+                                <img src="{{ asset('images/placeholder.png') }}" class="pending-item-img">
                             @endif
-                            <span style="font-size: 0.8em; margin: 8px 0; line-height: 1.1;">{{ $item->name }}</span>
+                            <span class="pending-item-name">{{ $item->name }}</span>
                         </div>
                     @endforeach
                 @else
-                    <p style="color: #aaa; width: 100%; text-align: center;">No hay ítems pendientes en el Laboratorio.</p>
+                    <p class="empty-pending-msg">No hay ítems pendientes en el Laboratorio.</p>
                 @endif
             </div>
         </section>

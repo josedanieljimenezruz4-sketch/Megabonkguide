@@ -9,73 +9,99 @@ use App\Models\Faq;
 
 class WikiAdminController extends Controller
 {
-    public function index()
+    /**
+     * Muestra el panel de administración de la Wiki (Información y FAQs).
+     */
+    public function mostrarPanelWiki()
     {
-        $infos = GameInfo::all();
-        $faqs = Faq::all();
+        $informacion = GameInfo::all();
+        $preguntasFrecuentes = Faq::all();
 
-        return view('admin.wiki.index', compact('infos', 'faqs'));
+        return view('admin.wiki.index', [
+            'informacion' => $informacion,
+            'preguntasFrecuentes' => $preguntasFrecuentes
+        ]);
     }
 
-    // --- GAME INFO ---
-    public function storeGameInfo(Request $request)
+    // --- INFORMACIÓN DEL JUEGO ---
+
+    /**
+     * Guarda una nueva entrada de información del juego.
+     */
+    public function guardarInformacionJuego(Request $request)
     {
-        $validated = $request->validate([
+        $datosValidados = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'category' => 'nullable|string|max:255',
         ]);
 
-        GameInfo::create($validated);
+        GameInfo::create($datosValidados);
         return redirect()->route('admin.wiki.index')->with('success', 'Información añadida.');
     }
 
-    public function updateGameInfo(Request $request, $id)
+    /**
+     * Actualiza una entrada existente de información del juego.
+     */
+    public function actualizarInformacionJuego(Request $request, $id)
     {
         $info = GameInfo::findOrFail($id);
-        $validated = $request->validate([
+        $datosValidados = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'category' => 'nullable|string|max:255',
         ]);
 
-        $info->update($validated);
+        $info->update($datosValidados);
         return redirect()->route('admin.wiki.index')->with('success', 'Información actualizada.');
     }
 
-    public function destroyGameInfo($id)
+    /**
+     * Elimina permanentemente una entrada de información del juego.
+     */
+    public function eliminarInformacionJuego($id)
     {
         GameInfo::findOrFail($id)->delete();
         return redirect()->route('admin.wiki.index')->with('success', 'Información eliminada.');
     }
 
-    // --- FAQS ---
-    public function storeFaq(Request $request)
+    // --- FAQs ---
+
+    /**
+     * Guarda una nueva Pregunta Frecuente (FAQ).
+     */
+    public function guardarPreguntaFrecuente(Request $request)
     {
-        $validated = $request->validate([
+        $datosValidados = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'category' => 'nullable|string|max:255',
         ]);
 
-        Faq::create($validated);
+        Faq::create($datosValidados);
         return redirect()->route('admin.wiki.index')->with('success', 'FAQ añadida.');
     }
 
-    public function updateFaq(Request $request, $id)
+    /**
+     * Actualiza una Pregunta Frecuente (FAQ) existente.
+     */
+    public function actualizarPreguntaFrecuente(Request $request, $id)
     {
         $faq = Faq::findOrFail($id);
-        $validated = $request->validate([
+        $datosValidados = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'category' => 'nullable|string|max:255',
         ]);
 
-        $faq->update($validated);
+        $faq->update($datosValidados);
         return redirect()->route('admin.wiki.index')->with('success', 'FAQ actualizada.');
     }
 
-    public function destroyFaq($id)
+    /**
+     * Elimina permanentemente una Pregunta Frecuente (FAQ).
+     */
+    public function eliminarPreguntaFrecuente($id)
     {
         Faq::findOrFail($id)->delete();
         return redirect()->route('admin.wiki.index')->with('success', 'FAQ eliminada.');

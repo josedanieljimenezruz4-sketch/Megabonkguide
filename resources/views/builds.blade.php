@@ -7,33 +7,11 @@
     <title>Buscador de Builds | MEGABONK GUIDE</title>
     <link rel="stylesheet" href="{{ asset('css/estilos.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('css/buscador_builds.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/builds.css') }}">
     <link rel="icon" href="{{ asset('images/iconotlabaho.webp') }}?v=1" type="image/webp">
     <link rel="shortcut icon" href="{{ asset('images/iconotlabaho.webp') }}">
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <style>
-        .star-rating-display {
-            display: inline-block;
-            font-size: 1.2rem;
-            position: relative;
-            color: #444; /* Estrellas vacías oscuras */
-            letter-spacing: 2px;
-        }
-        .star-rating-display::before {
-            content: "★★★★★";
-        }
-        .star-rating-display::after {
-            content: "★★★★★";
-            color: #FFD700; /* Oro vibrante */
-            position: absolute;
-            left: 0;
-            top: 0;
-            white-space: nowrap;
-            overflow: hidden;
-            width: calc(var(--rating) * 20%);
-            text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
-        }
-    </style>
 </head>
 
 <body>
@@ -94,7 +72,7 @@
                         <div class="card-header">
                             <h3 x-text="build.name"></h3>
                             <!-- Representación de Medias Estrellas con CSS -->
-                            <div class="star-rating-display" :style="`--rating: ${parseFloat(build.rating).toFixed(1)};`" :title="`${parseFloat(build.rating).toFixed(1)} Estrellas`"></div>
+                            <div class="valoracion-estrellas" :style="`--rating: ${parseFloat(build.rating).toFixed(1)};`" :title="`${parseFloat(build.rating).toFixed(1)} Estrellas`"></div>
                         </div>
                         <p class="card-details">
                             <span>**Tipo:** <span x-text="build.type"></span></span>

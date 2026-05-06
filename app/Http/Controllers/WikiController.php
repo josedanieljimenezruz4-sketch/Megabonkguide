@@ -8,23 +8,30 @@ use App\Models\Faq;
 
 class WikiController extends Controller
 {
-    public function index(Request $request)
+    /**
+     * Muestra la página principal de la Wiki (Información General y FAQs) con opciones de búsqueda.
+     */
+    public function mostrarWiki(Request $request)
     {
-        $search = $request->input('search');
+        $terminoBusqueda = $request->input('search');
 
-        if ($search) {
-            $infos = GameInfo::where('title', 'LIKE', "%{$search}%")
-                            ->orWhere('content', 'LIKE', "%{$search}%")
+        if ($terminoBusqueda) {
+            $informacion = GameInfo::where('title', 'LIKE', "%{$terminoBusqueda}%")
+                            ->orWhere('content', 'LIKE', "%{$terminoBusqueda}%")
                             ->get();
 
-            $faqs = Faq::where('title', 'LIKE', "%{$search}%")
-                            ->orWhere('content', 'LIKE', "%{$search}%")
+            $preguntasFrecuentes = Faq::where('title', 'LIKE', "%{$terminoBusqueda}%")
+                            ->orWhere('content', 'LIKE', "%{$terminoBusqueda}%")
                             ->get();
         } else {
-            $infos = GameInfo::all();
-            $faqs = Faq::all();
+            $informacion = GameInfo::all();
+            $preguntasFrecuentes = Faq::all();
         }
 
-        return view('info_general', compact('infos', 'faqs', 'search'));
+        return view('info_general', [
+            'infos' => $informacion,
+            'faqs' => $preguntasFrecuentes,
+            'search' => $terminoBusqueda
+        ]);
     }
 }

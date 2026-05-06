@@ -10,37 +10,52 @@ use Illuminate\Support\Facades\Auth;
 
 class UserTierListController extends Controller
 {
-    public function index(Request $request)
+    /**
+     * Muestra la lista paginada de Tier Lists creadas por la comunidad.
+     */
+    public function mostrarIndiceDeTierLists(Request $request)
     {
-        $categoria = $request->get('categoria');
+        $categoriaFiltro = $request->get('categoria');
 
-        $query = TierList::with(['user', 'rows.item'])->latest();
+        $consulta = TierList::with(['user', 'rows.item'])->latest();
 
-        if ($categoria && $categoria !== 'general' && $categoria !== 'todos') {
-            $query->where('categoria', $categoria);
+        if ($categoriaFiltro && $categoriaFiltro !== 'general' && $categoriaFiltro !== 'todos') {
+            $consulta->where('categoria', $categoriaFiltro);
         }
 
-        $tierLists = $query->paginate(12);
+        $tierListsPaginadas = $consulta->paginate(12);
 
-        return view('community_tierlists.index', compact('tierLists', 'categoria'));
+        return view('community_tierlists.index', [
+            'tierLists' => $tierListsPaginadas,
+            'categoria' => $categoriaFiltro
+        ]);
     }
 
-    public function create(Request $request)
+    /**
+     * Muestra el formulario para crear una nueva Tier List.
+     */
+    public function crearTierList(Request $request)
     {
-        $categoria = $request->get('categoria', 'personaje'); // Default to 'personaje'
+        $categoriaSeleccionada = $request->get('categoria', 'personaje'); // Por defecto 'personaje'
         
-        if ($categoria === 'general' || $categoria === 'todo') {
-            $items = Item::all();
+        if ($categoriaSeleccionada === 'general' || $categoriaSeleccionada === 'todo') {
+            $elementosDisponibles = Item::all();
         } else {
-            $items = Item::where('type', $categoria)->get();
+            $elementosDisponibles = Item::where('type', $categoriaSeleccionada)->get();
         }
         
-        return view('community_tierlists.create', compact('items', 'categoria'));
+        return view('community_tierlists.create', [
+            'items' => $elementosDisponibles,
+            'categoria' => $categoriaSeleccionada
+        ]);
     }
 
-    public function store(Request $request)
+    /**
+     * Valida y guarda en la base de datos la nueva Tier List de la comunidad.
+     */
+    public function guardarTierList(Request $request)
     {
-        $request->validate([
+        $datosValidados = $request->validate([
             'titulo' => 'required|string|max:255',
             'descripcion' => 'nullable|string',
             'categoria' => 'required|string',
@@ -48,36 +63,39 @@ class UserTierListController extends Controller
             'ranks.*' => 'nullable|in:S,A,B,C,D,E,F',
         ]);
 
-        $tierList = TierList::create([
+        $nuevaTierList = TierList::create([
             'user_id' => Auth::id(),
-            'titulo' => $request->input('titulo'),
-            'categoria' => $request->input('categoria'),
-            'descripcion' => $request->input('descripcion'),
+            'titulo' => $datosValidados['titulo'],
+            'categoria' => $datosValidados['categoria'],
+            'descripcion' => $datosValidados['descripcion'] ?? null,
         ]);
 
-        $ranks = $request->input('ranks', []);
-        foreach ($ranks as $itemId => $rank) {
-            if (!empty($rank) && in_array($rank, ['S', 'A', 'B', 'C', 'D', 'E', 'F'])) {
+        $rangosAsignados = $request->input('ranks', []);
+        foreach ($rangosAsignados as $itemId => $rango) {
+            if (!empty($rango) && in_array($rango, ['S', 'A', 'B', 'C', 'D', 'E', 'F'])) {
                 TierListRow::create([
-                    'tier_list_id' => $tierList->id,
+                    'tier_list_id' => $nuevaTierList->id,
                     'item_id' => $itemId,
-                    'rank' => $rank,
+                    'rank' => $rango,
                 ]);
             }
         }
 
-        return redirect()->route('community-tierlists.show', $tierList->id)
+        return redirect()->route('community-tierlists.show', $nuevaTierList->id)
                          ->with('success', '¡Tier List creada exitosamente!');
     }
 
-    public function show($id)
+    /**
+     * Muestra el detalle de una Tier List específica y sus comentarios.
+     */
+    public function mostrarTierListDetallada($id)
     {
-        $tierList = TierList::with(['user', 'rows.item', 'comments' => function($q) {
-            $q->whereNull('parent_id')->with(['user', 'replies.user']);
+        $tierList = TierList::with(['user', 'rows.item', 'comments' => function($consulta) {
+            $consulta->whereNull('parent_id')->with(['user', 'replies.user']);
         }])->findOrFail($id);
         
-        // Agrupar items por rango
-        $itemsByRank = [
+        // Agrupar items por rango para la vista
+        $elementosPorRango = [
             'S' => collect(),
             'A' => collect(),
             'B' => collect(),
@@ -87,16 +105,22 @@ class UserTierListController extends Controller
             'F' => collect()
         ];
 
-        foreach ($tierList->rows as $row) {
-            if ($row->item) {
-                $itemsByRank[$row->rank]->push($row->item);
+        foreach ($tierList->rows as $fila) {
+            if ($fila->item) {
+                $elementosPorRango[$fila->rank]->push($fila->item);
             }
         }
 
-        return view('community_tierlists.show', compact('tierList', 'itemsByRank'));
+        return view('community_tierlists.show', [
+            'tierList' => $tierList,
+            'itemsByRank' => $elementosPorRango
+        ]);
     }
 
-    public function destroyAdmin($id)
+    /**
+     * Acción de administrador para eliminar permanentemente una Tier List.
+     */
+    public function eliminarTierListAdmin($id)
     {
         $tierList = TierList::findOrFail($id);
         $tierList->delete();

@@ -16,37 +16,7 @@
 
     <main class="flex-grow">
         <!-- CÓDIGO PROPORCIONADO POR EL USUARIO -->
-        <style>
-            .glass-card {
-                background: rgba(15, 15, 15, 0.8) !important;
-                backdrop-filter: blur(10px) !important;
-                -webkit-backdrop-filter: blur(10px) !important;
-                border: 1px solid rgba(0, 255, 255, 0.2);
-                box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-                transition: all 0.3s ease;
-            }
-            .glass-card:hover {
-                border-color: rgba(0, 255, 255, 0.6);
-                transform: translateY(-5px);
-                box-shadow: 0 0 25px rgba(0, 255, 255, 0.15);
-            }
-            .glow-orange:hover {
-                border-color: rgba(255, 85, 0, 0.8) !important;
-                box-shadow: 0 0 30px rgba(255, 85, 0, 0.4) !important;
-            }
-            .glow-purple:hover {
-                border-color: rgba(168, 85, 247, 0.8) !important;
-                box-shadow: 0 0 30px rgba(168, 85, 247, 0.4) !important;
-            }
-            .glow-cyan:hover {
-                border-color: rgba(34, 211, 238, 0.8) !important;
-                box-shadow: 0 0 30px rgba(34, 211, 238, 0.4) !important;
-            }
-            .modal-overlay {
-                backdrop-filter: blur(8px);
-                background: rgba(0, 0, 0, 0.8);
-            }
-        </style>
+        <!-- Los estilos glass-card, glow-* y modal-overlay están definidos en estilos.css -->
 
         <div class="container mx-auto px-4 py-4">
             <div class="text-center mb-8">

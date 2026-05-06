@@ -8,41 +8,53 @@ use App\Models\Suggestion;
 
 class SuggestionController extends Controller
 {
-    public function index()
+    /**
+     * Muestra la lista paginada de sugerencias enviadas por la comunidad.
+     */
+    public function mostrarSugerencias()
     {
-        $suggestions = Suggestion::orderBy('created_at', 'desc')->paginate(15);
-        return view('admin.suggestions.index', compact('suggestions'));
+        $sugerencias = Suggestion::orderBy('created_at', 'desc')->paginate(15);
+        return view('admin.suggestions.index', ['suggestions' => $sugerencias]);
     }
 
-    public function destroy($id)
+    /**
+     * Elimina permanentemente una sugerencia de la base de datos.
+     */
+    public function eliminarSugerencia($id)
     {
-        $suggestion = Suggestion::findOrFail($id);
-        $suggestion->delete();
+        $sugerencia = Suggestion::findOrFail($id);
+        $sugerencia->delete();
 
         return redirect()->route('admin.suggestions.index')->with('success', 'Sugerencia eliminada correctamente.');
     }
 
-    public function markRead($id)
+    /**
+     * Marca una sugerencia como leída mediante petición AJAX.
+     */
+    public function marcarComoLeida($id)
     {
-        $suggestion = Suggestion::findOrFail($id);
-        $suggestion->is_read = true;
-        $suggestion->save();
+        $sugerencia = Suggestion::findOrFail($id);
+        $sugerencia->is_read = true;
+        $sugerencia->save();
 
         return response()->json(['success' => true]);
     }
 
-    public function updateStatus(Request $request, $id)
+    /**
+     * Actualiza el estado de progreso de una sugerencia (pendiente, en revisión, completada).
+     */
+    public function actualizarEstadoSugerencia(Request $request, $id)
     {
         $request->validate([
             'status' => 'required|in:pending,reviewing,completed'
         ]);
 
-        $suggestion = Suggestion::findOrFail($id);
-        $suggestion->status = $request->status;
-        $suggestion->save();
+        $sugerencia = Suggestion::findOrFail($id);
+        $sugerencia->status = $request->status;
+        $sugerencia->save();
 
         if ($request->wantsJson()) {
-            return response()->json(['success' => true, 'status' => $suggestion->status]);
+            return response()->json(['success' => true, 'status' => $sugerencia->status]);
         }
 
         return redirect()->route('admin.suggestions.index')->with('success', 'Estado actualizado correctamente.');

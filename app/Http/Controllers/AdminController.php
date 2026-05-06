@@ -4,113 +4,160 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Item;
+use App\Models\TierList;
+use App\Models\Score;
 use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
-    public function tierlistManager()
+    /**
+     * Muestra la vista de gestión de la Tier List Oficial (ítems y rangos).
+     */
+    public function gestionarTierlist()
     {
-        $allItems = \App\Models\Item::orderBy('name', 'asc')->get();
-        $itemsByRank = $allItems->whereNotNull('rank')->groupBy('rank');
-        $pendingItems = $allItems->whereNull('rank');
+        $todosLosElementos = Item::orderBy('name', 'asc')->get();
+        $elementosPorRango = $todosLosElementos->whereNotNull('rank')->groupBy('rank');
+        $elementosPendientes = $todosLosElementos->whereNull('rank');
 
-        return view('admin.tierlist-manager', compact('itemsByRank', 'pendingItems'));
+        return view('admin.tierlist-manager', [
+            'elementosPorRango' => $elementosPorRango,
+            'elementosPendientes' => $elementosPendientes
+        ]);
     }
 
-    public function index()
+    /**
+     * Muestra el panel de control (Dashboard) principal de administración.
+     */
+    public function mostrarPanelAdministracion()
     {
-        $totalUsers = User::count();
-        $totalUnlocks = DB::table('user_unlocks')->count();
-        $totalItems = \App\Models\Item::count();
+        $totalUsuarios = User::count();
+        $totalDesbloqueos = DB::table('user_unlocks')->count();
+        $totalElementos = Item::count();
         $totalAdmins = User::where('is_admin', true)->count();
 
         // Obtenemos los últimos 10 usuarios para mostrarlos en la tabla
-        $latestUsers = User::latest()->take(10)->get();
+        $ultimosUsuarios = User::latest()->take(10)->get();
 
-        return view('admin', compact('totalUsers', 'totalAdmins', 'totalUnlocks', 'totalItems', 'latestUsers'));
+        return view('admin', [
+            'totalUsuarios' => $totalUsuarios,
+            'totalAdmins' => $totalAdmins,
+            'totalDesbloqueos' => $totalDesbloqueos,
+            'totalElementos' => $totalElementos,
+            'ultimosUsuarios' => $ultimosUsuarios
+        ]);
     }
 
-    public function votes()
+    /**
+     * Muestra el gestor de votos de popularidad de los elementos.
+     */
+    public function gestionarVotos()
     {
-        $items = \App\Models\Item::orderBy('votes', 'desc')->paginate(15);
-        return view('admin-votes', compact('items'));
+        $elementos = Item::orderBy('votes', 'desc')->paginate(15);
+        return view('admin-votes', ['items' => $elementos]);
     }
 
-    public function resetAllVotes()
+    /**
+     * Reinicia todos los votos de popularidad a 0 de forma global.
+     */
+    public function reiniciarTodosLosVotos()
     {
         DB::table('item_user_votes')->truncate();
-        \App\Models\Item::query()->update(['votes' => 0]);
+        Item::query()->update(['votes' => 0]);
         
         return redirect()->route('admin.votes.index')->with('success', 'Todos los votos han sido reseteados.');
     }
 
-    public function resetItemVotes($id)
+    /**
+     * Reinicia los votos de popularidad de un elemento específico a 0.
+     */
+    public function reiniciarVotosElemento($id)
     {
-        $item = \App\Models\Item::findOrFail($id);
+        $elemento = Item::findOrFail($id);
         
-        // Remove pivot entries for that element
         DB::table('item_user_votes')->where('item_id', $id)->delete();
-        $item->update(['votes' => 0]);
+        $elemento->update(['votes' => 0]);
 
-        return redirect()->route('admin.votes.index')->with('success', 'Los votos han sido reseteados para: ' . $item->name);
+        return redirect()->route('admin.votes.index')->with('success', 'Los votos han sido reseteados para: ' . $elemento->name);
     }
 
-    public function communityTierLists()
+    /**
+     * Muestra el gestor de Tier Lists de la comunidad (Modo antiguo).
+     */
+    public function gestionarTierListsComunidad()
     {
-        $tierLists = \App\Models\TierList::with('user')->latest()->paginate(15);
-        return view('admin.community_tierlists', compact('tierLists'));
+        $tierLists = TierList::with('user')->latest()->paginate(15);
+        return view('admin.community_tierlists', ['tierLists' => $tierLists]);
     }
 
-    public function leaderboard()
+    /**
+     * Muestra el gestor del Leaderboard (puntuaciones pendientes y aprobadas).
+     */
+    public function gestionarLeaderboard()
     {
-        $pendingScores = \App\Models\Score::with(['user', 'character', 'build'])
+        $puntuacionesPendientes = Score::with(['user', 'character', 'build'])
             ->where('status', 'pending')
             ->oldest()
             ->get();
             
-        $approvedScores = \App\Models\Score::with(['user', 'character', 'build'])
+        $puntuacionesAprobadas = Score::with(['user', 'character', 'build'])
             ->where('status', 'approved')
             ->latest()
             ->paginate(15);
             
-        return view('admin.leaderboard', compact('pendingScores', 'approvedScores'));
+        return view('admin.leaderboard', [
+            'pendingScores' => $puntuacionesPendientes,
+            'approvedScores' => $puntuacionesAprobadas
+        ]);
     }
 
-    public function resetGlobalLeaderboard()
+    /**
+     * Reinicia el Leaderboard global (elimina todas las puntuaciones aprobadas).
+     */
+    public function reiniciarLeaderboardGlobal()
     {
-        \App\Models\Score::where('status', 'approved')->delete();
+        Score::where('status', 'approved')->delete();
         return redirect()->back()->with('success', 'LEADERBOARD GLOBAL REINICIADO. Todas las puntuaciones han sido archivadas de forma segura.');
     }
 
-    public function resetUserScore($id)
+    /**
+     * Elimina permanentemente una puntuación individual.
+     */
+    public function reiniciarPuntuacionUsuario($id)
     {
-        $score = \App\Models\Score::findOrFail($id);
-        $score->delete();
+        $puntuacion = Score::findOrFail($id);
+        $puntuacion->delete();
         return redirect()->back()->with('success', 'Puntuación individual reseteada correctamente.');
     }
 
-    public function approveScore($id)
+    /**
+     * Aprueba una puntuación pendiente, invalidando records anteriores del usuario en la misma categoría.
+     */
+    public function aprobarPuntuacion($id)
     {
-        $score = \App\Models\Score::findOrFail($id);
+        $puntuacion = Score::findOrFail($id);
         
         // Al aprobar un score, buscamos si este usuario tenía otro score aprobado para la misma categoría (dificultad + personaje)
         // y lo borramos o rechazamos, porque solo puede haber 1 por categoría.
-        \App\Models\Score::where('user_id', $score->user_id)
-            ->where('character_id', $score->character_id)
-            ->where('difficulty', $score->difficulty)
+        Score::where('user_id', $puntuacion->user_id)
+            ->where('character_id', $puntuacion->character_id)
+            ->where('difficulty', $puntuacion->difficulty)
             ->where('status', 'approved')
-            ->where('id', '!=', $score->id)
+            ->where('id', '!=', $puntuacion->id)
             ->delete();
 
-        $score->update(['status' => 'approved']);
+        $puntuacion->update(['status' => 'approved']);
 
         return back()->with('success', 'Puntuación aprobada correctamente. Ha reemplazado los récords anteriores del usuario en esta categoría si existían.');
     }
 
-    public function rejectScore($id)
+    /**
+     * Rechaza una puntuación pendiente.
+     */
+    public function rechazarPuntuacion($id)
     {
-        $score = \App\Models\Score::findOrFail($id);
-        $score->update(['status' => 'rejected']);
+        $puntuacion = Score::findOrFail($id);
+        $puntuacion->update(['status' => 'rejected']);
 
         return back()->with('success', 'Puntuación rechazada.');
     }

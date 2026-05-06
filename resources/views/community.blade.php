@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Comunidad | MEGABONK GUIDE</title>
     <link rel="stylesheet" href="{{ asset('css/estilos.css') }}?v={{ time() }}">
-    <link rel="stylesheet" href="{{ asset('css/comunity.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/community.css') }}">
     <link rel="icon" href="{{ asset('images/iconotlabaho.webp') }}?v=1" type="image/webp">
     <link rel="shortcut icon" href="{{ asset('images/iconotlabaho.webp') }}">
 </head>

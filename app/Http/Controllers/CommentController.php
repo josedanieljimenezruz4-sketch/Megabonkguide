@@ -9,7 +9,10 @@ use Illuminate\Support\Facades\Auth;
 
 class CommentController extends Controller
 {
-    public function store(Request $request, $tierListId)
+    /**
+     * Valida y guarda un nuevo comentario asociado a una Tier List específica.
+     */
+    public function guardarComentario(Request $request, $tierListId)
     {
         $request->validate([
             'content' => 'required|string|max:1000',
@@ -19,7 +22,7 @@ class CommentController extends Controller
 
         $tierList = TierList::findOrFail($tierListId);
 
-        $comment = Comment::create([
+        $comentario = Comment::create([
             'user_id' => Auth::id(),
             'tier_list_id' => $tierList->id,
             'parent_id' => $request->input('parent_id'),
@@ -27,9 +30,9 @@ class CommentController extends Controller
         ]);
 
         if ($request->ajax() || $request->wantsJson()) {
-            $comment->load('user', 'replies');
+            $comentario->load('user', 'replies');
             $html = view('community.partials.comment', [
-                'comment' => $comment,
+                'comment' => $comentario,
                 'depth' => $request->input('depth', 0),
                 'submitUrl' => route('community-tierlists.comment', $tierList->id)
             ])->render();
@@ -37,7 +40,7 @@ class CommentController extends Controller
             return response()->json([
                 'success' => true,
                 'html' => $html,
-                'parent_id' => $comment->parent_id
+                'parent_id' => $comentario->parent_id
             ]);
         }
 
@@ -45,10 +48,13 @@ class CommentController extends Controller
                          ->with('success', '¡Comentario añadido!');
     }
 
-    public function destroyAdmin($id)
+    /**
+     * Acción de administrador para eliminar un comentario.
+     */
+    public function eliminarComentarioAdmin($id)
     {
-        $comment = Comment::findOrFail($id);
-        $comment->delete();
+        $comentario = Comment::findOrFail($id);
+        $comentario->delete();
 
         return redirect()->back()->with('success', 'Comentario eliminado.');
     }

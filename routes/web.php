@@ -22,16 +22,16 @@ use App\Http\Controllers\Admin\WikiAdminController;
 */
 
 // Página de Inicio
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/', [HomeController::class, 'mostrarInicio'])->name('home');
 
 // Rutas exclusivas a Builds
-Route::get('/builds', [\App\Http\Controllers\BuildController::class, 'index'])->name('builds.index');
-Route::get('/builds/{build}', [\App\Http\Controllers\BuildController::class, 'show'])->name('builds.show')->where('build', '[0-9]+');
+Route::get('/builds', [\App\Http\Controllers\BuildController::class, 'mostrarListaDeBuilds'])->name('builds.index');
+Route::get('/builds/{build}', [\App\Http\Controllers\BuildController::class, 'mostrarBuild'])->name('builds.show')->where('build', '[0-9]+');
 
 // Tierlist y Meta
 Route::controller(GameDataController::class)->group(function () {
-    Route::get('/tierlist', 'tierlist')->name('tierlist');
-    Route::get('/meta', 'meta')->name('meta');
+    Route::get('/tierlist', 'mostrarTierlist')->name('tierlist');
+    Route::get('/meta', 'mostrarMeta')->name('meta');
 });
 
 // Leaderboard
@@ -62,125 +62,125 @@ Route::controller(CommunityController::class)->group(function () {
 });
 
 // Información y Novedades
-Route::get('/info-general', [WikiController::class, 'index'])->name('wiki.index');
+Route::get('/info-general', [WikiController::class, 'mostrarWiki'])->name('wiki.index');
 Route::controller(InfoController::class)->group(function () {
-    Route::get('/novedades', 'news')->name('info.news');
+    Route::get('/novedades', 'mostrarNovedades')->name('info.news');
 });
 
 // Autenticación y Perfil
 Route::controller(UserController::class)->group(function () {
-    Route::get('/login', 'login')->name('login');
-    Route::post('/login', 'authenticate')->name('login.post')->middleware('throttle:5,1'); // ¡Rate Limit: 5 logins x minuto!
-    Route::get('/registro', 'register')->name('register');
-    Route::post('/registro', 'store')->name('register.post')->middleware('throttle:10,1'); // ¡Rate Limit: 10 registros x minuto!
-    Route::post('/logout', 'logout')->name('logout');
+    Route::get('/login', 'mostrarFormularioLogin')->name('login');
+    Route::post('/login', 'autenticarUsuario')->name('login.post')->middleware('throttle:5,1'); // ¡Rate Limit: 5 logins x minuto!
+    Route::get('/registro', 'mostrarFormularioRegistro')->name('register');
+    Route::post('/registro', 'registrarUsuario')->name('register.post')->middleware('throttle:10,1'); // ¡Rate Limit: 10 registros x minuto!
+    Route::post('/logout', 'cerrarSesion')->name('logout');
 });
 
 // OAuth (Social Login)
 Route::controller(\App\Http\Controllers\SocialController::class)->group(function () {
-    Route::get('/auth/{provider}/redirect', 'redirectToProvider')->name('social.redirect');
-    Route::get('/auth/{provider}/callback', 'handleProviderCallback')->name('social.callback');
+    Route::get('/auth/{provider}/redirect', 'redirigirAlProveedor')->name('social.redirect');
+    Route::get('/auth/{provider}/callback', 'manejarCallbackDelProveedor')->name('social.callback');
 });
 
 // Rutas protegidas (Requieren sesión)
 Route::middleware('auth')->group(function () {
     Route::controller(UserController::class)->group(function () {
-        Route::get('/perfil', 'profile')->name('profile.old');
-        Route::get('/cambiar-datos', 'settings')->name('profile.settings');
+        Route::get('/perfil', 'mostrarPerfil')->name('profile.old');
+        Route::get('/cambiar-datos', 'mostrarAjustes')->name('profile.settings');
     });
 
     // Perfil Personal
     Route::controller(\App\Http\Controllers\ProfileController::class)->group(function () {
-        Route::get('/mi-perfil', 'index')->name('profile');
-        Route::post('/mi-perfil/avatar', 'updateAvatar')->name('profile.avatar.update');
+        Route::get('/mi-perfil', 'mostrarPerfil')->name('profile');
+        Route::post('/mi-perfil/avatar', 'actualizarAvatar')->name('profile.avatar.update');
     });
 
     // Inventario Unificado
-    Route::get('/inventario', [UnlockController::class, 'inventory'])->name('inventory');
+    Route::get('/inventario', [UnlockController::class, 'mostrarInventarioUnificado'])->name('inventory');
 
     // Builds
-    Route::get('/builds/create', [App\Http\Controllers\BuildController::class, 'create'])->name('builds.create');
-    Route::post('/builds', [App\Http\Controllers\BuildController::class, 'store'])->name('builds.store');
-    Route::post('/builds/{build}/vote', [App\Http\Controllers\BuildController::class, 'vote'])->name('builds.vote');
+    Route::get('/builds/create', [App\Http\Controllers\BuildController::class, 'crearBuild'])->name('builds.create');
+    Route::post('/builds', [App\Http\Controllers\BuildController::class, 'guardarBuild'])->name('builds.store');
+    Route::post('/builds/{build}/vote', [App\Http\Controllers\BuildController::class, 'votarBuild'])->name('builds.vote');
 
     // Votes
-    Route::post('/items/{id}/vote', [App\Http\Controllers\GameDataController::class, 'voteItem'])->name('items.vote');
-    Route::post('/items/{id}/vote-rank', [App\Http\Controllers\GameDataController::class, 'voteRankItem'])->name('items.voteRank');
-    Route::post('/meta-strategies/{id}/vote', [App\Http\Controllers\GameDataController::class, 'voteMetaStrategy'])->name('meta-strategies.vote');
+    Route::post('/items/{id}/vote', [App\Http\Controllers\GameDataController::class, 'votarElemento'])->name('items.vote');
+    Route::post('/items/{id}/vote-rank', [App\Http\Controllers\GameDataController::class, 'votarRangoElemento'])->name('items.voteRank');
+    Route::post('/meta-strategies/{id}/vote', [App\Http\Controllers\GameDataController::class, 'votarEstrategiaMeta'])->name('meta-strategies.vote');
 
     // Community Tier Lists
-    Route::get('/community-tierlists/create', [App\Http\Controllers\UserTierListController::class, 'create'])->name('community-tierlists.create');
-    Route::post('/community-tierlists', [App\Http\Controllers\UserTierListController::class, 'store'])->name('community-tierlists.store');
-    Route::post('/community-tierlists/{id}/comment', [App\Http\Controllers\CommentController::class, 'store'])->name('community-tierlists.comment');
+    Route::get('/community-tierlists/create', [App\Http\Controllers\UserTierListController::class, 'crearTierList'])->name('community-tierlists.create');
+    Route::post('/community-tierlists', [App\Http\Controllers\UserTierListController::class, 'guardarTierList'])->name('community-tierlists.store');
+    Route::post('/community-tierlists/{id}/comment', [App\Http\Controllers\CommentController::class, 'guardarComentario'])->name('community-tierlists.comment');
 });
 
 // Rutas de visualización pública de listadas de la comunidad (no requieren auth)
-Route::get('/community-tierlists', [App\Http\Controllers\UserTierListController::class, 'index'])->name('community-tierlists.index');
-Route::get('/community-tierlists/{id}', [App\Http\Controllers\UserTierListController::class, 'show'])->name('community-tierlists.show')->where('id', '[0-9]+');
+Route::get('/community-tierlists', [App\Http\Controllers\UserTierListController::class, 'mostrarIndiceDeTierLists'])->name('community-tierlists.index');
+Route::get('/community-tierlists/{id}', [App\Http\Controllers\UserTierListController::class, 'mostrarTierListDetallada'])->name('community-tierlists.show')->where('id', '[0-9]+');
 
 // Perfil Público
-Route::get('/perfil/{id}', [App\Http\Controllers\ProfileController::class, 'showPublic'])->name('profile.public')->where('id', '[0-9]+');
+Route::get('/perfil/{id}', [App\Http\Controllers\ProfileController::class, 'mostrarPerfilPublico'])->name('profile.public')->where('id', '[0-9]+');
 
 // Rutas de Administrador (Requieren sesión y ser admin)
 Route::middleware(['auth', 'admin'])->name('admin.')->prefix('admin')->group(function () {
-    Route::get('/', [AdminController::class, 'index'])->name('dashboard');
-    Route::get('/tierlist-manager', [AdminController::class, 'tierlistManager'])->name('tierlist-manager');
-    Route::get('/items/create', [ItemController::class, 'create'])->name('items.create');
-    Route::post('/items', [ItemController::class, 'store'])->name('items.store');
-    Route::post('/items/bulk-approve', [ItemController::class, 'bulkApprove'])->name('items.bulkApprove');
-    Route::post('/items/{id}/approve-rank', [ItemController::class, 'approveRank'])->name('items.approveRank');
+    Route::get('/', [AdminController::class, 'mostrarPanelAdministracion'])->name('dashboard');
+    Route::get('/tierlist-manager', [AdminController::class, 'gestionarTierlist'])->name('tierlist-manager');
+    Route::get('/items/create', [ItemController::class, 'mostrarFormularioCreacion'])->name('items.create');
+    Route::post('/items', [ItemController::class, 'guardarItem'])->name('items.store');
+    Route::post('/items/bulk-approve', [ItemController::class, 'aprobacionMasiva'])->name('items.bulkApprove');
+    Route::post('/items/{id}/approve-rank', [ItemController::class, 'aprobarRango'])->name('items.approveRank');
     
     // Gestión de votos
-    Route::get('/votes', [AdminController::class, 'votes'])->name('votes.index');
-    Route::post('/votes/reset-all', [AdminController::class, 'resetAllVotes'])->name('votes.resetAll');
-    Route::post('/votes/{id}/reset', [AdminController::class, 'resetItemVotes'])->name('votes.resetItem');
+    Route::get('/votes', [AdminController::class, 'gestionarVotos'])->name('votes.index');
+    Route::post('/votes/reset-all', [AdminController::class, 'reiniciarTodosLosVotos'])->name('votes.resetAll');
+    Route::post('/votes/{id}/reset', [AdminController::class, 'reiniciarVotosElemento'])->name('votes.resetItem');
 
     // Moderación Antigua
-    Route::get('/community-tierlists', [AdminController::class, 'communityTierLists'])->name('community-tierlists.index');
-    Route::delete('/community-tierlists/{id}', [App\Http\Controllers\UserTierListController::class, 'destroyAdmin'])->name('community-tierlists.destroy');
-    Route::delete('/comments/{id}', [App\Http\Controllers\CommentController::class, 'destroyAdmin'])->name('comments.destroy');
+    Route::get('/community-tierlists', [AdminController::class, 'gestionarTierListsComunidad'])->name('community-tierlists.index');
+    Route::delete('/community-tierlists/{id}', [App\Http\Controllers\UserTierListController::class, 'eliminarTierListAdmin'])->name('community-tierlists.destroy');
+    Route::delete('/comments/{id}', [App\Http\Controllers\CommentController::class, 'eliminarComentarioAdmin'])->name('comments.destroy');
 
     // Nueva Moderación (Builds y Tierlists)
-    Route::get('/moderation', [\App\Http\Controllers\Admin\ModerationController::class, 'index'])->name('moderation.index');
-    Route::delete('/moderation/builds/{id}', [\App\Http\Controllers\Admin\ModerationController::class, 'destroyBuild'])->name('moderation.builds.destroy');
-    Route::get('/moderation/builds/{build}/edit', [\App\Http\Controllers\Admin\ModerationController::class, 'editBuild'])->name('moderation.builds.edit');
-    Route::put('/moderation/builds/{build}', [\App\Http\Controllers\Admin\ModerationController::class, 'updateBuild'])->name('moderation.builds.update');
-    Route::delete('/moderation/tierlists/{id}', [\App\Http\Controllers\Admin\ModerationController::class, 'destroyTierList'])->name('moderation.tierlists.destroy');
+    Route::get('/moderation', [\App\Http\Controllers\Admin\ModerationController::class, 'mostrarPanelModeracion'])->name('moderation.index');
+    Route::delete('/moderation/builds/{id}', [\App\Http\Controllers\Admin\ModerationController::class, 'eliminarBuild'])->name('moderation.builds.destroy');
+    Route::get('/moderation/builds/{build}/edit', [\App\Http\Controllers\Admin\ModerationController::class, 'editarBuild'])->name('moderation.builds.edit');
+    Route::put('/moderation/builds/{build}', [\App\Http\Controllers\Admin\ModerationController::class, 'actualizarBuild'])->name('moderation.builds.update');
+    Route::delete('/moderation/tierlists/{id}', [\App\Http\Controllers\Admin\ModerationController::class, 'eliminarTierList'])->name('moderation.tierlists.destroy');
 
     // Gestión del Meta
-    Route::get('/meta', [\App\Http\Controllers\Admin\MetaAdminController::class, 'index'])->name('meta.index');
-    Route::post('/meta/strategies', [\App\Http\Controllers\Admin\MetaAdminController::class, 'storeStrategy'])->name('meta.strategies.store');
-    Route::put('/meta/strategies/{id}', [\App\Http\Controllers\Admin\MetaAdminController::class, 'updateStrategy'])->name('meta.strategies.update');
-    Route::delete('/meta/strategies/{id}', [\App\Http\Controllers\Admin\MetaAdminController::class, 'destroyStrategy'])->name('meta.strategies.destroy');
-    Route::post('/meta/patch-notes', [\App\Http\Controllers\Admin\MetaAdminController::class, 'storePatchNote'])->name('meta.patch_notes.store');
-    Route::put('/meta/patch-notes/{id}', [\App\Http\Controllers\Admin\MetaAdminController::class, 'updatePatchNote'])->name('meta.patch_notes.update');
-    Route::delete('/meta/patch-notes/{id}', [\App\Http\Controllers\Admin\MetaAdminController::class, 'destroyPatchNote'])->name('meta.patch_notes.destroy');
+    Route::get('/meta', [\App\Http\Controllers\Admin\MetaAdminController::class, 'mostrarMetaAdmin'])->name('meta.index');
+    Route::post('/meta/strategies', [\App\Http\Controllers\Admin\MetaAdminController::class, 'guardarEstrategia'])->name('meta.strategies.store');
+    Route::put('/meta/strategies/{id}', [\App\Http\Controllers\Admin\MetaAdminController::class, 'actualizarEstrategia'])->name('meta.strategies.update');
+    Route::delete('/meta/strategies/{id}', [\App\Http\Controllers\Admin\MetaAdminController::class, 'eliminarEstrategia'])->name('meta.strategies.destroy');
+    Route::post('/meta/patch-notes', [\App\Http\Controllers\Admin\MetaAdminController::class, 'guardarNotaParche'])->name('meta.patch_notes.store');
+    Route::put('/meta/patch-notes/{id}', [\App\Http\Controllers\Admin\MetaAdminController::class, 'actualizarNotaParche'])->name('meta.patch_notes.update');
+    Route::delete('/meta/patch-notes/{id}', [\App\Http\Controllers\Admin\MetaAdminController::class, 'eliminarNotaParche'])->name('meta.patch_notes.destroy');
 
     // Leaderboard Admin
-    Route::get('/leaderboard', [AdminController::class, 'leaderboard'])->name('leaderboard.index');
-    Route::post('/leaderboard/{id}/approve', [AdminController::class, 'approveScore'])->name('leaderboard.approve');
-    Route::post('/leaderboard/{id}/reject', [AdminController::class, 'rejectScore'])->name('leaderboard.reject');
-    Route::post('/leaderboard/reset-global', [AdminController::class, 'resetGlobalLeaderboard'])->name('leaderboard.resetGlobal');
-    Route::delete('/leaderboard/{id}/reset', [AdminController::class, 'resetUserScore'])->name('leaderboard.resetUser');
+    Route::get('/leaderboard', [AdminController::class, 'gestionarLeaderboard'])->name('leaderboard.index');
+    Route::post('/leaderboard/{id}/approve', [AdminController::class, 'aprobarPuntuacion'])->name('leaderboard.approve');
+    Route::post('/leaderboard/{id}/reject', [AdminController::class, 'rechazarPuntuacion'])->name('leaderboard.reject');
+    Route::post('/leaderboard/reset-global', [AdminController::class, 'reiniciarLeaderboardGlobal'])->name('leaderboard.resetGlobal');
+    Route::delete('/leaderboard/{id}/reset', [AdminController::class, 'reiniciarPuntuacionUsuario'])->name('leaderboard.resetUser');
 
     // Wiki Admin
-    Route::get('/wiki', [WikiAdminController::class, 'index'])->name('wiki.index');
-    Route::post('/wiki/game-infos', [WikiAdminController::class, 'storeGameInfo'])->name('wiki.game_infos.store');
-    Route::put('/wiki/game-infos/{id}', [WikiAdminController::class, 'updateGameInfo'])->name('wiki.game_infos.update');
-    Route::delete('/wiki/game-infos/{id}', [WikiAdminController::class, 'destroyGameInfo'])->name('wiki.game_infos.destroy');
+    Route::get('/wiki', [WikiAdminController::class, 'mostrarPanelWiki'])->name('wiki.index');
+    Route::post('/wiki/game-infos', [WikiAdminController::class, 'guardarInformacionJuego'])->name('wiki.game_infos.store');
+    Route::put('/wiki/game-infos/{id}', [WikiAdminController::class, 'actualizarInformacionJuego'])->name('wiki.game_infos.update');
+    Route::delete('/wiki/game-infos/{id}', [WikiAdminController::class, 'eliminarInformacionJuego'])->name('wiki.game_infos.destroy');
     
-    Route::post('/wiki/faqs', [WikiAdminController::class, 'storeFaq'])->name('wiki.faqs.store');
-    Route::put('/wiki/faqs/{id}', [WikiAdminController::class, 'updateFaq'])->name('wiki.faqs.update');
-    Route::delete('/wiki/faqs/{id}', [WikiAdminController::class, 'destroyFaq'])->name('wiki.faqs.destroy');
+    Route::post('/wiki/faqs', [WikiAdminController::class, 'guardarPreguntaFrecuente'])->name('wiki.faqs.store');
+    Route::put('/wiki/faqs/{id}', [WikiAdminController::class, 'actualizarPreguntaFrecuente'])->name('wiki.faqs.update');
+    Route::delete('/wiki/faqs/{id}', [WikiAdminController::class, 'eliminarPreguntaFrecuente'])->name('wiki.faqs.destroy');
 
     // Sugerencias
-    Route::get('/suggestions', [\App\Http\Controllers\Admin\SuggestionController::class, 'index'])->name('suggestions.index');
-    Route::post('/suggestions/{id}/mark-read', [\App\Http\Controllers\Admin\SuggestionController::class, 'markRead'])->name('suggestions.markRead');
-    Route::post('/suggestions/{id}/status', [\App\Http\Controllers\Admin\SuggestionController::class, 'updateStatus'])->name('suggestions.updateStatus');
-    Route::delete('/suggestions/{id}', [\App\Http\Controllers\Admin\SuggestionController::class, 'destroy'])->name('suggestions.destroy');
+    Route::get('/suggestions', [\App\Http\Controllers\Admin\SuggestionController::class, 'mostrarSugerencias'])->name('suggestions.index');
+    Route::post('/suggestions/{id}/mark-read', [\App\Http\Controllers\Admin\SuggestionController::class, 'marcarComoLeida'])->name('suggestions.markRead');
+    Route::post('/suggestions/{id}/status', [\App\Http\Controllers\Admin\SuggestionController::class, 'actualizarEstadoSugerencia'])->name('suggestions.updateStatus');
+    Route::delete('/suggestions/{id}', [\App\Http\Controllers\Admin\SuggestionController::class, 'eliminarSugerencia'])->name('suggestions.destroy');
 
     // Gestión de Usuarios
-    Route::get('/users', [\App\Http\Controllers\Admin\UserAdminController::class, 'index'])->name('users.index');
-    Route::post('/users/{id}/ban', [\App\Http\Controllers\Admin\UserAdminController::class, 'ban'])->name('users.ban');
-    Route::delete('/users/{id}', [\App\Http\Controllers\Admin\UserAdminController::class, 'destroy'])->name('users.destroy');
+    Route::get('/users', [\App\Http\Controllers\Admin\UserAdminController::class, 'mostrarUsuarios'])->name('users.index');
+    Route::post('/users/{id}/ban', [\App\Http\Controllers\Admin\UserAdminController::class, 'gestionarBaneo'])->name('users.ban');
+    Route::delete('/users/{id}', [\App\Http\Controllers\Admin\UserAdminController::class, 'eliminarUsuario'])->name('users.destroy');
 });

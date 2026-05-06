@@ -9,17 +9,26 @@ use App\Models\PatchNote;
 
 class MetaAdminController extends Controller
 {
-    public function index()
+    /**
+     * Muestra el panel de administración del Meta (Estrategias y Notas de parche).
+     */
+    public function mostrarMetaAdmin()
     {
-        $strategies = MetaStrategy::orderBy('created_at', 'desc')->get();
-        $patchNotes = PatchNote::orderBy('created_at', 'desc')->get();
+        $estrategias = MetaStrategy::orderBy('created_at', 'desc')->get();
+        $notasDeParche = PatchNote::orderBy('created_at', 'desc')->get();
 
-        return view('admin.meta', compact('strategies', 'patchNotes'));
+        return view('admin.meta', [
+            'estrategias' => $estrategias,
+            'patchNotes' => $notasDeParche
+        ]);
     }
 
-    public function storeStrategy(Request $request)
+    /**
+     * Guarda una nueva estrategia Meta en la base de datos.
+     */
+    public function guardarEstrategia(Request $request)
     {
-        $request->validate([
+        $datosValidados = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'build_type' => 'nullable|string|max:255',
@@ -27,44 +36,53 @@ class MetaAdminController extends Controller
         ]);
 
         MetaStrategy::create([
-            'title' => $request->title,
-            'description' => $request->description,
-            'build_type' => $request->build_type,
+            'title' => $datosValidados['title'],
+            'description' => $datosValidados['description'],
+            'build_type' => $datosValidados['build_type'],
             'is_active' => $request->input('is_active', true),
         ]);
 
         return redirect()->back()->with('success', 'Estrategia creada exitosamente.');
     }
 
-    public function updateStrategy(Request $request, $id)
+    /**
+     * Actualiza una estrategia Meta existente.
+     */
+    public function actualizarEstrategia(Request $request, $id)
     {
-        $strategy = MetaStrategy::findOrFail($id);
-        $request->validate([
+        $estrategia = MetaStrategy::findOrFail($id);
+        $datosValidados = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'build_type' => 'nullable|string|max:255',
             'is_active' => 'boolean'
         ]);
 
-        $strategy->update([
-            'title' => $request->title,
-            'description' => $request->description,
-            'build_type' => $request->build_type,
+        $estrategia->update([
+            'title' => $datosValidados['title'],
+            'description' => $datosValidados['description'],
+            'build_type' => $datosValidados['build_type'],
             'is_active' => $request->input('is_active', true),
         ]);
 
         return redirect()->back()->with('success', 'Estrategia actualizada.');
     }
 
-    public function destroyStrategy($id)
+    /**
+     * Elimina permanentemente una estrategia Meta.
+     */
+    public function eliminarEstrategia($id)
     {
         MetaStrategy::findOrFail($id)->delete();
         return redirect()->back()->with('success', 'Estrategia eliminada.');
     }
 
-    public function storePatchNote(Request $request)
+    /**
+     * Guarda una nueva nota de parche.
+     */
+    public function guardarNotaParche(Request $request)
     {
-        $request->validate([
+        $datosValidados = $request->validate([
             'version' => 'nullable|string|max:50',
             'change_type' => 'required|in:buff,nerf,new',
             'description' => 'required|string',
@@ -72,36 +90,42 @@ class MetaAdminController extends Controller
         ]);
 
         PatchNote::create([
-            'version' => $request->version,
-            'change_type' => $request->change_type,
-            'description' => $request->description,
+            'version' => $datosValidados['version'],
+            'change_type' => $datosValidados['change_type'],
+            'description' => $datosValidados['description'],
             'is_active' => $request->input('is_active', true),
         ]);
 
         return redirect()->back()->with('success', 'Nota del parche añadida.');
     }
 
-    public function updatePatchNote(Request $request, $id)
+    /**
+     * Actualiza una nota de parche existente.
+     */
+    public function actualizarNotaParche(Request $request, $id)
     {
-        $note = PatchNote::findOrFail($id);
-        $request->validate([
+        $nota = PatchNote::findOrFail($id);
+        $datosValidados = $request->validate([
             'version' => 'nullable|string|max:50',
             'change_type' => 'required|in:buff,nerf,new',
             'description' => 'required|string',
             'is_active' => 'boolean'
         ]);
 
-        $note->update([
-            'version' => $request->version,
-            'change_type' => $request->change_type,
-            'description' => $request->description,
+        $nota->update([
+            'version' => $datosValidados['version'],
+            'change_type' => $datosValidados['change_type'],
+            'description' => $datosValidados['description'],
             'is_active' => $request->input('is_active', true),
         ]);
 
         return redirect()->back()->with('success', 'Nota del parche actualizada.');
     }
 
-    public function destroyPatchNote($id)
+    /**
+     * Elimina permanentemente una nota de parche.
+     */
+    public function eliminarNotaParche($id)
     {
         PatchNote::findOrFail($id)->delete();
         return redirect()->back()->with('success', 'Nota eliminada.');

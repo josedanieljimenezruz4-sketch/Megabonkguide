@@ -6,71 +6,94 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Item;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
-    public function login()
+    /**
+     * Muestra el formulario de inicio de sesión.
+     */
+    public function mostrarFormularioLogin()
     {
         return view('login');
     }
-    public function register()
+
+    /**
+     * Muestra el formulario de registro de usuario.
+     */
+    public function mostrarFormularioRegistro()
     {
         return view('registro');
     }
-    public function profile()
+
+    /**
+     * Muestra la vista de perfil de usuario heredada (sistema de progresión).
+     */
+    public function mostrarPerfil()
     {
-        // El total de ínventario del juego ahora se lee directamente y con precisión matemática desde MySQL
-        $totalItems = \App\Models\Item::count();
-        $totalItems = $totalItems > 0 ? $totalItems : 1; // Para evitar posible división por cero
+        // El total de inventario del juego ahora se lee directamente y con precisión matemática desde MySQL
+        $totalElementos = Item::count();
+        $totalElementos = $totalElementos > 0 ? $totalElementos : 1; // Para evitar posible división por cero
 
         // Calculamos cuántos ha desbloqueado el usuario
-        $unlockedItems = \Illuminate\Support\Facades\DB::table('user_unlocks')->where('user_id', auth()->id())->count();
+        $elementosDesbloqueados = DB::table('user_unlocks')->where('user_id', auth()->id())->count();
         
         // Calculamos el porcentaje
-        $percentage = round(($unlockedItems / $totalItems) * 100);
+        $porcentaje = round(($elementosDesbloqueados / $totalElementos) * 100);
 
-        return view('perfil', compact('totalItems', 'unlockedItems', 'percentage'));
+        return view('perfil', [
+            'totalItems' => $totalElementos, 
+            'unlockedItems' => $elementosDesbloqueados, 
+            'percentage' => $porcentaje
+        ]);
     }
-    public function settings()
+
+    /**
+     * Muestra la vista de configuración/ajustes del usuario.
+     */
+    public function mostrarAjustes()
     {
         return view('cambiar_datos');
     }
 
-    // Procesar Registro
-    public function store(Request $request)
+    /**
+     * Procesa la solicitud de registro de un nuevo usuario.
+     */
+    public function registrarUsuario(Request $request)
     {
-        $validated = $request->validate([
+        $datosValidados = $request->validate([
             'username' => 'required|string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $user = User::create([
-            'username' => $validated['username'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
+        $usuario = User::create([
+            'username' => $datosValidados['username'],
+            'email' => $datosValidados['email'],
+            'password' => Hash::make($datosValidados['password']),
         ]);
 
-        Auth::login($user);
+        Auth::login($usuario);
 
-        // Asegúrate de que la ruta 'inicio' o '/' esté definida como 'home' en web.php
         return redirect('/');
     }
 
-    // Procesar Login
-    public function authenticate(Request $request)
+    /**
+     * Procesa la solicitud de inicio de sesión de un usuario.
+     */
+    public function autenticarUsuario(Request $request)
     {
-        $credentials = $request->validate([
+        $credenciales = $request->validate([
             'username' => ['required'],
             'password' => ['required'],
         ]);
 
-        // CAMBIO CLAVE AQUÍ: 
         // Si el usuario ingresa un correo, buscamos por 'email'. 
         // Si no, buscamos por 'username' (NO por 'name').
-        $fieldType = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        $tipoDeCampo = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
-        if (Auth::attempt([$fieldType => $credentials['username'], 'password' => $credentials['password']])) {
+        if (Auth::attempt([$tipoDeCampo => $credenciales['username'], 'password' => $credenciales['password']])) {
             $request->session()->regenerate();
             return redirect()->intended('/');
         }
@@ -80,12 +103,15 @@ class UserController extends Controller
         ])->onlyInput('username');
     }
 
-    // Cerrar Sesión
-    public function logout(Request $request)
+    /**
+     * Cierra la sesión del usuario actual.
+     */
+    public function cerrarSesion(Request $request)
     {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+        
         return redirect('/');
     }
 }

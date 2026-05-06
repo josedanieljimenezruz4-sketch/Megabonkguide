@@ -3,49 +3,50 @@
 @section('title', 'Gestión Wiki | MEGABONK GUIDE')
 
 @section('content')
-<div class="admin-container" style="max-width: 1000px; margin: 40px auto; padding: 20px; background-color: #1e1e24; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.4); color: #fff;">
-    <h1 class="admin-title" style="text-align: center; color: #ff4b2b; margin-bottom: 30px; font-size: 2rem; text-transform: uppercase;">📚 Gestión de la Wiki (Información General)</h1>
+<div class="admin-wiki-container">
+    <h1 class="admin-wiki-title">📚 Gestión de la Wiki (Información General)</h1>
 
     @if(session('success'))
-        <div class="alert alert-success" style="background: rgba(0, 255, 128, 0.2); color: #0f8; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+        <div class="admin-wiki-alert">
             {{ session('success') }}
         </div>
     @endif
 
-    <div class="admin-grid" style="display: grid; grid-template-columns: 1fr; gap: 40px;">
+    <div class="admin-wiki-grid">
         
         <!-- ================= GAME INFO ================= -->
-        <section class="admin-card" style="background: #111; padding: 20px; border-radius: 10px; border-left: 4px solid var(--neon-cyan, #41E8EF);">
+        <!-- ================= GAME INFO ================= -->
+        <section class="admin-wiki-card-info">
             <h2>Sobre el Juego / Información</h2>
             
-            <form action="{{ route('admin.wiki.game_infos.store') }}" method="POST" style="margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px; background: #000; padding: 15px; border-radius: 8px;">
+            <form action="{{ route('admin.wiki.game_infos.store') }}" method="POST" class="admin-wiki-form">
                 @csrf
                 <h4>Añadir Nueva Información</h4>
-                <input type="text" name="title" placeholder="Título" required style="padding: 10px; background: #222; border: 1px solid #444; color: white;">
-                <input type="text" name="category" placeholder="Categoría (Ej: Sobre el juego, Mecánicas)" style="padding: 10px; background: #222; border: 1px solid #444; color: white;">
-                <textarea name="content" placeholder="Contenido (Soporta Markdown)" required rows="4" style="padding: 10px; background: #222; border: 1px solid #444; color: white; resize: vertical;"></textarea>
-                <button type="submit" class="btn btn-primary" style="align-self: flex-start; background: #41E8EF; color: black; border: none; padding: 10px 15px; border-radius: 5px; font-weight: bold; cursor: pointer;">Guardar Información</button>
+                <input type="text" name="title" placeholder="Título" required class="admin-wiki-input">
+                <input type="text" name="category" placeholder="Categoría (Ej: Sobre el juego, Mecánicas)" class="admin-wiki-input">
+                <textarea name="content" placeholder="Contenido (Soporta Markdown)" required rows="4" class="admin-wiki-textarea"></textarea>
+                <button type="submit" class="admin-wiki-btn-info">Guardar Información</button>
             </form>
 
-            <table class="admin-table" style="width: 100%; border-collapse: collapse; text-align: left;">
+            <table class="admin-wiki-table">
                 <thead>
-                    <tr style="border-bottom: 2px solid #333;">
-                        <th style="padding: 10px;">Título</th>
-                        <th style="padding: 10px;">Categoría</th>
-                        <th style="padding: 10px;">Acciones</th>
+                    <tr>
+                        <th>Título</th>
+                        <th>Categoría</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($infos as $info)
-                    <tr style="border-bottom: 1px solid #222;">
-                        <td style="padding: 10px;">{{ $info->title }}</td>
-                        <td style="padding: 10px;">{{ $info->category ?? '-' }}</td>
-                        <td style="padding: 10px;">
-                            <div style="display: flex; gap: 5px;">
-                                <button type="button" style="background: #36d1dc; color: #000; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; font-weight: bold;" onclick="openEditInfoModal({{ $info->id }}, '{{ addslashes($info->title) }}', '{{ addslashes($info->category) }}', '{{ base64_encode($info->content) }}')">✎</button>
+                    @foreach($informacion as $info)
+                    <tr>
+                        <td>{{ $info->title }}</td>
+                        <td>{{ $info->category ?? '-' }}</td>
+                        <td>
+                            <div class="admin-wiki-actions">
+                                <button type="button" class="admin-wiki-btn-edit" onclick="openEditInfoModal({{ $info->id }}, '{{ addslashes($info->title) }}', '{{ addslashes($info->category) }}', '{{ base64_encode($info->content) }}')">✎</button>
                                 <form action="{{ route('admin.wiki.game_infos.destroy', $info->id) }}" method="POST" style="display: inline-block;">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="btn-danger" style="background: red; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px;" onclick="return confirm('¿Eliminar?')">X</button>
+                                    <button type="submit" class="admin-wiki-btn-delete" onclick="return confirm('¿Eliminar?')">X</button>
                                 </form>
                             </div>
                         </td>
@@ -56,35 +57,36 @@
         </section>
 
         <!-- ================= FAQS ================= -->
-        <section class="admin-card" style="background: #111; padding: 20px; border-radius: 10px; border-left: 4px solid var(--neon-purple, #B965F0);">
+        <!-- ================= FAQS ================= -->
+        <section class="admin-wiki-card-faq">
             <h2>Preguntas Frecuentes (FAQ)</h2>
             
-            <form action="{{ route('admin.wiki.faqs.store') }}" method="POST" style="margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px; background: #000; padding: 15px; border-radius: 8px;">
+            <form action="{{ route('admin.wiki.faqs.store') }}" method="POST" class="admin-wiki-form">
                 @csrf
                 <h4>Añadir Nueva FAQ</h4>
-                <input type="text" name="title" placeholder="Pregunta" required style="padding: 10px; background: #222; border: 1px solid #444; color: white;">
-                <input type="text" name="category" placeholder="Categoría (Opcional)" style="padding: 10px; background: #222; border: 1px solid #444; color: white;">
-                <textarea name="content" placeholder="Respuesta (Soporta Markdown)" required rows="4" style="padding: 10px; background: #222; border: 1px solid #444; color: white; resize: vertical;"></textarea>
-                <button type="submit" class="btn btn-primary" style="align-self: flex-start; background: #B965F0; color: white; border: none; padding: 10px 15px; border-radius: 5px; font-weight: bold; cursor: pointer;">Guardar FAQ</button>
+                <input type="text" name="title" placeholder="Pregunta" required class="admin-wiki-input">
+                <input type="text" name="category" placeholder="Categoría (Opcional)" class="admin-wiki-input">
+                <textarea name="content" placeholder="Respuesta (Soporta Markdown)" required rows="4" class="admin-wiki-textarea"></textarea>
+                <button type="submit" class="admin-wiki-btn-faq">Guardar FAQ</button>
             </form>
 
-            <table class="admin-table" style="width: 100%; border-collapse: collapse; text-align: left;">
+            <table class="admin-wiki-table">
                 <thead>
-                    <tr style="border-bottom: 2px solid #333;">
-                        <th style="padding: 10px;">Pregunta</th>
-                        <th style="padding: 10px;">Acciones</th>
+                    <tr>
+                        <th>Pregunta</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($faqs as $faq)
-                    <tr style="border-bottom: 1px solid #222;">
-                        <td style="padding: 10px;">{{ $faq->title }}</td>
-                        <td style="padding: 10px;">
-                            <div style="display: flex; gap: 5px;">
-                                <button type="button" style="background: #36d1dc; color: #000; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; font-weight: bold;" onclick="openEditFaqModal({{ $faq->id }}, '{{ addslashes($faq->title) }}', '{{ addslashes($faq->category) }}', '{{ base64_encode($faq->content) }}')">✎</button>
+                    @foreach($preguntasFrecuentes as $faq)
+                    <tr>
+                        <td>{{ $faq->title }}</td>
+                        <td>
+                            <div class="admin-wiki-actions">
+                                <button type="button" class="admin-wiki-btn-edit" onclick="openEditFaqModal({{ $faq->id }}, '{{ addslashes($faq->title) }}', '{{ addslashes($faq->category) }}', '{{ base64_encode($faq->content) }}')">✎</button>
                                 <form action="{{ route('admin.wiki.faqs.destroy', $faq->id) }}" method="POST" style="display: inline-block;">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="btn-danger" style="background: red; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px;" onclick="return confirm('¿Eliminar?')">X</button>
+                                    <button type="submit" class="admin-wiki-btn-delete" onclick="return confirm('¿Eliminar?')">X</button>
                                 </form>
                             </div>
                         </td>
@@ -98,33 +100,34 @@
 </div>
 
 <!-- Modals de Edición -->
-<div id="editInfoModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
-    <div style="background: #1e1e24; padding: 30px; border-radius: 12px; width: 90%; max-width: 600px; border: 1px solid #41E8EF; box-shadow: 0 0 20px rgba(65, 232, 239, 0.2);">
-        <h2 style="color: #41E8EF; margin-top: 0;">Editar Información</h2>
-        <form id="editInfoForm" method="POST" style="display: flex; flex-direction: column; gap: 10px;">
+<!-- Modals de Edición -->
+<div id="editInfoModal" class="admin-wiki-modal-overlay">
+    <div class="admin-wiki-modal-info">
+        <h2 class="admin-wiki-modal-title-info">Editar Información</h2>
+        <form id="editInfoForm" method="POST" class="admin-wiki-modal-form">
             @csrf @method('PUT')
-            <input type="text" name="title" id="editInfoTitle" required style="padding: 10px; background: #222; border: 1px solid #444; color: white;">
-            <input type="text" name="category" id="editInfoCategory" style="padding: 10px; background: #222; border: 1px solid #444; color: white;">
-            <textarea name="content" id="editInfoContent" required rows="6" style="padding: 10px; background: #222; border: 1px solid #444; color: white; resize: vertical;"></textarea>
-            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
-                <button type="button" onclick="document.getElementById('editInfoModal').style.display='none'" style="padding: 10px; background: #555; color: white; border: none; border-radius: 5px; cursor: pointer;">Cancelar</button>
-                <button type="submit" style="padding: 10px; background: #41E8EF; color: black; font-weight: bold; border: none; border-radius: 5px; cursor: pointer;">Guardar</button>
+            <input type="text" name="title" id="editInfoTitle" required class="admin-wiki-input">
+            <input type="text" name="category" id="editInfoCategory" class="admin-wiki-input">
+            <textarea name="content" id="editInfoContent" required rows="6" class="admin-wiki-textarea"></textarea>
+            <div class="admin-wiki-modal-actions">
+                <button type="button" onclick="document.getElementById('editInfoModal').style.display='none'" class="admin-wiki-btn-cancel">Cancelar</button>
+                <button type="submit" class="admin-wiki-btn-save-info">Guardar</button>
             </div>
         </form>
     </div>
 </div>
 
-<div id="editFaqModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 1000; align-items: center; justify-content: center;">
-    <div style="background: #1e1e24; padding: 30px; border-radius: 12px; width: 90%; max-width: 600px; border: 1px solid #B965F0; box-shadow: 0 0 20px rgba(185, 101, 240, 0.2);">
-        <h2 style="color: #B965F0; margin-top: 0;">Editar FAQ</h2>
-        <form id="editFaqForm" method="POST" style="display: flex; flex-direction: column; gap: 10px;">
+<div id="editFaqModal" class="admin-wiki-modal-overlay">
+    <div class="admin-wiki-modal-faq">
+        <h2 class="admin-wiki-modal-title-faq">Editar FAQ</h2>
+        <form id="editFaqForm" method="POST" class="admin-wiki-modal-form">
             @csrf @method('PUT')
-            <input type="text" name="title" id="editFaqTitle" required style="padding: 10px; background: #222; border: 1px solid #444; color: white;">
-            <input type="text" name="category" id="editFaqCategory" style="padding: 10px; background: #222; border: 1px solid #444; color: white;">
-            <textarea name="content" id="editFaqContent" required rows="6" style="padding: 10px; background: #222; border: 1px solid #444; color: white; resize: vertical;"></textarea>
-            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px;">
-                <button type="button" onclick="document.getElementById('editFaqModal').style.display='none'" style="padding: 10px; background: #555; color: white; border: none; border-radius: 5px; cursor: pointer;">Cancelar</button>
-                <button type="submit" style="padding: 10px; background: #B965F0; color: white; font-weight: bold; border: none; border-radius: 5px; cursor: pointer;">Guardar</button>
+            <input type="text" name="title" id="editFaqTitle" required class="admin-wiki-input">
+            <input type="text" name="category" id="editFaqCategory" class="admin-wiki-input">
+            <textarea name="content" id="editFaqContent" required rows="6" class="admin-wiki-textarea"></textarea>
+            <div class="admin-wiki-modal-actions">
+                <button type="button" onclick="document.getElementById('editFaqModal').style.display='none'" class="admin-wiki-btn-cancel">Cancelar</button>
+                <button type="submit" class="admin-wiki-btn-save-faq">Guardar</button>
             </div>
         </form>
     </div>

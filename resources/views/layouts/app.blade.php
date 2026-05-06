@@ -12,28 +12,6 @@
     
     <link rel="icon" href="{{ asset('images/iconotlabaho.webp') }}?v=1" type="image/webp">
     <link rel="shortcut icon" href="{{ asset('images/iconotlabaho.webp') }}">
-    <!-- CSS Global Atmosférico -->
-    <style>
-        body {
-            background: radial-gradient(circle at top left, rgba(255, 0, 255, 0.05), transparent 40%),
-                        radial-gradient(circle at bottom right, rgba(0, 255, 255, 0.05), transparent 40%),
-                        #080808 !important;
-            background-attachment: fixed !important;
-            background-color: #080808 !important;
-            min-height: 100vh;
-            margin: 0;
-            color: white;
-        }
-
-        .glass-card {
-            background: rgba(15, 15, 15, 0.8) !important;
-            backdrop-filter: blur(10px) !important;
-            -webkit-backdrop-filter: blur(10px) !important;
-            border: 1px solid rgba(0, 255, 255, 0.2);
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            transition: all 0.3s ease;
-        }
-    </style>
 </head>
 <body>
 

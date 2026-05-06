@@ -10,57 +10,63 @@ use Illuminate\Support\Str;
 
 class SocialController extends Controller
 {
-    public function redirectToProvider($provider)
+    /**
+     * Redirige al usuario al proveedor de OAuth seleccionado.
+     */
+    public function redirigirAlProveedor($proveedor)
     {
-        return Socialite::driver($provider)->redirect();
+        return Socialite::driver($proveedor)->redirect();
     }
 
-    public function handleProviderCallback($provider)
+    /**
+     * Maneja el callback de autenticación tras la respuesta del proveedor.
+     */
+    public function manejarCallbackDelProveedor($proveedor)
     {
         try {
-            $socialUser = Socialite::driver($provider)->user();
+            $usuarioSocial = Socialite::driver($proveedor)->user();
         } catch (\Exception $e) {
-            return redirect('/login')->withErrors(['oauth' => 'Error en la autenticación con ' . ucfirst($provider)]);
+            return redirect('/login')->withErrors(['oauth' => 'Error en la autenticación con ' . ucfirst($proveedor)]);
         }
 
         // Buscar usuario por email (o por ID si ya está vinculado y no dio email)
-        if ($socialUser->getEmail()) {
-            $user = User::where('email', $socialUser->getEmail())->first();
+        if ($usuarioSocial->getEmail()) {
+            $usuario = User::where('email', $usuarioSocial->getEmail())->first();
         } else {
             // Algunos proveedores podrían no devolver email. Buscamos por el ID del proveedor.
-            $column = $provider . '_id';
-            $user = User::where($column, $socialUser->getId())->first();
+            $columna = $proveedor . '_id';
+            $usuario = User::where($columna, $usuarioSocial->getId())->first();
         }
 
-        if ($user) {
+        if ($usuario) {
             // Actualizar IDs y avatar si existen
-            if ($provider == 'google' && !$user->google_id) {
-                $user->google_id = $socialUser->getId();
+            if ($proveedor == 'google' && !$usuario->google_id) {
+                $usuario->google_id = $usuarioSocial->getId();
             }
-            if ($provider == 'discord' && !$user->discord_id) {
-                $user->discord_id = $socialUser->getId();
+            if ($proveedor == 'discord' && !$usuario->discord_id) {
+                $usuario->discord_id = $usuarioSocial->getId();
             }
             // Actualizar avatar si el usuario no tiene o si queremos mantenerlo actualizado
-            if ($socialUser->getAvatar()) {
-                $user->avatar = $socialUser->getAvatar();
+            if ($usuarioSocial->getAvatar()) {
+                $usuario->avatar = $usuarioSocial->getAvatar();
             }
-            $user->save();
+            $usuario->save();
         } else {
             // Crear nuevo usuario
-            $email = $socialUser->getEmail() ?? $socialUser->getId() . '@' . $provider . '.com';
+            $email = $usuarioSocial->getEmail() ?? $usuarioSocial->getId() . '@' . $proveedor . '.com';
 
-            $user = User::create([
-                'username' => $socialUser->getName() ?? $socialUser->getNickname() ?? 'Usuario_' . Str::random(5),
+            $usuario = User::create([
+                'username' => $usuarioSocial->getName() ?? $usuarioSocial->getNickname() ?? 'Usuario_' . Str::random(5),
                 'email' => $email,
                 'password' => null, // El password será nulo
-                'google_id' => $provider == 'google' ? $socialUser->getId() : null,
-                'discord_id' => $provider == 'discord' ? $socialUser->getId() : null,
-                'avatar' => $socialUser->getAvatar(),
+                'google_id' => $proveedor == 'google' ? $usuarioSocial->getId() : null,
+                'discord_id' => $proveedor == 'discord' ? $usuarioSocial->getId() : null,
+                'avatar' => $usuarioSocial->getAvatar(),
             ]);
         }
 
-        Auth::login($user, true); // true para "remember me"
+        Auth::login($usuario, true); // true para "remember me"
 
-        return redirect('/')->with('success', 'Bienvenido, ' . $user->username);
+        return redirect('/')->with('success', 'Bienvenido, ' . $usuario->username);
     }
 }

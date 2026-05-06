@@ -3,19 +3,24 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use App\Models\Update;
 
 class InfoController extends Controller
 {
-    public function general()
+    /**
+     * Muestra la vista de información general (legacy, ahora se maneja vía WikiController).
+     */
+    public function mostrarInfoGeneral()
     {
         return view('info_general');
     }
 
-    public function news()
+    /**
+     * Muestra la lista de las últimas novedades y parches del juego.
+     */
+    public function mostrarNovedades()
     {
-        $updates = Update::orderBy('published_at', 'desc')->get();
-        return view('novedades', compact('updates'));
+        $actualizaciones = Update::orderBy('published_at', 'desc')->get();
+        return view('novedades', ['updates' => $actualizaciones]);
     }
 }

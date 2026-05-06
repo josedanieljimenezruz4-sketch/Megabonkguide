@@ -3,86 +3,7 @@
 @section('title', 'Panel de Administración | MEGABONK GUIDE')
 
 @push('styles')
-    <style>
-        .admin-dashboard {
-            max-width: 100% !important; /* It's inside a main container now */
-            margin: 0;
-            padding: 20px;
-            background-color: transparent !important;
-            box-shadow: none !important;
-            color: #fff;
-        }
-        .admin-title {
-            color: #ff4b2b;
-            margin-bottom: 30px;
-            font-size: 2rem;
-            text-transform: uppercase;
-        }
-        .admin-stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-        .admin-stat-card {
-            background-color: rgba(44, 47, 51, 0.8);
-            backdrop-filter: blur(5px);
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            border-left: 4px solid #ff416c;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            border-right: 1px solid rgba(255,255,255,0.05);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-        .admin-stat-card h3 {
-            margin: 0;
-            color: #aaa;
-            font-size: 1rem;
-        }
-        .admin-stat-card .stat-value {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin: 10px 0 0;
-            color: #fff;
-        }
-        .admin-users-table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: rgba(44, 47, 51, 0.8);
-            border-radius: 8px;
-            overflow: hidden;
-            margin-top: 15px;
-            backdrop-filter: blur(5px);
-        }
-        .admin-users-table th, .admin-users-table td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        .admin-users-table th {
-            background-color: rgba(26, 26, 32, 0.9);
-            color: #ff416c;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-        }
-        .badge-admin {
-            background: linear-gradient(90deg, #ff4b2b, #ff416c);
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            color: white;
-        }
-        .badge-user {
-            background-color: #555;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            color: white;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}?v={{ time() }}">
 @endpush
 
 @section('content')
@@ -92,7 +13,7 @@
         <div class="admin-stats-grid">
             <div class="admin-stat-card" style="border-left-color: #00d2ff;">
                 <h3>👥 Usuarios Totales</h3>
-                <p class="stat-value">{{ $totalUsers }}</p>
+                <p class="stat-value">{{ $totalUsuarios }}</p>
             </div>
             <div class="admin-stat-card" style="border-left-color: #ff4b2b;">
                 <h3>👑 Administradores</h3>
@@ -100,11 +21,11 @@
             </div>
             <div class="admin-stat-card" style="border-left-color: #ffcf00;">
                 <h3>⚔️ Ítems Registrados</h3>
-                <p class="stat-value">{{ $totalItems }}</p>
+                <p class="stat-value">{{ $totalElementos }}</p>
             </div>
             <div class="admin-stat-card" style="border-left-color: #00e676;">
                 <h3>🔓 Unlocks Realizados</h3>
-                <p class="stat-value">{{ $totalUnlocks }}</p>
+                <p class="stat-value">{{ $totalDesbloqueos }}</p>
             </div>
         </div>
 
@@ -120,19 +41,19 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($latestUsers as $user)
+                @foreach($ultimosUsuarios as $usuario)
                 <tr>
-                    <td>#{{ $user->id }}</td>
-                    <td>{{ $user->username }}</td>
-                    <td>{{ $user->email }}</td>
+                    <td>#{{ $usuario->id }}</td>
+                    <td>{{ $usuario->username }}</td>
+                    <td>{{ $usuario->email }}</td>
                     <td>
-                        @if($user->is_admin)
+                        @if($usuario->is_admin)
                             <span class="badge-admin">Admin</span>
                         @else
                             <span class="badge-user">Usuario</span>
                         @endif
                     </td>
-                    <td>{{ $user->created_at ? $user->created_at->format('d/m/Y') : 'N/A' }}</td>
+                    <td>{{ $usuario->created_at ? $usuario->created_at->format('d/m/Y') : 'N/A' }}</td>
                 </tr>
                 @endforeach
             </tbody>

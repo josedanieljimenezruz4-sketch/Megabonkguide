@@ -9,27 +9,42 @@ use App\Models\TierList;
 
 class ModerationController extends Controller
 {
-    public function index()
+    /**
+     * Muestra el panel de moderación para Builds y Tier Lists.
+     */
+    public function mostrarPanelModeracion()
     {
-        $builds = Build::with('user', 'character')->latest()->paginate(15, ['*'], 'builds_page');
-        $tierlists = TierList::with('user')->latest()->paginate(15, ['*'], 'tierlists_page');
+        $buildsPaginadas = Build::with('user', 'character')->latest()->paginate(15, ['*'], 'builds_page');
+        $tierlistsPaginadas = TierList::with('user')->latest()->paginate(15, ['*'], 'tierlists_page');
 
-        return view('admin.moderation.index', compact('builds', 'tierlists'));
+        return view('admin.moderation.index', [
+            'builds' => $buildsPaginadas,
+            'tierlists' => $tierlistsPaginadas
+        ]);
     }
 
-    public function destroyBuild($id)
+    /**
+     * Elimina permanentemente una Build por parte de moderación.
+     */
+    public function eliminarBuild($id)
     {
         Build::findOrFail($id)->delete();
         return back()->with('success', 'Build eliminada por el administrador.');
     }
 
-    public function destroyTierList($id)
+    /**
+     * Elimina permanentemente una TierList por parte de moderación.
+     */
+    public function eliminarTierList($id)
     {
         TierList::findOrFail($id)->delete();
         return back()->with('success', 'TierList eliminada por el administrador.');
     }
 
-    public function editBuild(Build $build)
+    /**
+     * Carga el formulario de edición para una Build.
+     */
+    public function editarBuild(Build $build)
     {
         $build->load('items');
         
@@ -37,14 +52,24 @@ class ModerationController extends Controller
         $armas = \App\Models\Item::where('type', 'arma')->get();
         $tomos = \App\Models\Item::where('type', 'tomo')->get();
         $accesorios = \App\Models\Item::where('type', 'item')->get();
-        $strategies = \App\Models\MetaStrategy::where('is_active', true)->get();
+        $estrategias = \App\Models\MetaStrategy::where('is_active', true)->get();
 
-        return view('admin.moderation.edit_build', compact('build', 'personajes', 'armas', 'tomos', 'accesorios', 'strategies'));
+        return view('admin.moderation.edit_build', [
+            'build' => $build,
+            'personajes' => $personajes,
+            'armas' => $armas,
+            'tomos' => $tomos,
+            'accesorios' => $accesorios,
+            'strategies' => $estrategias
+        ]);
     }
 
-    public function updateBuild(Request $request, Build $build)
+    /**
+     * Actualiza la información y el equipamiento de una Build.
+     */
+    public function actualizarBuild(Request $request, Build $build)
     {
-        $validated = $request->validate([
+        $datosValidados = $request->validate([
             'name' => 'required|string|max:255',
             'character_id' => 'required|exists:items,id',
             'description' => 'nullable|string',
@@ -54,17 +79,17 @@ class ModerationController extends Controller
         ]);
 
         $build->update([
-            'name' => $validated['name'],
-            'character_id' => $validated['character_id'],
-            'description' => $validated['description'] ?? null,
-            'type' => $validated['type'] ?? null,
-            'meta_strategy_id' => $validated['meta_strategy_id'] ?? null,
+            'name' => $datosValidados['name'],
+            'character_id' => $datosValidados['character_id'],
+            'description' => $datosValidados['description'] ?? null,
+            'type' => $datosValidados['type'] ?? null,
+            'meta_strategy_id' => $datosValidados['meta_strategy_id'] ?? null,
         ]);
 
         $build->items()->detach();
         foreach (['Arma', 'Tomo', 'Item'] as $slot) {
-            if (isset($validated['items'][$slot])) {
-                foreach ($validated['items'][$slot] as $itemId) {
+            if (isset($datosValidados['items'][$slot])) {
+                foreach ($datosValidados['items'][$slot] as $itemId) {
                     if ($itemId) { 
                         $build->items()->attach($itemId, ['slot_type' => $slot]);
                     }

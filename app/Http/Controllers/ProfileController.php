@@ -6,87 +6,117 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
+use App\Models\Item;
+use App\Models\Build;
+use App\Models\TierList;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class ProfileController extends Controller
 {
-    public function index()
+    /**
+     * Muestra el perfil privado del usuario autenticado.
+     */
+    public function mostrarPerfil()
     {
-        $user = Auth::user();
+        $usuario = Auth::user();
         
-        // Progress Bar Data
-        $totalItems = \App\Models\Item::count();
-        $totalItems = $totalItems > 0 ? $totalItems : 1;
-        $unlocksCount = \Illuminate\Support\Facades\DB::table('user_unlocks')->where('user_id', $user->id)->count();
-        $percentage = round(($unlocksCount / $totalItems) * 100);
-        $progreso = $percentage;
-        $faltantes = $totalItems - $unlocksCount;
+        // Datos para la barra de progreso de desbloqueos
+        $totalElementos = Item::count();
+        $totalElementos = $totalElementos > 0 ? $totalElementos : 1;
+        $desbloqueosUsuario = DB::table('user_unlocks')->where('user_id', $usuario->id)->count();
+        $porcentaje = round(($desbloqueosUsuario / $totalElementos) * 100);
+        $faltantes = $totalElementos - $desbloqueosUsuario;
 
-        // User Activity Data
-        // Assuming models exist: App\Models\Build and App\Models\TierList
-        $builds = \App\Models\Build::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
-        $tierLists = \App\Models\TierList::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
+        // Historial de actividad del usuario (Builds y Tier Lists)
+        $buildsDelUsuario = Build::where('user_id', $usuario->id)->orderBy('created_at', 'desc')->get();
+        $tierListsDelUsuario = TierList::where('user_id', $usuario->id)->orderBy('created_at', 'desc')->get();
 
-        return view('profile', compact('user', 'totalItems', 'unlocksCount', 'progreso', 'faltantes', 'builds', 'tierLists'));
+        // Mantenemos los nombres de variables en inglés en compact para no romper profile.blade.php
+        return view('profile', [
+            'user' => $usuario,
+            'totalItems' => $totalElementos,
+            'unlocksCount' => $desbloqueosUsuario,
+            'progreso' => $porcentaje,
+            'faltantes' => $faltantes,
+            'builds' => $buildsDelUsuario,
+            'tierLists' => $tierListsDelUsuario
+        ]);
     }
 
-    public function updateAvatar(Request $request)
+    /**
+     * Actualiza la imagen de avatar del usuario autenticado.
+     */
+    public function actualizarAvatar(Request $request)
     {
         $request->validate([
             'avatar' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
-        $user = Auth::user();
+        $usuario = Auth::user();
 
         if ($request->hasFile('avatar')) {
-            $avatar = $request->file('avatar');
-            $filename = time() . '_' . $user->id . '.' . $avatar->getClientOriginalExtension();
+            $avatarSubido = $request->file('avatar');
+            $nombreArchivo = time() . '_' . $usuario->id . '.' . $avatarSubido->getClientOriginalExtension();
             
-            // Delete old avatar if it exists and is local
-            if ($user->avatar && !str_starts_with($user->avatar, 'http')) {
-                Storage::disk('public')->delete('avatars/' . $user->avatar);
+            // Eliminar el avatar antiguo si existe y es local
+            if ($usuario->avatar && !str_starts_with($usuario->avatar, 'http')) {
+                Storage::disk('public')->delete('avatars/' . $usuario->avatar);
             }
 
-            // Create directory if not exists
+            // Crear el directorio si no existe
             if (!Storage::disk('public')->exists('avatars')) {
                 Storage::disk('public')->makeDirectory('avatars');
             }
 
-            // Use Intervention Image to resize to 300x300 and save
-            $path = storage_path('app/public/avatars/' . $filename);
-            Image::make($avatar)->fit(300, 300)->save($path);
+            // Usar Intervention Image para redimensionar a 300x300 y guardar
+            $rutaRuta = storage_path('app/public/avatars/' . $nombreArchivo);
+            Image::make($avatarSubido)->fit(300, 300)->save($rutaRuta);
 
-            $user->avatar = $filename;
-            $user->save();
+            $usuario->avatar = $nombreArchivo;
+            $usuario->save();
 
             return response()->json([
                 'success' => true,
-                'avatar_url' => asset('storage/avatars/' . $filename),
+                'avatar_url' => asset('storage/avatars/' . $nombreArchivo),
                 'message' => 'Avatar actualizado correctamente.'
             ]);
         }
 
         return response()->json(['success' => false, 'message' => 'No se ha subido ninguna imagen.']);
     }
-    public function showPublic($id)
+
+    /**
+     * Muestra el perfil público de un usuario especificado por su ID.
+     */
+    public function mostrarPerfilPublico($id)
     {
-        $user = \App\Models\User::findOrFail($id);
+        $usuarioPublico = User::findOrFail($id);
         
-        if (auth()->check() && auth()->id() == $user->id) {
+        // Si el usuario está viendo su propio perfil, lo redirigimos al perfil privado
+        if (auth()->check() && auth()->id() == $usuarioPublico->id) {
             return redirect()->route('profile');
         }
 
-        // Progress Bar Data
-        $totalItems = \App\Models\Item::count();
-        $totalItems = $totalItems > 0 ? $totalItems : 1;
-        $unlocksCount = \Illuminate\Support\Facades\DB::table('user_unlocks')->where('user_id', $user->id)->count();
-        $percentage = round(($unlocksCount / $totalItems) * 100);
-        $progreso = $percentage;
-        $faltantes = $totalItems - $unlocksCount;
+        // Datos para la barra de progreso
+        $totalElementos = Item::count();
+        $totalElementos = $totalElementos > 0 ? $totalElementos : 1;
+        $desbloqueosUsuario = DB::table('user_unlocks')->where('user_id', $usuarioPublico->id)->count();
+        $porcentaje = round(($desbloqueosUsuario / $totalElementos) * 100);
+        $faltantes = $totalElementos - $desbloqueosUsuario;
 
-        // User Activity Data
-        $builds = \App\Models\Build::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
-        $tierLists = \App\Models\TierList::where('user_id', $user->id)->orderBy('created_at', 'desc')->get();
+        // Historial de actividad del usuario
+        $buildsDelUsuario = Build::where('user_id', $usuarioPublico->id)->orderBy('created_at', 'desc')->get();
+        $tierListsDelUsuario = TierList::where('user_id', $usuarioPublico->id)->orderBy('created_at', 'desc')->get();
 
-        return view('profile', compact('user', 'totalItems', 'unlocksCount', 'progreso', 'faltantes', 'builds', 'tierLists'));
+        return view('profile', [
+            'user' => $usuarioPublico,
+            'totalItems' => $totalElementos,
+            'unlocksCount' => $desbloqueosUsuario,
+            'progreso' => $porcentaje,
+            'faltantes' => $faltantes,
+            'builds' => $buildsDelUsuario,
+            'tierLists' => $tierListsDelUsuario
+        ]);
     }
 }
