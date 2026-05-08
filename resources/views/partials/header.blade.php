@@ -7,11 +7,16 @@
 
         <nav class="main-nav">
             <ul>
-                <li><a href="{{ route('tierlist') }}" class="{{ request()->routeIs('tierlist*') ? 'active-link' : '' }}">TIERLIST</a></li>
-                <li><a href="{{ route('builds.index') }}" class="{{ request()->routeIs('builds.*') ? 'active-link' : '' }}">BUILDS</a></li>
-                <li><a href="{{ route('comunity.index') }}" class="{{ request()->routeIs('comunity.*') ? 'active-link' : '' }}">COMMUNITY</a></li>
+                <li><a href="{{ route('tierlist') }}"
+                        class="{{ request()->routeIs('tierlist*') ? 'active-link' : '' }}">TIERLIST</a></li>
+                <li><a href="{{ route('builds.index') }}"
+                        class="{{ request()->routeIs('builds.*') ? 'active-link' : '' }}">BUILDS</a></li>
+                <li><a href="{{ route('comunity.index') }}"
+                        class="{{ request()->routeIs('comunity.*') ? 'active-link' : '' }}">COMMUNITY</a></li>
                 <li class="dropdown">
-                    <a href="{{ route('unlocks.index') }}" class="{{ request()->routeIs('unlocks.*') ? 'active-link' : '' }}">UNLOCKS <span class="arrow">▼</span></a>
+                    <a href="{{ route('unlocks.index') }}"
+                        class="{{ request()->routeIs('unlocks.*') ? 'active-link' : '' }}">UNLOCKS <span
+                            class="arrow">▼</span></a>
                     <ul class="dropdown-menu">
                         <li><a href="{{ route('unlocks.weapons') }}">Armas</a></li>
                         <li><a href="{{ route('unlocks.tomes') }}">Tomos</a></li>
@@ -19,10 +24,14 @@
                         <li><a href="{{ route('unlocks.characters') }}">Personajes</a></li>
                     </ul>
                 </li>
-                <li><a href="{{ route('meta') }}" class="{{ request()->routeIs('meta*') ? 'active-link' : '' }}">META</a></li>
-                <li><a href="{{ route('wiki.index') }}" class="{{ request()->routeIs('wiki.*') ? 'active-link' : '' }}">INFO GENERAL</a></li>
-                <li><a href="{{ route('info.news') }}" class="{{ request()->routeIs('info.news') ? 'active-link' : '' }}">NOVEDADES</a></li>
-                <li><a href="{{ route('leaderboard') }}" class="{{ request()->routeIs('leaderboard*') ? 'active-link' : '' }}">LEADERBOARD</a></li>
+                <li><a href="{{ route('meta') }}"
+                        class="{{ request()->routeIs('meta*') ? 'active-link' : '' }}">META</a></li>
+                <li><a href="{{ route('wiki.index') }}"
+                        class="{{ request()->routeIs('wiki.*') ? 'active-link' : '' }}">INFO GENERAL</a></li>
+                <li><a href="{{ route('info.news') }}"
+                        class="{{ request()->routeIs('info.news') ? 'active-link' : '' }}">NOVEDADES</a></li>
+                <li><a href="{{ route('leaderboard') }}"
+                        class="{{ request()->routeIs('leaderboard*') ? 'active-link' : '' }}">LEADERBOARD</a></li>
             </ul>
         </nav>
         <div class="user-auth-links">
@@ -42,7 +51,7 @@
                             <li class="separator"></li>
                         @endif
                         <li><a href="{{ route('profile') }}">Mi Perfil</a></li>
-                        <li><a href="{{ route('inventory') }}">🎒 Mi Inventario</a></li>
+                        <li><a href="{{ route('inventory') }}">Mi Inventario</a></li>
                         <li><a href="{{ route('profile.settings') }}">Cambiar Datos</a></li>
                         <li class="separator"></li>
                         <li>
@@ -84,13 +93,13 @@
 <!-- Toast Global de Notificaciones -->
 <div id="global-toast" class="notificacion-toast">Progreso actualizado</div>
 <script>
-// Muestra una notificación toast temporal con el mensaje indicado
-window.showToast = function(message) {
-    const toast = document.getElementById("global-toast");
-    if(message) toast.innerText = message;
-    toast.classList.add("show");
-    setTimeout(function(){ 
-        toast.classList.remove("show"); 
-    }, 2000);
-}
+    // Muestra una notificación toast temporal con el mensaje indicado
+    window.showToast = function (message) {
+        const toast = document.getElementById("global-toast");
+        if (message) toast.innerText = message;
+        toast.classList.add("show");
+        setTimeout(function () {
+            toast.classList.remove("show");
+        }, 2000);
+    }
 </script>
