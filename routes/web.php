@@ -87,6 +87,7 @@ Route::middleware('auth')->group(function () {
     Route::controller(UserController::class)->group(function () {
         Route::get('/perfil', 'mostrarPerfil')->name('profile.old');
         Route::get('/cambiar-datos', 'mostrarAjustes')->name('profile.settings');
+        Route::post('/cambiar-datos', 'actualizarAjustes')->name('profile.settings.update');
     });
 
     // Perfil Personal
