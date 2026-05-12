@@ -46,13 +46,24 @@ class GameDataController extends Controller
         // Obtener las últimas Tier Lists de la comunidad para mostrar en el sidebar
         $tierListsRecientes = TierList::with(['user', 'rows.item'])->latest()->take(5)->get();
 
+        // Sugerencias del usuario actual (indexadas por item_id para búsqueda rápida)
+        $sugerenciasUsuario = [];
+        if (auth()->check()) {
+            $sugerenciasUsuario = \App\Models\TierSuggestion::where('user_id', auth()->id())
+                ->whereIn('status', ['pending', 'approved'])
+                ->pluck('suggested_tier', 'item_id')
+                ->toArray();
+        }
+
         return view('tierlist', [
+            'allItems' => $todosLosElementos,
             'itemsByRank' => $elementosPorRango,
             'pendingItems' => $elementosPendientes,
             'mostVotedRanks' => $rangosMasVotados,
             'category' => $categoria,
             'sort' => $ordenar,
             'recentCommunityTierLists' => $tierListsRecientes,
+            'userSuggestions' => $sugerenciasUsuario,
         ]);
     }
 
@@ -65,10 +76,11 @@ class GameDataController extends Controller
             return [];
         }
 
-        $votosDeRango = DB::table('user_rank_votes')
-            ->select('item_id', 'suggested_rank', DB::raw('count(*) as total'))
+        $votosDeRango = DB::table('tier_suggestions')
+            ->select('item_id', 'suggested_tier as suggested_rank', DB::raw('count(*) as total'))
             ->whereIn('item_id', $idsPendientes)
-            ->groupBy('item_id', 'suggested_rank')
+            ->where('status', 'pending')
+            ->groupBy('item_id', 'suggested_tier')
             ->get();
             
         $rangosMasVotados = [];
@@ -82,45 +94,7 @@ class GameDataController extends Controller
     }
 
     /**
-     * Registra un voto de popularidad para un ítem. Solo permite un voto por usuario.
-     */
-    public function votarElemento(Request $request, $id)
-    {
-        $item = Item::findOrFail($id);
-        
-        $idUsuario = auth()->id();
-        
-        // Comprobar si el usuario ya ha votado este ítem
-        $yaVotado = DB::table('item_user_votes')
-            ->where('user_id', $idUsuario)
-            ->where('item_id', $id)
-            ->exists();
-            
-        if ($yaVotado) {
-            return response()->json([
-                'success' => false,
-                'message' => '¡Solo puedes votar una vez por este item!'
-            ]);
-        }
-        
-        // Registrar el voto del usuario
-        DB::table('item_user_votes')->insert([
-            'user_id' => $idUsuario,
-            'item_id' => $id,
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
-        
-        $item->increment('votes');
-
-        return response()->json([
-            'success' => true,
-            'votes' => $item->votes
-        ]);
-    }
-
-    /**
-     * Registra o actualiza el voto de rango sugerido por un usuario para un ítem pendiente.
+     * Registra o actualiza el voto de rango sugerido por un usuario para un ítem.
      */
     public function votarRangoElemento(Request $request, $id)
     {
@@ -133,23 +107,15 @@ class GameDataController extends Controller
         $idUsuario = auth()->id();
         $rango = $request->input('rank');
         
-        // Crear o actualizar el voto del usuario para este ítem
-        DB::table('user_rank_votes')->updateOrInsert(
+        // Crear o actualizar la sugerencia del usuario para este ítem
+        \App\Models\TierSuggestion::updateOrCreate(
             ['user_id' => $idUsuario, 'item_id' => $id],
-            ['suggested_rank' => $rango, 'updated_at' => now()]
+            ['suggested_tier' => $rango, 'status' => 'pending']
         );
         
-        // Determinar el rango más votado actualmente
-        $masVotado = DB::table('user_rank_votes')
-            ->select('suggested_rank', DB::raw('count(*) as total'))
-            ->where('item_id', $id)
-            ->groupBy('suggested_rank')
-            ->orderBy('total', 'desc')
-            ->first();
-
         return response()->json([
             'success' => true,
-            'most_voted_rank' => $masVotado ? $masVotado->suggested_rank : $rango
+            'message' => 'Sugerencia de rango registrada correctamente.'
         ]);
     }
 

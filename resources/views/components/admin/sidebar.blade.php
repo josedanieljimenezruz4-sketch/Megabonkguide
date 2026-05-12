@@ -13,7 +13,7 @@
         <li><a href="{{ route('admin.community-tierlists.index') }}" class="{{ $baseClass }} {{ request()->routeIs('admin.community-tierlists.*') ? $activeClass : $inactiveClass }}"><i>👥</i> Tier Lists Comunidad</a></li>
         <li><a href="{{ route('admin.wiki.index') }}" class="{{ $baseClass }} {{ request()->routeIs('admin.wiki.*') ? $activeClass : $inactiveClass }}"><i>📚</i> Gestión Wiki</a></li>
         <li><a href="{{ route('admin.leaderboard.index') }}" class="{{ $baseClass }} {{ request()->routeIs('admin.leaderboard.*') ? $activeClass : $inactiveClass }}"><i>🏆</i> Leaderboard</a></li>
-        <li><a href="{{ route('admin.votes.index') }}" class="{{ $baseClass }} {{ request()->routeIs('admin.votes.*') ? $activeClass : $inactiveClass }}"><i>📊</i> Gestión de Votos</a></li>
+        <li><a href="{{ route('admin.tier-suggestions.index') }}" class="{{ $baseClass }} {{ request()->routeIs('admin.tier-suggestions.*') ? $activeClass : $inactiveClass }}"><i>🗳️</i> Sugerencias de Tier</a></li>
         <li>
             <a href="{{ route('admin.suggestions.index') }}" class="{{ $baseClass }} {{ request()->routeIs('admin.suggestions.*') ? $activeClass : $inactiveClass }} justify-between">
                 <div class="flex items-center gap-3">

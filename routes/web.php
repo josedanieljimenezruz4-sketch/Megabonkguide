@@ -105,7 +105,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/builds/{build}/vote', [App\Http\Controllers\BuildController::class, 'votarBuild'])->name('builds.vote');
 
     // Votes
-    Route::post('/items/{id}/vote', [App\Http\Controllers\GameDataController::class, 'votarElemento'])->name('items.vote');
     Route::post('/items/{id}/vote-rank', [App\Http\Controllers\GameDataController::class, 'votarRangoElemento'])->name('items.voteRank');
     Route::post('/meta-strategies/{id}/vote', [App\Http\Controllers\GameDataController::class, 'votarEstrategiaMeta'])->name('meta-strategies.vote');
 
@@ -131,10 +130,13 @@ Route::middleware(['auth', 'admin'])->name('admin.')->prefix('admin')->group(fun
     Route::post('/items/bulk-approve', [ItemController::class, 'aprobacionMasiva'])->name('items.bulkApprove');
     Route::post('/items/{id}/approve-rank', [ItemController::class, 'aprobarRango'])->name('items.approveRank');
     
-    // Gestión de votos
-    Route::get('/votes', [AdminController::class, 'gestionarVotos'])->name('votes.index');
-    Route::post('/votes/reset-all', [AdminController::class, 'reiniciarTodosLosVotos'])->name('votes.resetAll');
-    Route::post('/votes/{id}/reset', [AdminController::class, 'reiniciarVotosElemento'])->name('votes.resetItem');
+    // Sugerencias de Tier
+    Route::get('/tier-suggestions', [AdminController::class, 'gestionarTierSuggestions'])->name('tier-suggestions.index');
+    Route::post('/tier-suggestions/{id}/approve', [AdminController::class, 'aprobarTierSuggestion'])->name('tier-suggestions.approve');
+    Route::post('/tier-suggestions/{id}/reject', [AdminController::class, 'rechazarTierSuggestion'])->name('tier-suggestions.reject');
+    Route::post('/tier-suggestions/{id}/ban', [AdminController::class, 'banearTierSuggestion'])->name('tier-suggestions.ban');
+    Route::post('/tier-suggestions/item/{itemId}/approve-majority', [AdminController::class, 'aprobarMayoria'])->name('tier-suggestions.approveMajority');
+    Route::post('/meta/reset', [AdminController::class, 'resetMeta'])->name('meta.reset');
 
     // Moderación Antigua
     Route::get('/community-tierlists', [AdminController::class, 'gestionarTierListsComunidad'])->name('community-tierlists.index');

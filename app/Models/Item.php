@@ -41,4 +41,12 @@ class Item extends Model
     {
         return $this->hasMany(Build::class, 'character_id');
     }
+
+    /**
+     * Relación Uno a Muchos con Sugerencias de Tier.
+     */
+    public function tierSuggestions()
+    {
+        return $this->hasMany(TierSuggestion::class, 'item_id', 'id');
+    }
 }

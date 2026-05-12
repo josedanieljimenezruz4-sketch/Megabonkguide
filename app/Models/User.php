@@ -103,4 +103,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(Build::class);
     }
+
+    /**
+     * RELACIÓN: 1 A MUCHOS
+     * Un usuario puede hacer varias sugerencias de tier.
+     */
+    public function tierSuggestions()
+    {
+        return $this->hasMany(TierSuggestion::class);
+    }
 }

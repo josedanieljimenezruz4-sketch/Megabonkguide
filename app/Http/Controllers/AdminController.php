@@ -48,38 +48,7 @@ class AdminController extends Controller
         ]);
     }
 
-    /**
-     * Muestra el gestor de votos de popularidad de los elementos.
-     */
-    public function gestionarVotos()
-    {
-        $elementos = Item::orderBy('votes', 'desc')->paginate(15);
-        return view('admin-votes', ['items' => $elementos]);
-    }
 
-    /**
-     * Reinicia todos los votos de popularidad a 0 de forma global.
-     */
-    public function reiniciarTodosLosVotos()
-    {
-        DB::table('item_user_votes')->truncate();
-        Item::query()->update(['votes' => 0]);
-        
-        return redirect()->route('admin.votes.index')->with('success', 'Todos los votos han sido reseteados.');
-    }
-
-    /**
-     * Reinicia los votos de popularidad de un elemento específico a 0.
-     */
-    public function reiniciarVotosElemento($id)
-    {
-        $elemento = Item::findOrFail($id);
-        
-        DB::table('item_user_votes')->where('item_id', $id)->delete();
-        $elemento->update(['votes' => 0]);
-
-        return redirect()->route('admin.votes.index')->with('success', 'Los votos han sido reseteados para: ' . $elemento->name);
-    }
 
     /**
      * Muestra el gestor de Tier Lists de la comunidad (Modo antiguo).
@@ -160,5 +129,140 @@ class AdminController extends Controller
         $puntuacion->update(['status' => 'rejected']);
 
         return back()->with('success', 'Puntuación rechazada.');
+    }
+
+    /**
+     * Muestra las sugerencias de tier agrupadas por ítem.
+     */
+    public function gestionarTierSuggestions()
+    {
+        // Obtener sugerencias pendientes agrupadas por ítem
+        $sugerenciasRaw = \App\Models\TierSuggestion::with(['user', 'item'])
+            ->where('status', 'pending')
+            ->get();
+
+        // Agrupar por item_id
+        $agrupadas = $sugerenciasRaw->groupBy('item_id')->map(function ($grupo) {
+            $item = $grupo->first()->item;
+            $conteoRangos = $grupo->groupBy('suggested_tier')->map->count()->sortDesc();
+            $rangoMayoritario = $conteoRangos->keys()->first();
+            $totalVotos = $grupo->count();
+            $usuarios = $grupo->map(fn($s) => [
+                'id' => $s->id,
+                'username' => $s->user->username ?? 'Anónimo',
+                'tier' => $s->suggested_tier,
+                'fecha' => $s->created_at->format('d/m H:i'),
+            ]);
+
+            return (object) [
+                'item' => $item,
+                'item_id' => $grupo->first()->item_id,
+                'conteo_rangos' => $conteoRangos,
+                'rango_mayoritario' => $rangoMayoritario,
+                'total_votos' => $totalVotos,
+                'usuarios' => $usuarios,
+            ];
+        })->sortByDesc('total_votos');
+
+        return view('admin.tier_suggestions', compact('agrupadas'));
+    }
+
+    /**
+     * Aprueba el rango mayoritario de un ítem y limpia todas sus sugerencias pendientes.
+     */
+    public function aprobarMayoria(Request $request, $itemId)
+    {
+        $item = Item::findOrFail($itemId);
+
+        // Si el admin eligió un rango manualmente, usarlo. Si no, calcular la mayoría.
+        $rangoFinal = $request->input('rank');
+
+        if (!$rangoFinal || !in_array($rangoFinal, ['S','A','B','C','D','E','F'])) {
+            $rangoGanador = DB::table('tier_suggestions')
+                ->select('suggested_tier', DB::raw('count(*) as total'))
+                ->where('item_id', $itemId)
+                ->where('status', 'pending')
+                ->groupBy('suggested_tier')
+                ->orderByDesc('total')
+                ->first();
+
+            if (!$rangoGanador) {
+                return back()->with('success', 'No hay sugerencias pendientes para este ítem.');
+            }
+            $rangoFinal = $rangoGanador->suggested_tier;
+        }
+
+        DB::transaction(function () use ($item, $rangoFinal, $itemId) {
+            $item->update(['rank' => $rangoFinal]);
+
+            \App\Models\TierSuggestion::where('item_id', $itemId)
+                ->where('status', 'pending')
+                ->update(['status' => 'approved']);
+        });
+
+        return back()->with('success', '✅ ' . $item->name . ' asignado al rango ' . $rangoFinal . '. Sugerencias limpiadas.');
+    }
+
+    /**
+     * Aprueba una sugerencia de tier, actualizando el ítem y rechazando otras pendientes.
+     */
+    public function aprobarTierSuggestion($id)
+    {
+        $sugerencia = \App\Models\TierSuggestion::findOrFail($id);
+        
+        // Actualizar el rango del ítem
+        $item = $sugerencia->item;
+        $item->update(['rank' => $sugerencia->suggested_tier]);
+        
+        // Marcar esta sugerencia como aprobada
+        $sugerencia->update(['status' => 'approved']);
+        
+        // Marcar el resto de sugerencias pendientes de este ítem como rechazadas (procesadas)
+        \App\Models\TierSuggestion::where('item_id', $sugerencia->item_id)
+            ->where('status', 'pending')
+            ->update(['status' => 'rejected']);
+            
+        return back()->with('success', 'Sugerencia aprobada. El ítem ' . $item->name . ' ahora es rango ' . $item->rank . '. Se han marcado las demás sugerencias como procesadas.');
+    }
+
+    /**
+     * Rechaza una sugerencia de tier.
+     */
+    public function rechazarTierSuggestion($id)
+    {
+        $sugerencia = \App\Models\TierSuggestion::findOrFail($id);
+        $sugerencia->update(['status' => 'rejected']);
+        
+        return back()->with('success', 'Sugerencia de tier rechazada.');
+    }
+
+    /**
+     * Reinicia la Tier List oficial: pone todos los rangos a null usando una transacción.
+     * Si algo falla a mitad del proceso, la tabla no se queda a medias (rollback automático).
+     */
+    public function resetMeta()
+    {
+        DB::transaction(function () {
+            // Poner todos los rangos a null
+            Item::whereNotNull('rank')->update(['rank' => null]);
+
+            // Marcar todas las sugerencias pendientes como procesadas
+            \App\Models\TierSuggestion::where('status', 'pending')
+                ->update(['status' => 'rejected']);
+        });
+
+        return back()->with('success', '⚠️ META REINICIADA. Todos los ítems han perdido su rango. Las sugerencias pendientes han sido archivadas.');
+    }
+
+    /**
+     * Banea/elimina una sugerencia de tier considerada troll o spam.
+     */
+    public function banearTierSuggestion($id)
+    {
+        $sugerencia = \App\Models\TierSuggestion::findOrFail($id);
+        $nombreUsuario = $sugerencia->user->username ?? 'Desconocido';
+        $sugerencia->delete();
+
+        return back()->with('success', 'Sugerencia de "' . $nombreUsuario . '" eliminada permanentemente (ban de voto).');
     }
 }
