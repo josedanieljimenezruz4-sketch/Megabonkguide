@@ -180,34 +180,7 @@
     </style>
 
     <!-- Footer -->
-    <footer class="main-footer">
-        <div class="footer-sections">
-            <div>
-                <h3>Enlaces Rápidos</h3>
-                <ul>
-                    <li><a href="{{ route('tierlist.index') }}">TIERLIST</a></li>
-                    <li><a href="{{ route('meta') }}">META</a></li>
-                    <li><a href="{{ route('info.news') }}">NOVEDADES</a></li>
-                </ul>
-            </div>
-            <div>
-                <h3>Soporte</h3>
-                <ul>
-                    <li><a href="#">Contáctanos</a></li>
-                    <li><a href="{{ route('community.suggestions') }}">Sugerencias</a></li>
-                    <li><a href="#">Preguntas Frecuentes</a></li>
-                </ul>
-            </div>
-            <div>
-                <h3>Legal</h3>
-                <ul>
-                    <li><a href="#">Términos y Condiciones</a></li>
-                    <li><a href="#">Política de Privacidad</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-copy">&copy; 2025 MEGABONK GUIDE. Todos los derechos reservados.</div>
-    </footer>
+    @include('partials.footer')
 
 </body>
 

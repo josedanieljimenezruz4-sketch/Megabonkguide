@@ -60,12 +60,17 @@
         @if($builds->count() > 0)
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px;">
                 @foreach($builds as $build)
-                    <a href="{{ route('builds.show', $build->id) }}" style="text-decoration: none; color: inherit;">
-                        <div style="background: #1e1e2e; padding: 15px; border-radius: 8px; border-left: 4px solid #2e7d32; transition: transform 0.2s; border-top: 1px solid #333; border-right: 1px solid #333; border-bottom: 1px solid #333;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
-                            <h4 style="color: #fff; margin: 0 0 5px 0;">{{ $build->title ?? 'Build sin título' }}</h4>
-                            <span style="color: #aaa; font-size: 0.85em;">{{ $build->created_at->format('d/m/Y') }}</span>
-                        </div>
-                    </a>
+                    <div style="position: relative;">
+                        <a href="{{ route('builds.show', $build->id) }}" style="text-decoration: none; color: inherit;">
+                            <div style="background: #1e1e2e; padding: 15px; border-radius: 8px; border-left: 4px solid #2e7d32; transition: transform 0.2s; border-top: 1px solid #333; border-right: 1px solid #333; border-bottom: 1px solid #333;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                                <h4 style="color: #fff; margin: 0 0 5px 0;">{{ $build->name ?? 'Build sin título' }}</h4>
+                                <span style="color: #aaa; font-size: 0.85em;">{{ $build->created_at->format('d/m/Y') }}</span>
+                            </div>
+                        </a>
+                        @if(auth()->id() == $user->id)
+                            <a href="{{ route('builds.edit', $build->id) }}" style="position: absolute; top: 10px; right: 10px; background: rgba(255, 255, 255, 0.1); color: #ffcf00; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 0.8em; border: 1px solid #ffcf00;">✏️ Editar</a>
+                        @endif
+                    </div>
                 @endforeach
             </div>
         @else
@@ -78,15 +83,20 @@
         @if($tierLists->count() > 0)
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px;">
                 @foreach($tierLists as $tl)
-                    <a href="{{ route('community-tierlists.show', $tl->id) }}" style="text-decoration: none; color: inherit;">
-                        <div style="background: #1e1e2e; padding: 15px; border-radius: 8px; border-left: 4px solid #ffcf00; transition: transform 0.2s; border-top: 1px solid #333; border-right: 1px solid #333; border-bottom: 1px solid #333;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
-                            <h4 style="color: #fff; margin: 0 0 5px 0;">{{ $tl->titulo }}</h4>
-                            <div style="display: flex; justify-content: space-between; font-size: 0.85em; color: #aaa;">
-                                <span>{{ ucfirst($tl->categoria) }}</span>
-                                <span>{{ $tl->created_at->format('d/m/Y') }}</span>
+                    <div style="position: relative;">
+                        <a href="{{ route('community-tierlists.show', $tl->id) }}" style="text-decoration: none; color: inherit;">
+                            <div style="background: #1e1e2e; padding: 15px; border-radius: 8px; border-left: 4px solid #ffcf00; transition: transform 0.2s; border-top: 1px solid #333; border-right: 1px solid #333; border-bottom: 1px solid #333;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                                <h4 style="color: #fff; margin: 0 0 5px 0;">{{ $tl->titulo }}</h4>
+                                <div style="display: flex; justify-content: space-between; font-size: 0.85em; color: #aaa;">
+                                    <span>{{ ucfirst($tl->categoria) }}</span>
+                                    <span>{{ $tl->created_at->format('d/m/Y') }}</span>
+                                </div>
                             </div>
-                        </div>
-                    </a>
+                        </a>
+                        @if(auth()->id() == $user->id)
+                            <a href="{{ route('community-tierlists.edit', $tl->id) }}" style="position: absolute; top: 10px; right: 10px; background: rgba(255, 255, 255, 0.1); color: #ffcf00; padding: 4px 8px; border-radius: 4px; text-decoration: none; font-size: 0.8em; border: 1px solid #ffcf00;">✏️ Editar</a>
+                        @endif
+                    </div>
                 @endforeach
             </div>
         @else

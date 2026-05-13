@@ -7,6 +7,7 @@ use App\Models\TierList;
 use App\Models\TierListRow;
 use App\Models\Item;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class UserTierListController extends Controller
 {
@@ -83,6 +84,82 @@ class UserTierListController extends Controller
 
         return redirect()->route('community-tierlists.show', $nuevaTierList->id)
                          ->with('success', '¡Tier List creada exitosamente!');
+    }
+
+    /**
+     * Muestra el formulario para editar una Tier List existente.
+     */
+    public function editarTierList($id)
+    {
+        $tierList = TierList::with('rows.item')->findOrFail($id);
+
+        if ($tierList->user_id !== Auth::id()) {
+            abort(403, 'No tienes permiso para editar esta Tier List.');
+        }
+
+        if ($tierList->categoria === 'general' || $tierList->categoria === 'todo') {
+            $elementosDisponibles = Item::all();
+        } else {
+            $elementosDisponibles = Item::where('type', $tierList->categoria)->get();
+        }
+
+        // Crear un mapa de itemId => rank para precargar en la vista
+        $itemRanks = [];
+        foreach ($tierList->rows as $row) {
+            $itemRanks[$row->item_id] = $row->rank;
+        }
+
+        return view('community_tierlists.edit', [
+            'tierList' => $tierList,
+            'items' => $elementosDisponibles,
+            'itemRanks' => $itemRanks,
+            'categoria' => $tierList->categoria
+        ]);
+    }
+
+    /**
+     * Actualiza una Tier List en la base de datos usando DB::transaction.
+     */
+    public function actualizarTierList(Request $request, $id)
+    {
+        $tierList = TierList::findOrFail($id);
+
+        if ($tierList->user_id !== Auth::id()) {
+            abort(403, 'No tienes permiso para editar esta Tier List.');
+        }
+
+        $datosValidados = $request->validate([
+            'titulo' => 'required|string|max:255',
+            'descripcion' => 'nullable|string',
+            'ranks' => 'array',
+            'ranks.*' => 'nullable|in:S,A,B,C,D,E,F',
+        ]);
+
+        DB::transaction(function () use ($tierList, $datosValidados, $request) {
+            // Actualizar campos principales
+            $tierList->update([
+                'titulo' => $datosValidados['titulo'],
+                'descripcion' => $datosValidados['descripcion'] ?? null,
+            ]);
+
+            // Eliminar todas las filas actuales
+            $tierList->rows()->delete();
+
+            // Insertar los nuevos rangos
+            $rangosAsignados = $request->input('ranks', []);
+            foreach ($rangosAsignados as $itemId => $rango) {
+                if (!empty($rango) && in_array($rango, ['S', 'A', 'B', 'C', 'D', 'E', 'F'])) {
+                    TierListRow::create([
+                        'tier_list_id' => $tierList->id,
+                        'item_id' => $itemId,
+                        'rank' => $rango,
+                    ]);
+                }
+            }
+        });
+
+        return redirect()->route('community-tierlists.show', $tierList->id)
+                         ->with('success', '¡Tier List actualizada exitosamente!');
     }
 
     /**

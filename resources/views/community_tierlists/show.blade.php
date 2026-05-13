@@ -7,7 +7,7 @@
     <title>{{ $tierList->titulo }} | Tier List de la Comunidad</title>
     <link rel="stylesheet" href="{{ asset('css/estilos.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('css/tierlist.css') }}?v={{ time() }}">
-    <link rel="icon" href="{{ asset('iconotlabaho.webp') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('images/iconotlabaho.webp') }}" type="image/x-icon">
 </head>
 
 <body>
@@ -27,6 +27,9 @@
                 <span style="color: #1da1f2; margin-left: 2px;" data-tippy-content="Tier List Oficial de Megabonk Guide">☑️</span>
             @endif
             <span style="color: #aaa; margin-left: 10px;">| Categoría: {{ ucfirst($tierList->categoria) }}</span>
+            @if(auth()->check() && auth()->id() == $tierList->user_id)
+                <a href="{{ route('community-tierlists.edit', $tierList->id) }}" style="margin-left: 10px; background: rgba(255, 255, 255, 0.1); color: #ffcf00; padding: 4px 10px; border-radius: 4px; text-decoration: none; font-size: 0.9em; border: 1px solid #ffcf00;">✏️ Editar Tier List</a>
+            @endif
         </div>
 
         @if($tierList->descripcion)
@@ -123,11 +126,7 @@
 
     </main>
 
-    <footer class="main-footer" style="margin-top: 50px;">
-        <div class="footer-copy">
-            &copy; 2025 MEGABONK GUIDE. Todos los derechos reservados.
-        </div>
-    </footer>
+    @include('partials.footer')
 
     <script src="https://unpkg.com/@popperjs/core@2"></script>
     <script src="https://unpkg.com/tippy.js@6"></script>

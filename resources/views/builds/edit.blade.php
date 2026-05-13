@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Publicar Build | MEGABONK GUIDE</title>
+    <title>Editar Build | MEGABONK GUIDE</title>
     <link rel="stylesheet" href="{{ asset('css/estilos.css') }}?v={{ time() }}">
     <link rel="icon" href="{{ asset('images/iconotlabaho.webp') }}" type="image/x-icon">
     <!-- Fuentes modernas -->
@@ -198,14 +198,14 @@
         <!-- Alpine State: controls dynamic quantity of slots AND tracks selected values -->
         <div class="premium-container" 
              x-data="{ 
-                armasCount: 2, 
-                tomosCount: 2,
-                selectedArmas: {},
-                selectedTomos: {},
-                selectedItems: {}
+                armasCount: {{ $armasCountTotal }}, 
+                tomosCount: {{ $tomosCountTotal }},
+                selectedArmas: {{ json_encode((object)$selectedArmas) }},
+                selectedTomos: {{ json_encode((object)$selectedTomos) }},
+                selectedItems: {{ json_encode((object)$selectedItems) }}
              }">
             
-            <h1 class="page-title">FORJAR NUEVA BUILD</h1>
+            <h1 class="page-title">EDITAR BUILD</h1>
             
             @if(session('success'))
                 <div class="alert-success fade-in">
@@ -213,15 +213,16 @@
                 </div>
             @endif
 
-            <form action="{{ route('builds.store') }}" method="POST">
+            <form action="{{ route('builds.update', $build->id) }}" method="POST">
                 @csrf
+                @method('PUT')
                 
                 <!-- DATOS GENERALES -->
                 <div class="form-section fade-in" style="animation-delay: 0.1s;">
                     <div class="slot-group" style="grid-template-columns: 1fr;">
                         <div>
                             <label>Título de la Build</label>
-                            <input type="text" name="name" required placeholder="Ej: Fuego Inmortal..." maxlength="255">
+                            <input type="text" name="name" value="{{ $build->name }}" required placeholder="Ej: Fuego Inmortal..." maxlength="255">
                         </div>
                     </div>
                 </div>
@@ -232,9 +233,9 @@
                         <div>
                             <label>Rol Principal</label>
                             <select name="type">
-                                <option value="DPS">💥 DPS Damage Dealer</option>
-                                <option value="Tanque">🛡️ Tanque Defensor</option>
-                                <option value="Soporte">✨ Soporte Sanador</option>
+                                <option value="DPS" {{ $build->type == 'DPS' ? 'selected' : '' }}>💥 DPS Damage Dealer</option>
+                                <option value="Tanque" {{ $build->type == 'Tanque' ? 'selected' : '' }}>🛡️ Tanque Defensor</option>
+                                <option value="Soporte" {{ $build->type == 'Soporte' ? 'selected' : '' }}>✨ Soporte Sanador</option>
                             </select>
                         </div>
                         <div>
@@ -242,7 +243,7 @@
                             <select name="character_id" required>
                                 <option value="">-- Selecciona el Héroe --</option>
                                 @foreach($personajes as $p)
-                                    <option value="{{ $p->id }}">{{ $p->name }}</option>
+                                    <option value="{{ $p->id }}" {{ $build->character_id == $p->id ? 'selected' : '' }}>{{ $p->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -251,7 +252,7 @@
                             <select name="meta_strategy_id">
                                 <option value="">-- Ninguna --</option>
                                 @foreach($strategies as $strategy)
-                                    <option value="{{ $strategy->id }}">{{ $strategy->title }}</option>
+                                    <option value="{{ $strategy->id }}" {{ $build->meta_strategy_id == $strategy->id ? 'selected' : '' }}>{{ $strategy->title }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -349,9 +350,9 @@
                 </div>
 
                 <div style="margin-top: 40px; border:none;" class="fade-in" style="animation-delay: 0.6s;">
-                    <button type="submit" class="btn-submit">Publicar Construcción Definitiva</button>
+                    <button type="submit" class="btn-submit">Guardar Cambios</button>
                     <p style="text-align:center; font-size: 13px; color: var(--text-muted); margin-top: 20px;">
-                        Tus Builds son visibles para toda la comunidad al instante.
+                        Cualquier actualización será visible para la comunidad.
                     </p>
                 </div>
             </form>

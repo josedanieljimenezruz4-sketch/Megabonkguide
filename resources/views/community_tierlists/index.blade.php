@@ -7,7 +7,7 @@
     <title>Tier Lists de la Comunidad | MEGABONK GUIDE</title>
     <link rel="stylesheet" href="{{ asset('css/estilos.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('css/tierlist.css') }}?v={{ time() }}">
-    <link rel="icon" href="{{ asset('iconotlabaho.webp') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('images/iconotlabaho.webp') }}" type="image/x-icon">
 </head>
 
 <body>
@@ -100,11 +100,7 @@
 
     </main>
 
-    <footer class="main-footer" style="margin-top: 50px;">
-        <div class="footer-copy">
-            &copy; 2025 MEGABONK GUIDE. Todos los derechos reservados.
-        </div>
-    </footer>
+    @include('partials.footer')
 
 </body>
 </html>

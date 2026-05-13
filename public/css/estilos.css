@@ -28,6 +28,13 @@ body {
     min-height: 100vh;
 }
 
+/* Titulos Globales (Encabezados H1, H2) */
+h1, h2 {
+    font-weight: 900 !important;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
 /* Scrollbar Personalizada */
 ::-webkit-scrollbar {
     width: 6px;

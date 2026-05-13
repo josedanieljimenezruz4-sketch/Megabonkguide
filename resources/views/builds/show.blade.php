@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $build->name }} | MEGABONK GUIDE</title>
     <link rel="stylesheet" href="{{ asset('css/estilos.css') }}?v={{ time() }}">
-    <link rel="icon" href="{{ asset('iconotlabaho.webp') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('images/iconotlabaho.webp') }}" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
@@ -281,7 +281,7 @@
             <div class="grid-section fade-in" style="animation-delay: 0.3s;">
                 <h3>🎭 Personaje Principal</h3>
                 <div class="item-card" style="display:inline-block; padding: 20px 40px; text-align: center;">
-                    <img src="{{ renderItemImage($build->character) }}" alt="Personaje" style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 15px; border-radius: 8px; filter: drop-shadow(0 0 10px rgba(185,101,240,0.5));">
+                    <img src="{{ renderItemImage($build->character) }}" alt="Personaje" style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%; margin-bottom: 15px; border: 2px solid var(--primary-glow); box-shadow: 0 0 15px rgba(185,101,240,0.5);">
                     <h4 style="font-size: 1.3rem;">{{ $build->character ? $build->character->name : 'Personaje Misterioso' }}</h4>
                 </div>
             </div>
@@ -292,7 +292,7 @@
                 <div class="items-grid">
                     @foreach($build->items->where('pivot.slot_type', 'Arma') as $arma)
                         <div class="item-card">
-                            <img src="{{ renderItemImage($arma) }}" alt="{{ $arma->name }}" style="width: 50px; height: 50px; object-fit: contain; margin-bottom: 10px; border-radius: 5px; background: rgba(0,0,0,0.4); padding: 5px;">
+                            <img src="{{ renderItemImage($arma) }}" alt="{{ $arma->name }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%; margin-bottom: 10px; border: 2px solid var(--primary-glow); background: rgba(0,0,0,0.4); padding: 2px;">
                             <h4>{{ $arma->name }}</h4>
                         </div>
                     @endforeach
@@ -308,7 +308,7 @@
                 <div class="items-grid">
                     @foreach($build->items->where('pivot.slot_type', 'Tomo') as $tomo)
                         <div class="item-card">
-                            <img src="{{ renderItemImage($tomo) }}" alt="{{ $tomo->name }}" style="width: 50px; height: 50px; object-fit: contain; margin-bottom: 10px; border-radius: 5px; background: rgba(0,0,0,0.4); padding: 5px;">
+                            <img src="{{ renderItemImage($tomo) }}" alt="{{ $tomo->name }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%; margin-bottom: 10px; border: 2px solid var(--primary-glow); background: rgba(0,0,0,0.4); padding: 2px;">
                             <h4>{{ $tomo->name }}</h4>
                         </div>
                     @endforeach
@@ -324,7 +324,7 @@
                 <div class="items-grid">
                     @foreach($build->items->where('pivot.slot_type', 'Item') as $item)
                         <div class="item-card">
-                            <img src="{{ renderItemImage($item) }}" alt="{{ $item->name }}" style="width: 50px; height: 50px; object-fit: contain; margin-bottom: 10px; border-radius: 5px; background: rgba(0,0,0,0.4); padding: 5px;">
+                            <img src="{{ renderItemImage($item) }}" alt="{{ $item->name }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%; margin-bottom: 10px; border: 2px solid var(--primary-glow); background: rgba(0,0,0,0.4); padding: 2px;">
                             <h4>{{ $item->name }}</h4>
                         </div>
                     @endforeach

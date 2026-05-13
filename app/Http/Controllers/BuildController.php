@@ -38,7 +38,15 @@ class BuildController extends Controller
 
         // Filtro por valoración
         $consulta->when($request->filled('rating'), function ($q) use ($request) {
-            $q->where('rating', $request->rating);
+            $q->where('rating', '>=', $request->rating);
+        });
+
+        // Filtro por tomo específico
+        $consulta->when($request->filled('tomo_id'), function ($q) use ($request) {
+            $q->whereHas('items', function ($subConsulta) use ($request) {
+                $subConsulta->where('item_id', $request->tomo_id)
+                      ->where('slot_type', 'Tomo');
+            });
         });
 
         // Filtro por tipo de build (DPS, Tanque, Soporte)
@@ -63,7 +71,18 @@ class BuildController extends Controller
             ]);
         }
 
-        return view('builds', ['builds' => $builds, 'counts' => $contadores]);
+        // Recuperamos los elementos de la base de datos para los filtros dinámicos
+        $personajes = Item::where('type', 'personaje')->orderBy('name')->get();
+        $armas = Item::where('type', 'arma')->orderBy('name')->get();
+        $tomos = Item::where('type', 'tomo')->orderBy('name')->get();
+
+        return view('builds', [
+            'builds' => $builds, 
+            'counts' => $contadores, 
+            'personajes' => $personajes, 
+            'armas' => $armas, 
+            'tomos' => $tomos
+        ]);
     }
 
     /**
@@ -123,6 +142,94 @@ class BuildController extends Controller
         }
 
         return redirect()->back()->with('success', '¡Build publicada en la base de datos con éxito!');
+    }
+
+    /**
+     * Muestra el formulario para editar una build existente.
+     */
+    public function editarBuild(Build $build)
+    {
+        if ($build->user_id !== auth()->id()) {
+            abort(403, 'No tienes permiso para editar esta build.');
+        }
+
+        $personajes = Item::where('type', 'personaje')->get();
+        $armas = Item::where('type', 'arma')->get();
+        $tomos = Item::where('type', 'tomo')->get();
+        $accesorios = Item::where('type', 'item')->get();
+        $strategies = MetaStrategy::where('is_active', true)->get();
+
+        $build->load('items');
+
+        $selectedArmas = [];
+        $selectedTomos = [];
+        $selectedItems = [];
+
+        $armaCount = 1;
+        $tomoCount = 1;
+        $itemCount = 1;
+
+        foreach ($build->items as $item) {
+            if ($item->pivot->slot_type == 'Arma') {
+                $selectedArmas[$armaCount++] = $item->id;
+            } elseif ($item->pivot->slot_type == 'Tomo') {
+                $selectedTomos[$tomoCount++] = $item->id;
+            } elseif ($item->pivot->slot_type == 'Item') {
+                $selectedItems[$itemCount++] = $item->id;
+            }
+        }
+
+        $armasCountTotal = max(2, count($selectedArmas));
+        $tomosCountTotal = max(2, count($selectedTomos));
+
+        return view('builds.edit', compact('build', 'personajes', 'armas', 'tomos', 'accesorios', 'strategies', 'selectedArmas', 'selectedTomos', 'selectedItems', 'armasCountTotal', 'tomosCountTotal'));
+    }
+
+    /**
+     * Actualiza la build en la base de datos.
+     */
+    public function actualizarBuild(Request $request, Build $build)
+    {
+        if ($build->user_id !== auth()->id()) {
+            abort(403, 'No tienes permiso para editar esta build.');
+        }
+
+        $datosValidados = $request->validate([
+            'name' => 'required|string|max:255',
+            'character_id' => 'required|exists:items,id',
+            'description' => 'nullable|string',
+            'rating' => 'integer|min:1|max:5',
+            'type' => 'nullable|string',
+            'meta_strategy_id' => 'nullable|exists:meta_strategies,id',
+            'items' => 'required|array',
+            'items.Arma' => 'required|array|max:4',
+            'items.Tomo' => 'required|array|max:4',
+            'items.Item' => 'nullable|array|max:6',
+        ]);
+
+        $build->update([
+            'name' => $datosValidados['name'],
+            'character_id' => $datosValidados['character_id'],
+            'description' => $datosValidados['description'] ?? null,
+            'rating' => $datosValidados['rating'] ?? $build->rating,
+            'type' => $datosValidados['type'] ?? null,
+            'meta_strategy_id' => $datosValidados['meta_strategy_id'] ?? null,
+        ]);
+
+        $formattedSync = [];
+        foreach (['Arma', 'Tomo', 'Item'] as $tipoRanura) {
+            if (isset($datosValidados['items'][$tipoRanura])) {
+                foreach ($datosValidados['items'][$tipoRanura] as $itemId) {
+                    if ($itemId) { 
+                        $formattedSync[$itemId] = ['slot_type' => $tipoRanura];
+                    }
+                }
+            }
+        }
+        
+        $build->items()->sync($formattedSync);
+
+        return redirect()->route('builds.show', $build->id)->with('success', '¡Build actualizada con éxito!');
     }
 
     /**

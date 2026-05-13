@@ -141,6 +141,6 @@ class CommunityController extends Controller
             'content' => $request->content,
         ]);
 
-        return redirect()->back()->with('success', '¡Gracias por tu sugerencia! Ha sido enviada a los administradores.');
+        return redirect()->back()->with('suggestion_success', '¡Gracias por tu sugerencia! Ha sido enviada a los administradores.');
     }
 }

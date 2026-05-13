@@ -39,8 +39,41 @@
                         <label for="character">Personaje:</label>
                         <select id="character" x-model="filters.character_id" @change="fetchBuilds()">
                             <option value="">Cualquiera</option>
-                            <option value="hacha-purpura">La Maestra del Bonk</option>
-                            {{-- Tienes que pasarlos desde el backend o usar texto fijo por ahora --}}
+                            @foreach($personajes as $p)
+                                <option value="{{ $p->id }}">{{ $p->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="weapon">Arma:</label>
+                        <select id="weapon" x-model="filters.weapon_id" @change="fetchBuilds()">
+                            <option value="">Cualquiera</option>
+                            @foreach($armas as $a)
+                                <option value="{{ $a->id }}">{{ $a->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="tomo">Tomo:</label>
+                        <select id="tomo" x-model="filters.tomo_id" @change="fetchBuilds()">
+                            <option value="">Cualquiera</option>
+                            @foreach($tomos as $t)
+                                <option value="{{ $t->id }}">{{ $t->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="rating">Ranking:</label>
+                        <select id="rating" x-model="filters.rating" @change="fetchBuilds()">
+                            <option value="">Cualquiera</option>
+                            <option value="5">⭐⭐⭐⭐⭐ (5 Estrellas)</option>
+                            <option value="4">⭐⭐⭐⭐ (4+ Estrellas)</option>
+                            <option value="3">⭐⭐⭐ (3+ Estrellas)</option>
+                            <option value="2">⭐⭐ (2+ Estrellas)</option>
+                            <option value="1">⭐ (1+ Estrellas)</option>
                         </select>
                     </div>
 
@@ -54,7 +87,7 @@
                         </div>
                     </div>
 
-                    <button type="button" @click="filters = {search: '', character_id: '', type: ''}; fetchBuilds();" class="btn-reset">Limpiar Filtros</button>
+                    <button type="button" @click="filters = {search: '', character_id: '', weapon_id: '', tomo_id: '', rating: '', type: ''}; fetchBuilds();" class="btn-reset">Limpiar Filtros</button>
                 </form>
             </aside>
 
@@ -89,7 +122,12 @@
                                 </template>
                                 <span x-text="build.created_at_human ? 'hace ' + build.created_at_human : ''"></span>
                             </span>
-                            <a :href="'/builds/' + build.id" class="view-build-link">Ver Detalles →</a>
+                            <div style="display: flex; gap: 10px;">
+                                <template x-if="build.user_id == {{ auth()->id() ?? 'null' }}">
+                                    <a :href="'/builds/' + build.id + '/edit'" class="view-build-link" style="background: rgba(255, 255, 255, 0.1); border-color: #ffcf00; color: #ffcf00;">✏️ Editar</a>
+                                </template>
+                                <a :href="'/builds/' + build.id" class="view-build-link">Ver Detalles →</a>
+                            </div>
                         </div>
                     </div>
                 </template>
@@ -109,6 +147,9 @@
                         filters: {
                             search: '',
                             character_id: '',
+                            weapon_id: '',
+                            tomo_id: '',
+                            rating: '',
                             type: ''
                         },
                         async fetchBuilds() {
@@ -136,36 +177,7 @@
 
     </main>
 
-    <footer class="main-footer">
-        <div class="footer-sections">
-            <div>
-                <h3>Enlaces Rápidos</h3>
-                <ul>
-                    <li><a href="{{ route('tierlist') }}">TIERLIST</a></li>
-                    <li><a href="{{ route('meta') }}">META</a></li>
-                    <li><a href="{{ route('info.news') }}">NOVEDADES</a></li>
-                </ul>
-            </div>
-            <div>
-                <h3>Soporte</h3>
-                <ul>
-                    <li><a href="#">Contáctanos</a></li>
-                    <li><a href="{{ route('comunity.suggestions') }}">Sugerencias</a></li>
-                    <li><a href="#">Preguntas Frecuentes</a></li>
-                </ul>
-            </div>
-            <div>
-                <h3>Legal</h3>
-                <ul>
-                    <li><a href="#">Términos y Condiciones</a></li>
-                    <li><a href="#">Política de Privacidad</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-copy">
-            &copy; 2025 MEGABONK GUIDE. Todos los derechos reservados.
-        </div>
-    </footer>
+    @include('partials.footer')
 
 </body>
 

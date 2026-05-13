@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Tier List de la Comunidad | MEGABONK GUIDE</title>
+    <title>Editar Tier List de la Comunidad | MEGABONK GUIDE</title>
     <link rel="stylesheet" href="{{ asset('css/estilos.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('css/tierlist.css') }}?v={{ time() }}">
     <link rel="icon" href="{{ asset('images/iconotlabaho.webp') }}" type="image/x-icon">
@@ -24,27 +24,19 @@
     @include('partials.header')
 
     <main class="main-content-tierlist" style="max-width: 800px;">
-        <h1 class="page-title">Crea tu propia Tier List</h1>
+        <h1 class="page-title">Editar tu Tier List</h1>
         <p class="intro-text-tierlist" style="text-align: center;">
-            Comparte tu conocimiento con la comunidad armando tu propia Tier List.
+            Modifica las posiciones de tus ítems para reflejar el estado actual del juego.
         </p>
 
-        <form action="{{ route('community-tierlists.create') }}" method="GET" class="form-group" style="text-align: center; margin-bottom: 30px; background: #2c2f33; padding: 15px; border-radius: 10px;">
-            <label for="categoria_select" style="display:inline-block; margin-right:10px; font-weight:bold; color:white;">Categoría:</label>
-            <select name="categoria" id="categoria_select" class="rank-select" onchange="this.form.submit()" style="padding:8px 15px;">
-                <option value="general" @if($categoria == 'general') selected @endif>General (Todo)</option>
-                <option value="personaje" @if($categoria == 'personaje') selected @endif>Personajes</option>
-                <option value="arma" @if($categoria == 'arma') selected @endif>Armas</option>
-                <option value="tomo" @if($categoria == 'tomo') selected @endif>Tomos</option>
-                <option value="item" @if($categoria == 'item') selected @endif>Ítems</option>
-            </select>
-            <br>
-            <small style="color:#aaa;">(Al cambiar la categoría se recargará la lista de ítems)</small>
-        </form>
+        <div style="text-align: center; margin-bottom: 30px; background: #2c2f33; padding: 15px; border-radius: 10px;">
+            <span style="display:inline-block; margin-right:10px; font-weight:bold; color:white;">Categoría actual:</span>
+            <span style="color: #ffcf00; font-weight: bold; text-transform: capitalize;">{{ $categoria }}</span>
+        </div>
 
-        <form action="{{ route('community-tierlists.store') }}" method="POST">
+        <form action="{{ route('community-tierlists.update', $tierList->id) }}" method="POST">
             @csrf
-            <input type="hidden" name="categoria" value="{{ $categoria }}">
+            @method('PUT')
 
             @if($errors->any())
                 <div style="background: rgba(255,0,0,0.1); border: 1px solid #ff4757; color: #ff4757; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
@@ -58,12 +50,12 @@
 
             <div class="form-group">
                 <label for="titulo">Título de tu Tier List</label>
-                <input type="text" id="titulo" name="titulo" class="form-control" placeholder="Ej: La mejor build para Speedrun..." required>
+                <input type="text" id="titulo" name="titulo" class="form-control" value="{{ $tierList->titulo }}" required>
             </div>
 
             <div class="form-group">
                 <label for="descripcion">Descripción (Opcional)</label>
-                <textarea id="descripcion" name="descripcion" class="form-control" rows="3" placeholder="Cuéntanos por qué elegiste este orden..."></textarea>
+                <textarea id="descripcion" name="descripcion" class="form-control" rows="3">{{ $tierList->descripcion }}</textarea>
             </div>
 
             <h2 style="color: #ffcf00; margin-top: 40px; margin-bottom: 20px; text-align: center;">Ordena tus unidades (Arrastra y suelta)</h2>
@@ -97,7 +89,21 @@
                 <div class="dnd-tier-row">
                     <div class="dnd-tier-label" style="background: {{ $color }};">{{ $rank }}</div>
                     <div class="dnd-tier-zone" ondrop="drop(event, '{{ $rank }}')" ondragover="allowDrop(event)">
-                        <!-- Dropzone for {{ $rank }} -->
+                        @foreach($items as $item)
+                            @if(isset($itemRanks[$item->id]) && $itemRanks[$item->id] === $rank)
+                                @php
+                                    $imageSrc = asset('images/' . $item->image_path);
+                                    if (\Illuminate\Support\Str::startsWith($item->image_path, 'items/')) {
+                                        $imageSrc = asset('storage/' . $item->image_path);
+                                    }
+                                @endphp
+                                <div class="dnd-item" draggable="true" ondragstart="drag(event, '{{ $item->id }}')" id="item-{{ $item->id }}">
+                                    <img src="{{ $item->image_path ? $imageSrc : asset('images/placeholder.png') }}" onerror="this.onerror=null; this.src='{{ asset('images/placeholder.png') }}';">
+                                    <div class="dnd-item-tooltip">{{ $item->name }}</div>
+                                    <input type="hidden" name="ranks[{{ $item->id }}]" id="input-{{ $item->id }}" value="{{ $rank }}">
+                                </div>
+                            @endif
+                        @endforeach
                     </div>
                 </div>
                 @endforeach
@@ -106,17 +112,19 @@
             <h3 style="color: #aaa; margin-top: 30px; margin-bottom: 15px; text-align: center;">Bandeja de Ítems</h3>
             <div class="dnd-unranked-zone" ondrop="drop(event, '')" ondragover="allowDrop(event)">
                 @foreach($items as $item)
-                @php
-                    $imageSrc = asset('images/' . $item->image_path);
-                    if (\Illuminate\Support\Str::startsWith($item->image_path, 'items/')) {
-                        $imageSrc = asset('storage/' . $item->image_path);
-                    }
-                @endphp
-                <div class="dnd-item" draggable="true" ondragstart="drag(event, '{{ $item->id }}')" id="item-{{ $item->id }}">
-                    <img src="{{ $item->image_path ? $imageSrc : asset('images/placeholder.png') }}" onerror="this.onerror=null; this.src='{{ asset('images/placeholder.png') }}';">
-                    <div class="dnd-item-tooltip">{{ $item->name }}</div>
-                    <input type="hidden" name="ranks[{{ $item->id }}]" id="input-{{ $item->id }}" value="">
-                </div>
+                    @if(!isset($itemRanks[$item->id]))
+                        @php
+                            $imageSrc = asset('images/' . $item->image_path);
+                            if (\Illuminate\Support\Str::startsWith($item->image_path, 'items/')) {
+                                $imageSrc = asset('storage/' . $item->image_path);
+                            }
+                        @endphp
+                        <div class="dnd-item" draggable="true" ondragstart="drag(event, '{{ $item->id }}')" id="item-{{ $item->id }}">
+                            <img src="{{ $item->image_path ? $imageSrc : asset('images/placeholder.png') }}" onerror="this.onerror=null; this.src='{{ asset('images/placeholder.png') }}';">
+                            <div class="dnd-item-tooltip">{{ $item->name }}</div>
+                            <input type="hidden" name="ranks[{{ $item->id }}]" id="input-{{ $item->id }}" value="">
+                        </div>
+                    @endif
                 @endforeach
             </div>
 
@@ -199,38 +207,32 @@
                             draggable.classList.remove('is-dragging');
                             draggable.style.opacity = '1';
                             
-                            if (e.dataTransfer.dropEffect === 'none') {
-                                var tray = document.querySelector('.dnd-unranked-zone');
-                                tray.appendChild(draggable);
-                                document.getElementById('input-' + itemId).value = '';
-                            } else {
-                                var parent = draggable.parentElement;
-                                if (parent.classList.contains('dnd-tier-zone')) {
-                                    var rank = parent.previousElementSibling.innerText.trim();
-                                    document.getElementById('input-' + itemId).value = rank;
-                                } else {
-                                    document.getElementById('input-' + itemId).value = '';
-                                }
+                            // Determine which zone it was dropped in
+                            var container = draggable.closest('.dnd-tier-zone');
+                            var rank = '';
+                            if(container) {
+                                // Find the rank from the sibling label
+                                var label = container.parentElement.querySelector('.dnd-tier-label');
+                                if(label) rank = label.innerText.trim();
                             }
+                            
+                            // Update the hidden input
+                            var hiddenInput = document.getElementById('input-' + itemId);
+                            if(hiddenInput) hiddenInput.value = rank;
                         }
                         draggingElementId = null;
-                    }
-
-                    if (scrollInterval) {
-                        clearInterval(scrollInterval);
-                        scrollInterval = null;
+                        if(scrollInterval) clearInterval(scrollInterval);
                     }
                 });
             </script>
 
-            <div style="text-align: center;">
-                <button type="submit" class="btn-submit">Publicar Tier List</button>
+            <div style="text-align: center; margin-top: 30px;">
+                <button type="submit" class="btn-submit">Guardar Cambios de la Tier List</button>
             </div>
         </form>
-
     </main>
 
     @include('partials.footer')
-
 </body>
+
 </html>

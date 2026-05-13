@@ -29,18 +29,15 @@
 }
 
 .main-page-title {
-    font-size: 3.5em; /* Reducido de 5em a 3.5em */
-    color: var(--color-primary-accent);
+    font-size: 3.5em;
+    font-weight: 800;
+    margin-bottom: 15px;
     text-transform: uppercase;
     letter-spacing: 5px;
-    margin-bottom: 15px;
-    text-shadow: 0 0 10px rgba(65, 232, 239, 0.8), 0 0 20px rgba(65, 232, 239, 0.6);
-    animation: glow-pulse 3s infinite alternate;
-}
-
-@keyframes glow-pulse {
-    0% { text-shadow: 0 0 10px rgba(65, 232, 239, 0.6), 0 0 20px rgba(65, 232, 239, 0.4); }
-    100% { text-shadow: 0 0 20px rgba(65, 232, 239, 1), 0 0 40px rgba(65, 232, 239, 0.8), 0 0 60px rgba(185, 101, 240, 0.6); }
+    background: linear-gradient(135deg, var(--color-secondary-accent), var(--color-primary-accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0px 4px 20px rgba(185, 101, 240, 0.3);
 }
 
 .intro-text {

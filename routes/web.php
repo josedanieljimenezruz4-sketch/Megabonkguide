@@ -57,7 +57,7 @@ Route::controller(CommunityController::class)->group(function () {
     Route::get('/community/{id}', 'mostrarPublicacionDetallada')->name('comunity.show')->where('id', '[0-9]+');
     Route::post('/community/{id}/like', 'alternarMeGusta')->name('comunity.like')->middleware('auth');
     Route::post('/community/{id}/comment', 'guardarNuevoComentario')->name('comunity.comment')->middleware('auth');
-    Route::get('/sugerencias', 'mostrarFormularioSugerencias')->name('comunity.suggestions');
+    // Route::get('/sugerencias', 'mostrarFormularioSugerencias')->name('comunity.suggestions'); // Formulario antiguo eliminado, ahora es un modal
     Route::post('/sugerencias', 'guardarNuevaSugerencia')->name('comunity.suggestions.store');
 });
 
@@ -102,6 +102,8 @@ Route::middleware('auth')->group(function () {
     // Builds
     Route::get('/builds/create', [App\Http\Controllers\BuildController::class, 'crearBuild'])->name('builds.create');
     Route::post('/builds', [App\Http\Controllers\BuildController::class, 'guardarBuild'])->name('builds.store');
+    Route::get('/builds/{build}/edit', [App\Http\Controllers\BuildController::class, 'editarBuild'])->name('builds.edit');
+    Route::put('/builds/{build}', [App\Http\Controllers\BuildController::class, 'actualizarBuild'])->name('builds.update');
     Route::post('/builds/{build}/vote', [App\Http\Controllers\BuildController::class, 'votarBuild'])->name('builds.vote');
 
     // Votes
@@ -111,6 +113,8 @@ Route::middleware('auth')->group(function () {
     // Community Tier Lists
     Route::get('/community-tierlists/create', [App\Http\Controllers\UserTierListController::class, 'crearTierList'])->name('community-tierlists.create');
     Route::post('/community-tierlists', [App\Http\Controllers\UserTierListController::class, 'guardarTierList'])->name('community-tierlists.store');
+    Route::get('/community-tierlists/{id}/edit', [App\Http\Controllers\UserTierListController::class, 'editarTierList'])->name('community-tierlists.edit');
+    Route::put('/community-tierlists/{id}', [App\Http\Controllers\UserTierListController::class, 'actualizarTierList'])->name('community-tierlists.update');
     Route::post('/community-tierlists/{id}/comment', [App\Http\Controllers\CommentController::class, 'guardarComentario'])->name('community-tierlists.comment');
 });
 

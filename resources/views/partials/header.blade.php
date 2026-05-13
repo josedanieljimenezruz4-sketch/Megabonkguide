@@ -102,4 +102,10 @@
             toast.classList.remove("show");
         }, 2000);
     }
+
+    @if(session('success'))
+    document.addEventListener('DOMContentLoaded', () => {
+        showToast("{{ session('success') }}");
+    });
+    @endif
 </script>
