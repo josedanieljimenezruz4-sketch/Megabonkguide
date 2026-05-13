@@ -27,46 +27,28 @@
         </p>
 
         <!-- BLOQUE 1: TIER LIST OFICIAL (LA TABLA) -->
-        <div class="tierlist-container" style="background: transparent; margin-bottom: 40px;">
+        <div class="tierlist-container">
             @php
                 $ranksOrder = ['S', 'A', 'B', 'C', 'D', 'E', 'F'];
-                $colors = [
-                    'S' => '#FFD700',
-                    'A' => '#FF3131',
-                    'B' => '#FF5E13',
-                    'C' => '#FFF01F',
-                    'D' => '#39FF14',
-                    'E' => '#00FFEF',
-                    'F' => '#6D6D6D'
-                ];
             @endphp
 
-            <div style="display: flex; flex-direction: column; gap: 4px; border-radius: 12px; overflow: hidden;">
-                @foreach($ranksOrder as $rank)
-                    <div class="tier-rank-row" style="display: flex; min-height: 80px; border-radius: 8px; overflow: hidden; box-shadow: 0 0 12px {{ $colors[$rank] }}22;">
-                        <div style="display: flex; align-items: center; justify-content: center; width: 80px; background: linear-gradient(135deg, {{ $colors[$rank] }}, {{ $colors[$rank] }}cc); color: #000; font-size: 2.8em; font-weight: 900; flex-shrink: 0; font-family: 'Inter', 'Segoe UI', sans-serif; letter-spacing: -2px; box-shadow: 15px 0 35px {{ $colors[$rank] }}44, 0 0 25px {{ $colors[$rank] }}55; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">
-                            {{ $rank }}
-                        </div>
-                        <div style="flex-grow: 1; padding: 8px; display: flex; flex-wrap: wrap; gap: 4px; background: rgba(20,20,25,0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); align-items: center; align-content: center; border-left: 1px solid {{ $colors[$rank] }}22;">
-                            @if(isset($itemsByRank[$rank]) && $itemsByRank[$rank]->count() > 0)
-                                @foreach($itemsByRank[$rank]->sortBy('name') as $item)
-                                    <div class="tier-item" data-tippy-content="<b>{{ $item->name }}</b><br/>{{ $item->description ?? '' }}" style="width: 60px; height: 60px; flex-shrink: 0;">
-                                        @php
-                                            $imageSrc = asset('images/' . $item->image_path);
-                                            if (\Illuminate\Support\Str::startsWith($item->image_path, 'items/')) {
-                                                $imageSrc = asset('storage/' . $item->image_path);
-                                            }
-                                        @endphp
-                                        <img src="{{ $item->image_path ? $imageSrc : asset('images/placeholder.png') }}" alt="{{ $item->name }}" title="{{ $item->name }}"
-                                            onerror="this.onerror=null; this.src='{{ asset('images/placeholder.png') }}';"
-                                            style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); background: #222; transition: transform 0.2s;">
-                                    </div>
-                                @endforeach
-                            @endif
-                        </div>
+            @foreach($ranksOrder as $rank)
+                <div class="tier-row tier-{{ strtolower($rank) }}">
+                    <div class="tier-rank">{{ $rank }}</div>
+                    <div class="tier-items">
+                        @if(isset($itemsByRank[$rank]) && $itemsByRank[$rank]->count() > 0)
+                            @foreach($itemsByRank[$rank]->sortBy('name') as $item)
+                                <div class="tier-item" data-tippy-content="<b>{{ $item->name }}</b><br/>{{ $item->description ?? 'Sin descripción.' }}">
+                                    <img src="{{ asset($item->image_url) }}" alt="{{ $item->name }}"
+                                         title="{{ $item->name }}"
+                                         onerror="this.onerror=null; this.src='{{ asset('images/placeholder.png') }}';">
+                                    <span>{{ $item->name }}</span>
+                                </div>
+                            @endforeach
+                        @endif
                     </div>
-                @endforeach
-            </div>
+                </div>
+            @endforeach
         </div>
 
         <!-- BLOQUE 3: FILTROS Y EXPLORACIÓN -->

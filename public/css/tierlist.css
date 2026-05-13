@@ -118,44 +118,59 @@
     box-shadow: 0 8px 25px rgba(155, 89, 182, 0.5);
 }
 
-/* --- Estilos de la Tabla Tier List --- */
-
+/* --- Estilos de la Tabla Tier List (Divs Flex) --- */
 .tierlist-container {
     width: 100%;
     margin-bottom: 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.tierlist-container table {
-    width: 100%;
-    border-collapse: collapse;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-    border-radius: 10px;
+.tier-row {
+    display: flex;
+    background-color: #1a1a1a;
+    border-radius: 8px;
     overflow: hidden;
-    /* Asegura que las esquinas redondeadas se vean bien */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(109, 109, 109, 0.2);
+    min-height: 90px;
 }
 
-.tierlist-container th,
-.tierlist-container td {
+.tier-row:hover {
+    border-color: rgba(65, 232, 239, 0.3);
+    box-shadow: 0 4px 20px rgba(65, 232, 239, 0.15);
+}
+
+.tier-rank {
+    width: 80px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 2em;
+    color: #000;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.tier-items {
+    flex-grow: 1;
     padding: 15px;
-    border: 1px solid rgba(109, 109, 109, 0.3);
-    text-align: left;
-}
-
-.tierlist-container thead th {
-    background-color: var(--color-background-dark);
-    color: var(--color-primary-accent);
-    font-size: 1.1em;
-    text-transform: uppercase;
-}
-
-.tierlist-container tbody tr:hover {
-    background-color: rgba(185, 101, 240, 0.05);
-    /* Hover púrpura sutil */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
 }
 
 /* Efecto Hover para los Ítems (Zoom scale) */
 .tier-item {
     transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 80px;
 }
 
 .tier-item:hover {
@@ -164,58 +179,30 @@
     z-index: 10;
 }
 
+.tier-item img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid var(--color-primary-accent);
+    background: #222;
+}
+
+.tier-item span {
+    font-size: 0.8em;
+    margin-top: 5px;
+    line-height: 1.1;
+    color: #fff;
+}
+
 /* Colores Específicos para el Rango (Tier) */
-.tier-rank {
-    font-weight: bold;
-    text-align: center !important;
-    width: 80px;
-    font-size: 1.5em;
-    letter-spacing: 1px;
-}
-
-.tier-s {
-    background-color: rgba(255, 215, 0, 0.1);
-    /* Fondo Dorado Sutil */
-}
-
-.tier-s .tier-rank {
-    color: #FFD700;
-    /* Dorado para S */
-    border-left: 5px solid #FFD700;
-}
-
-.tier-a {
-    background-color: rgba(65, 232, 239, 0.1);
-    /* Fondo Azul/Cian Sutil */
-}
-
-.tier-a .tier-rank {
-    color: #41E8EF;
-    /* Azul/Cian para A */
-    border-left: 5px solid #41E8EF;
-}
-
-.tier-b {
-    background-color: rgba(185, 101, 240, 0.1);
-    /* Fondo Púrpura Sutil */
-}
-
-.tier-b .tier-rank {
-    color: #B965F0;
-    /* Púrpura para B */
-    border-left: 5px solid #B965F0;
-}
-
-.tier-c {
-    background-color: rgba(109, 109, 109, 0.1);
-    /* Fondo Gris Sutil */
-}
-
-.tier-c .tier-rank {
-    color: #A0A0A0;
-    /* Gris para C */
-    border-left: 5px solid #A0A0A0;
-}
+.tier-s .tier-rank { background-color: #FFD700; }
+.tier-a .tier-rank { background-color: #41E8EF; }
+.tier-b .tier-rank { background-color: #B965F0; }
+.tier-c .tier-rank { background-color: #FFF01F; }
+.tier-d .tier-rank { background-color: #39FF14; }
+.tier-e .tier-rank { background-color: #00FFEF; }
+.tier-f .tier-rank { background-color: #6D6D6D; }
 
 
 /* --- Votos y Tooltips (Tippy.js) --- */

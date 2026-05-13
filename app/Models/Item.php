@@ -49,4 +49,21 @@ class Item extends Model
     {
         return $this->hasMany(TierSuggestion::class, 'item_id', 'id');
     }
+
+    /**
+     * Accessor para obtener la URL correcta de la imagen.
+     * Resuelve el problema de imágenes guardadas en storage vs imágenes estáticas en public/images.
+     */
+    public function getImageUrlAttribute()
+    {
+        if (empty($this->image_path)) {
+            return 'images/placeholder.png';
+        }
+
+        if (\Illuminate\Support\Str::startsWith($this->image_path, 'items/')) {
+            return 'storage/' . $this->image_path;
+        }
+
+        return 'images/' . $this->image_path;
+    }
 }

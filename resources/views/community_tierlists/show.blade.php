@@ -41,54 +41,27 @@
         @endif
 
         <div class="tierlist-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th class="tier-rank">RANGO</th>
-                        <th>UNIDADES</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @php
-                        $ranksOrder = ['S', 'A', 'B', 'C', 'D', 'E', 'F'];
-                    @endphp
+            @php
+                $ranksOrder = ['S', 'A', 'B', 'C', 'D', 'E', 'F'];
+            @endphp
 
-                    @foreach($ranksOrder as $rank)
+            @foreach($ranksOrder as $rank)
+                <div class="tier-row tier-{{ strtolower($rank) }}">
+                    <div class="tier-rank">{{ $rank }}</div>
+                    <div class="tier-items">
                         @if(isset($itemsByRank[$rank]) && $itemsByRank[$rank]->count() > 0)
-                            <tr class="tier-{{ strtolower($rank) }}">
-                                <td class="tier-rank">{{ $rank }}</td>
-                                <td>
-                                    <div class="tier-items-list"
-                                        style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
-                                        @foreach($itemsByRank[$rank] as $item)
-                                            <div class="tier-item" data-tippy-content="{{ $item->description ?? 'Sin descripción.' }}"
-                                                style="display: flex; flex-direction: column; align-items: center; width: 80px; text-align: center;">
-                                                @php
-                                                    $imageSrc = asset('images/' . $item->image_path);
-                                                    if (\Illuminate\Support\Str::startsWith($item->image_path, 'items/')) {
-                                                        $imageSrc = asset('storage/' . $item->image_path);
-                                                    }
-                                                @endphp
-                                                @if($item->image_path)
-                                                    <img src="{{ $imageSrc }}" alt="{{ $item->name }}"
-                                                        title="{{ $item->name }}"
-                                                        onerror="this.onerror=null; this.src='{{ asset('images/placeholder.png') }}';"
-                                                        style="width: 50px; height: 50px; object-fit: contain; border-radius: 5px; background: #222;">
-                                                @else
-                                                    <img src="{{ asset('images/placeholder.png') }}" alt="{{ $item->name }}"
-                                                        title="{{ $item->name }}"
-                                                        style="width: 50px; height: 50px; object-fit: contain; border-radius: 5px; background: #222;">
-                                                @endif
-                                                <span style="font-size: 0.8em; margin-top: 5px; line-height: 1.1;">{{ $item->name }}</span>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </td>
-                            </tr>
+                            @foreach($itemsByRank[$rank] as $item)
+                                <div class="tier-item" data-tippy-content="{{ $item->description ?? 'Sin descripción.' }}">
+                                    <img src="{{ asset($item->image_url) }}" alt="{{ $item->name }}"
+                                        title="{{ $item->name }}"
+                                        onerror="this.onerror=null; this.src='{{ asset('images/placeholder.png') }}';">
+                                    <span>{{ $item->name }}</span>
+                                </div>
+                            @endforeach
                         @endif
-                    @endforeach
-                </tbody>
-            </table>
+                    </div>
+                </div>
+            @endforeach
         </div>
 
         <div class="comments-section" style="margin-top: 50px; background: #1a1a1a; padding: 20px; border-radius: 10px; max-width: 800px; margin-inline: auto; border: 1px solid #333; text-align: left;">
