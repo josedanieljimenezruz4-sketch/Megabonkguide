@@ -68,6 +68,10 @@ class UnlockController extends Controller
         $unlockedItems = $this->obtenerElementosDesbloqueados();
         $query = Item::where('type', $type);
 
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
         if ($request->filter === 'completed') {
             $query->whereIn('id', $unlockedItems);
         } elseif ($request->filter === 'pending') {

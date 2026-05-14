@@ -13,7 +13,7 @@
             <ul>
                 <li><a href="mailto:soporte@megabonkguide.com">Contáctanos</a></li>
                 <li><a href="#" onclick="event.preventDefault(); toggleModal();">Sugerencias</a></li>
-                <li><a href="#">Preguntas Frecuentes</a></li>
+                <li><a href="{{ route('wiki.index') }}" class="footer-neon-link">Preguntas Frecuentes</a></li>
             </ul>
         </div>
         <div>
@@ -28,6 +28,16 @@
         &copy; 2025 MEGABONK GUIDE. Todos los derechos reservados.
     </div>
 </footer>
+
+<style>
+.footer-neon-link {
+    transition: all 0.3s ease;
+}
+.footer-neon-link:hover {
+    color: var(--color-primary-accent) !important;
+    text-shadow: 0 0 10px rgba(65, 232, 239, 0.8) !important;
+}
+</style>
 
 <!-- Modal de Sugerencias Global -->
 <div id="suggestionModal" class="modal-overlay fixed inset-0 z-50 hidden flex items-center justify-center p-4">

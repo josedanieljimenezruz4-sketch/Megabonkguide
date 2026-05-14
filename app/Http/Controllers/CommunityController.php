@@ -13,19 +13,47 @@ class CommunityController extends Controller
     // Recupera y muestra la lista paginada de publicaciones de la comunidad.
     public function mostrarListaDePublicaciones(Request $request)
     {
-        $posts = CommunityPost::with('user')->latest()->paginate(10);
-        
-        $filter = 'recent';
-        return view('community', compact('posts', 'filter'));
+        $query = CommunityPost::with('user')->withCount('comments');
+
+        $sort = $request->input('sort', 'recent');
+        $category = $request->input('category', '');
+
+        // Lógica de Categoría
+        $query->when($category, function ($q, $cat) {
+            return $q->where('category', $cat);
+        });
+
+        // Lógica de Ordenación
+        if ($sort === 'popular') {
+            $query->orderBy('likes_count', 'desc');
+        } elseif ($sort === 'commented') {
+            $query->orderBy('comments_count', 'desc');
+        } elseif ($sort === 'oldest') {
+            $query->orderBy('created_at', 'asc');
+        } else {
+            // 'recent' o default
+            $query->orderBy('created_at', 'desc');
+        }
+
+        $posts = $query->paginate(10);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return view('community.partials.posts_list', compact('posts'))->render();
+        }
+
+        return view('community', compact('posts', 'sort', 'category'));
     }
 
     // Carga una publicación específica junto con sus comentarios y respuestas.
     public function mostrarPublicacionDetallada($id)
     {
-        $post = CommunityPost::with(['user', 'comments' => function($query) {
-            $query->whereNull('parent_id')->with(['user', 'replies']);
-        }])->findOrFail($id);
-        
+        $post = CommunityPost::with([
+            'user',
+            'comments' => function ($query) {
+                $query->whereNull('parent_id')->with(['user', 'replies']);
+            }
+        ])->findOrFail($id);
+
         return view('community.show', compact('post'));
     }
 
@@ -108,7 +136,7 @@ class CommunityController extends Controller
                 'submitUrl' => route('comunity.comment', $post->id),
                 'post' => $post
             ])->render();
-            
+
             return response()->json([
                 'success' => true,
                 'html' => $html,

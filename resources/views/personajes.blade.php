@@ -32,69 +32,9 @@
         </p>
 
         <!-- =======================
-             FILTROS DE BÚSQUEDA
+             FILTROS DE BÚSQUEDA (Alpine.js Modular)
         ======================= -->
-        <div class="filters-panel" style="background:#1e1e24; padding:15px; border-radius:8px; display:flex; gap:15px; margin-bottom:20px; align-items:center; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
-            <p style="margin:0; font-weight:bold; color:#ff416c;">Filtros Instantáneos:</p>
-            <div style="display:flex; gap:10px; width:100%;">
-                <select id="filter-status" style="padding:10px; border-radius:6px; background:#2c2f33; color:white; border:1px solid #3f4247; font-weight:bold; cursor:pointer;">
-                    <option value="all">🌟 Todos los Estados</option>
-                    <option value="completed">✅ Solo Completados</option>
-                    <option value="pending">⏳ Solo Pendientes</option>
-                </select>
-                <select id="filter-order" style="padding:10px; border-radius:6px; background:#2c2f33; color:white; border:1px solid #3f4247; font-weight:bold; cursor:pointer;">
-                    <option value="asc">🔤 Orden Alfabético (A-Z)</option>
-                    <option value="desc">🔤 Orden Alfabético (Z-A)</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- =======================
-             SCRIPT DE FILTROS LOCALES
-        ======================= -->
-        <script>
-            document.addEventListener("DOMContentLoaded", () => {
-                const filterStatus = document.getElementById('filter-status');
-                const filterOrder = document.getElementById('filter-order');
-                const grid = document.querySelector('.catalogo-grid');
-                
-                function applyFilters() {
-                    const status = filterStatus.value;
-                    const order = filterOrder.value;
-                    let cards = Array.from(grid.querySelectorAll('.item-card'));
-                    
-                    cards.forEach(card => {
-                        const cb = card.querySelector('input[type="checkbox"]');
-                        const isChecked = cb ? cb.checked : false;
-                        
-                        if (status === 'completed' && !isChecked) {
-                            card.style.display = 'none';
-                        } else if (status === 'pending' && isChecked) {
-                            card.style.display = 'none';
-                        } else {
-                            card.style.display = '';
-                        }
-                    });
-                    
-                    cards.sort((a, b) => {
-                        const nameA = a.querySelector('.item-name').innerText.trim().toLowerCase();
-                        const nameB = b.querySelector('.item-name').innerText.trim().toLowerCase();
-                        return order === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
-                    });
-                    
-                    cards.forEach(card => grid.appendChild(card));
-                }
-                
-                filterStatus.addEventListener('change', applyFilters);
-                filterOrder.addEventListener('change', applyFilters);
-
-                grid.addEventListener('change', (e) => {
-                    if(e.target.matches('input[type="checkbox"]')) {
-                        setTimeout(applyFilters, 50);
-                    }
-                });
-            });
-        </script>
+        @include('partials.unlock-filters')
 
         <!-- =======================
              LISTADO DE PERSONAJES

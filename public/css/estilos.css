@@ -669,3 +669,78 @@ a {
 .nombre-usuario-admin {
     color: #41E8EF;
 }
+
+/* =========================================
+   PAGINACIÓN NEÓN (GLOBAL)
+========================================= */
+.pagination-neon-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin: 30px auto;
+}
+
+.pagination-neon {
+    display: flex;
+    flex-direction: row; /* CRITICO para que sea horizontal */
+    justify-content: center;
+    align-items: center;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 8px;
+}
+
+.pagination-neon .page-item {
+    display: flex;
+}
+
+.pagination-neon .page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 10px;
+    background-color: #111 !important; /* Fondo muy oscuro, importante para sobreescribir Bootstrap/Tailwind */
+    border: 2px solid #00f3ff !important; /* Borde de 2px sólido Cian Neón */
+    border-radius: 8px !important;
+    color: #00f3ff !important;
+    font-weight: 800 !important;
+    text-decoration: none !important;
+    transition: all 0.3s ease;
+}
+
+/* Hover interactivo (Morado Neón) */
+.pagination-neon .page-item:not(.disabled):not(.active) .page-link:hover {
+    border-color: #bc13fe !important;
+    color: #bc13fe !important;
+    box-shadow: 0 0 12px rgba(188, 19, 254, 0.6) !important;
+    background-color: #222 !important;
+    transform: translateY(-2px);
+}
+
+/* Página Activa (Cian rellenado) */
+.pagination-neon .page-item.active .page-link {
+    background-color: #00f3ff !important;
+    color: #000 !important;
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.8) !important;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5) !important;
+    pointer-events: none;
+}
+
+/* Flechas desactivadas */
+.pagination-neon .page-item.disabled .page-link {
+    border-color: #444 !important;
+    color: #555 !important;
+    cursor: not-allowed !important;
+    background-color: #111 !important;
+    box-shadow: none !important;
+}
+
+/* RESPONSIVO */
+@media (max-width: 600px) {
+    .pagination-neon .page-item-number:not(.active) {
+        display: none !important;
+    }
+}

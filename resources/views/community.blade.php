@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="{{ asset('css/community.css') }}">
     <link rel="icon" href="{{ asset('images/iconotlabaho.webp') }}?v=1" type="image/webp">
     <link rel="shortcut icon" href="{{ asset('images/iconotlabaho.webp') }}">
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
 <body>
@@ -21,7 +23,7 @@
     <!-- =======================
          CONTENIDO PRINCIPAL
     ======================= -->
-    <main class="main-content-community">
+    <main class="main-content-community" x-data="communityFilter()">
 
         <!-- Notificaciones de Error y Éxito -->
         @if ($errors->any())
@@ -54,16 +56,22 @@
         <section class="community-actions">
             <a href="#" class="btn-create-post" onclick="document.getElementById('createPostModal').style.display='block'; return false;">✍️ Publicar Nuevo Contenido</a>
 
-            <div class="filter-controls">
-                <label for="category-filter">Filtrar por:</label>
-                <select id="category-filter" class="custom-select" onchange="window.location.href='?filter='+this.value">
-                    <option value="recent" {{ request('filter') == 'recent' ? 'selected' : '' }}>Más Reciente</option>
-                    <option value="oldest" {{ request('filter') == 'oldest' ? 'selected' : '' }}>Más Antiguo</option>
-                    <option value="popular" {{ request('filter') == 'popular' ? 'selected' : '' }}>Más Popular</option>
-                    <option value="build" {{ request('filter') == 'build' ? 'selected' : '' }}>Builds</option>
-                    <option value="meta" {{ request('filter') == 'meta' ? 'selected' : '' }}>Meta & Estrategia</option>
-                    <option value="question" {{ request('filter') == 'question' ? 'selected' : '' }}>Preguntas</option>
-                    <option value="meme" {{ request('filter') == 'meme' ? 'selected' : '' }}>Memes</option>
+            <div class="filter-controls" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <label for="sort-filter">Ordenar por:</label>
+                <select id="sort-filter" class="custom-select" x-model="sort" @change="fetchPosts">
+                    <option value="recent" {{ request('sort') == 'recent' ? 'selected' : '' }}>Más Reciente</option>
+                    <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Más Antiguo</option>
+                    <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>Más Popular</option>
+                    <option value="commented" {{ request('sort') == 'commented' ? 'selected' : '' }}>Más Comentado</option>
+                </select>
+
+                <label for="category-filter" style="margin-left: 10px;">Categoría:</label>
+                <select id="category-filter" class="custom-select" x-model="category" @change="fetchPosts">
+                    <option value="" {{ request('category') == '' ? 'selected' : '' }}>Todas</option>
+                    <option value="question" {{ request('category') == 'question' ? 'selected' : '' }}>Preguntas</option>
+                    <option value="build" {{ request('category') == 'build' ? 'selected' : '' }}>Builds</option>
+                    <option value="meta" {{ request('category') == 'meta' ? 'selected' : '' }}>Estrategias</option>
+                    <option value="meme" {{ request('category') == 'meme' ? 'selected' : '' }}>Memes</option>
                 </select>
             </div>
         </section>
@@ -71,52 +79,15 @@
         <!-- =======================
              LISTADO DE POSTS
         ======================= -->
-        <section class="posts-list">
+        <section class="posts-list" style="position: relative;">
 
-            @forelse($posts as $post)
-            <div class="post-card glow-{{ strtolower($post->category) }}">
-                <div class="post-header">
-                    <span class="post-category tag-{{ strtolower($post->category) }}">{{ strtoupper($post->category) }}</span>
-                    <h3><a href="{{ route('comunity.show', $post->id) }}" class="post-title-link break-words whitespace-normal max-w-full" style="display: block;">{{ $post->title }}</a></h3>
-                    <div class="post-meta" style="display: flex; align-items: center; gap: 10px; margin-top: 10px; color: #aaa; font-size: 0.8rem;">
-                        <x-user-avatar :user="$post->user" size="40" class="post-author-avatar" style="border: 2px solid #ffcf00;" />
-                        <span style="display: flex; align-items: center; gap: 4px;">
-                            Publicado por 
-                            <a href="{{ $post->user ? url('/perfil/' . $post->user->id) : '#' }}" style="color: #ffcf00; font-weight: bold; text-decoration: none;">
-                                {{ $post->user->username ?? 'Desconocido' }}
-                            </a>
-                            @if($post->user && $post->user->is_admin)
-                                <span style="color: #1da1f2;" title="Verificado">☑️</span>
-                            @endif
-                            hace {{ $post->created_at->diffForHumans() }}
-                        </span>
-                    </div>
-                </div>
-                
-                @if($post->image_path)
-                    <div style="margin-top: 10px; margin-bottom: 10px; height: 150px; overflow: hidden; border-radius: 6px;">
-                        <img src="{{ asset('storage/' . $post->image_path) }}" alt="Imagen" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8;">
-                    </div>
-                @endif
-
-                <p class="post-summary break-words whitespace-normal max-w-full" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
-                    {{ $post->content }}
-                </p>
-                <div class="post-footer">
-                    <span class="stats likes">❤️ {{ $post->likes_count }}</span>
-                    <span class="stats comments">💬 {{ $post->comments_count }} Comentarios</span>
-                    <a href="{{ route('comunity.show', $post->id) }}" class="view-post-link">Ver Discusión →</a>
-                </div>
+            <!-- Spinner -->
+            <div x-show="loading" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(30,30,46,0.5); z-index: 10; justify-content: center; align-items: center; border-radius: 8px;" :style="loading ? 'display: flex;' : 'display: none;'">
+                <div class="neon-spinner"></div>
             </div>
-            @empty
-            <p class="empty-state">No hay publicaciones disponibles.</p>
-            @endforelse
 
-            <!-- =======================
-                 PAGINACIÓN
-            ======================= -->
-            <div class="pagination-wrapper" style="margin-top: 20px;">
-                {{ $posts->appends(['filter' => request('filter')])->links() }}
+            <div id="posts-container" :style="loading ? 'opacity: 0.5; transition: opacity 0.3s;' : 'opacity: 1; transition: opacity 0.3s;'">
+                @include('community.partials.posts_list')
             </div>
 
         </section>
@@ -198,7 +169,60 @@
     .glow-meta:hover { border-color: #fbc02d; box-shadow: 0 0 15px rgba(251, 192, 45, 0.4); }
     .glow-question:hover { border-color: #e65100; box-shadow: 0 0 15px rgba(230, 81, 0, 0.4); }
     .glow-meme:hover { border-color: #6a1b9a; box-shadow: 0 0 15px rgba(106, 27, 154, 0.4); }
+    
+    /* Spinner Neon */
+    .neon-spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid rgba(233, 69, 96, 0.3);
+        border-top: 4px solid #e94560;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        box-shadow: 0 0 15px rgba(233, 69, 96, 0.5);
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
     </style>
+
+    <script>
+    function communityFilter() {
+        return {
+            sort: '{{ request('sort', 'recent') }}',
+            category: '{{ request('category', '') }}',
+            loading: false,
+            fetchPosts() {
+                this.loading = true;
+                
+                const params = new URLSearchParams({
+                    sort: this.sort,
+                    category: this.category
+                });
+                
+                fetch(window.location.pathname + '?' + params.toString(), {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'text/html'
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('posts-container').innerHTML = html;
+                    this.loading = false;
+                    
+                    // Update URL silently
+                    const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + params.toString();
+                    window.history.pushState({path: newUrl}, '', newUrl);
+                })
+                .catch(error => {
+                    console.error("Error fetching posts:", error);
+                    this.loading = false;
+                });
+            }
+        }
+    }
+    </script>
 
     <!-- =======================
          FOOTER
