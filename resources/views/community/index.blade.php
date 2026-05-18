@@ -95,7 +95,7 @@
 
             <!-- Paginación con parámetros de filtro preservados -->
             <div class="pagination-wrapper" style="margin-top: 20px;">
-                {{ $posts->appends(['filter' => request('filter')])->links() }}
+                {{ $posts->appends(['filter' => request('filter')])->links('partials.pagination-neon') }}
             </div>
 
         </section>

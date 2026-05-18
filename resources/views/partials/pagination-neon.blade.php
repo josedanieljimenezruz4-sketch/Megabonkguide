@@ -44,3 +44,50 @@
         </ul>
     </nav>
 @endif
+
+<style>
+.pagination-neon-container {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    margin-top: 2rem !important;
+    margin-bottom: 2rem !important;
+}
+.pagination-neon {
+    display: flex !important;
+    flex-direction: row !important;
+    list-style: none !important;
+    padding: 0 !important;
+    gap: 0.5rem !important;
+}
+.pagination-neon .page-item .page-link {
+    display: block !important;
+    padding: 0.5rem 1rem !important;
+    background-color: #1e1e2e !important;
+    color: #fff !important;
+    border: 2px solid #00f3ff !important;
+    border-radius: 4px !important;
+    text-decoration: none !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 0 5px rgba(0, 243, 255, 0.2) !important;
+    font-weight: 800 !important;
+}
+.pagination-neon .page-item .page-link:hover {
+    background-color: #00f3ff !important;
+    color: #000 !important;
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.8) !important;
+}
+.pagination-neon .page-item.active .page-link {
+    background-color: #00f3ff !important;
+    color: #000 !important;
+    border-color: #00f3ff !important;
+    box-shadow: 0 0 15px rgba(0, 243, 255, 0.8) !important;
+}
+.pagination-neon .page-item.disabled .page-link {
+    color: #666 !important;
+    border-color: #333 !important;
+    background-color: #111 !important;
+    box-shadow: none !important;
+    cursor: not-allowed !important;
+}
+</style>

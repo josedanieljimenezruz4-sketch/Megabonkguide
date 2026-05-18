@@ -86,7 +86,7 @@
             </div>
             
             <div style="display: flex; justify-content: center; margin-top: 30px;" class="custom-pagination">
-                {{ $tierLists->links() }}
+                {{ $tierLists->links('partials.pagination-neon') }}
             </div>
         @else
             <p style="text-align: center; color: #aaa; padding: 40px 0; font-size: 1.2em;">

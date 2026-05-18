@@ -17,27 +17,38 @@ class ProfileController extends Controller
     /**
      * Muestra el perfil privado del usuario autenticado.
      */
+    /**
+     * Muestra el perfil privado del usuario autenticado.
+     */
     public function mostrarPerfil()
     {
         $usuario = Auth::user();
-        
-        // Datos para la barra de progreso de desbloqueos
-        $totalElementos = Item::count();
-        $totalElementos = $totalElementos > 0 ? $totalElementos : 1;
-        $desbloqueosUsuario = DB::table('user_unlocks')->where('user_id', $usuario->id)->count();
-        $porcentaje = round(($desbloqueosUsuario / $totalElementos) * 100);
-        $faltantes = $totalElementos - $desbloqueosUsuario;
 
-        // Historial de actividad del usuario (Builds y Tier Lists)
+        // 1. Total de ítems reales hoy en la base de datos (13)
+        $totalElementos = Item::count();
+
+        // 2. Conteo blindado: Solo contamos los desbloqueos cuyos item_id EXISTAN en la tabla items
+        $desbloqueosUsuario = DB::table('user_unlocks')
+            ->where('user_id', $usuario->id)
+            ->whereIn('item_id', Item::pluck('id')) // <-- LA LLAVE MAESTRA: Filtra solo IDs reales actuales
+            ->count(DB::raw('DISTINCT item_id'));
+
+        // 3. Cálculo del progreso real matemático
+        $porcentaje = $totalElementos > 0 ? round(($desbloqueosUsuario / $totalElementos) * 100) : 0;
+
+        // 4. Cantidad de ítems faltantes
+        $faltantes = max(0, $totalElementos - $desbloqueosUsuario);
+
+        // 5. Historial de actividad del usuario (Builds y Tier Lists)
         $buildsDelUsuario = Build::where('user_id', $usuario->id)->orderBy('created_at', 'desc')->get();
         $tierListsDelUsuario = TierList::where('user_id', $usuario->id)->orderBy('created_at', 'desc')->get();
 
-        // Mantenemos los nombres de variables en inglés en compact para no romper profile.blade.php
+        // 6. Retorno unificado mapeando los nombres exactos que espera profile.blade.php
         return view('profile', [
             'user' => $usuario,
             'totalItems' => $totalElementos,
             'unlocksCount' => $desbloqueosUsuario,
-            'progreso' => $porcentaje,
+            'progreso' => $porcentaje, // Esta es la variable clave con el porcentaje real
             'faltantes' => $faltantes,
             'builds' => $buildsDelUsuario,
             'tierLists' => $tierListsDelUsuario
@@ -58,7 +69,7 @@ class ProfileController extends Controller
         if ($request->hasFile('avatar')) {
             $avatarSubido = $request->file('avatar');
             $nombreArchivo = time() . '_' . $usuario->id . '.' . $avatarSubido->getClientOriginalExtension();
-            
+
             // Eliminar el avatar antiguo si existe y es local
             if ($usuario->avatar && !str_starts_with($usuario->avatar, 'http')) {
                 Storage::disk('public')->delete('avatars/' . $usuario->avatar);
@@ -92,7 +103,7 @@ class ProfileController extends Controller
     public function mostrarPerfilPublico($id)
     {
         $usuarioPublico = User::findOrFail($id);
-        
+
         // Si el usuario está viendo su propio perfil, lo redirigimos al perfil privado
         if (auth()->check() && auth()->id() == $usuarioPublico->id) {
             return redirect()->route('profile');
@@ -100,10 +111,10 @@ class ProfileController extends Controller
 
         // Datos para la barra de progreso
         $totalElementos = Item::count();
-        $totalElementos = $totalElementos > 0 ? $totalElementos : 1;
-        $desbloqueosUsuario = DB::table('user_unlocks')->where('user_id', $usuarioPublico->id)->count();
-        $porcentaje = round(($desbloqueosUsuario / $totalElementos) * 100);
-        $faltantes = $totalElementos - $desbloqueosUsuario;
+        $desbloqueosUsuario = DB::table('user_unlocks')->where('user_id', $usuarioPublico->id)->count(DB::raw('DISTINCT item_id'));
+
+        $porcentaje = $totalElementos > 0 ? round(($desbloqueosUsuario / $totalElementos) * 100) : 0;
+        $faltantes = max(0, $totalElementos - $desbloqueosUsuario);
 
         // Historial de actividad del usuario
         $buildsDelUsuario = Build::where('user_id', $usuarioPublico->id)->orderBy('created_at', 'desc')->get();
