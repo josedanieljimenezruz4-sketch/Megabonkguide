@@ -155,12 +155,22 @@ class GameDataController extends Controller
         // Último parche publicado
         $ultimoParche = Update::where('type', 'patch')->latest('published_at')->first();
 
-        // Top 3 personajes más usados en builds
-        $topPersonajes = Item::where('type', 'personaje')
-            ->withCount('characterBuilds')
-            ->orderBy('character_builds_count', 'desc')
+        // Top 3 personajes más usados en builds (Top Todas las Épocas)
+        $topPersonajesRaw = Build::select('character_id', DB::raw('count(*) as count'))
+            ->groupBy('character_id')
+            ->orderBy('count', 'desc')
             ->take(3)
             ->get();
+
+        $topPersonajes = collect();
+        foreach ($topPersonajesRaw as $top) {
+            $personaje = Item::find($top->character_id);
+            if ($personaje) {
+                // Attach the count to the object so it can be used if needed
+                $personaje->builds_count = $top->count;
+                $topPersonajes->push($personaje);
+            }
+        }
 
         return view('meta', compact('estrategias', 'notasDeParche', 'tendencias', 'ultimoParche', 'topPersonajes'));
     }

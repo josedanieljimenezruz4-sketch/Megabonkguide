@@ -98,7 +98,7 @@
                             <div class="trend-card {{ $index === 0 ? 'trend-card-first' : '' }}">
                                 <div class="trend-character-info">
                                     <div class="trend-character-avatar {{ $index === 0 ? 'trend-avatar-first' : '' }}">
-                                        <img src="{{ asset('storage/' . $tendencia['character']->image_path) }}" alt="{{ $tendencia['character']->name }}" class="trend-character-img">
+                                        <img src="{{ $tendencia['character']->image_path ? asset('storage/' . $tendencia['character']->image_path) : asset('images/default-avatar.png') }}" alt="{{ $tendencia['character']->name }}" class="trend-character-img">
                                     </div>
                                     <span class="trend-character-name">{{ Str::limit($tendencia['character']->name, 15) }}</span>
                                 </div>
