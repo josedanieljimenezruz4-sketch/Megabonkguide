@@ -41,7 +41,7 @@
                 <div style="display: flex; align-items: center; gap: 6px;">
                     <span
                         style="color: #bc13fe; font-weight: bold; font-size: 0.95em; white-space: nowrap;">Personaje:</span>
-                    <select id="filter-character" name="character" class="custom-select" onchange="this.form.submit()"
+                    <select id="filter-character" name="character" class="custom-select" onchange="this.form.dispatchEvent(new Event('submit', {bubbles:true, cancelable:true}))"
                         style="background: #111; color: #fff; border: 1px solid #444; padding: 6px 12px; border-radius: 6px; cursor: pointer;">
                         <option value="all" {{ $characterId == 'all' ? 'selected' : '' }}>Todos</option>
                         @foreach($characters as $char)
@@ -94,9 +94,11 @@
         </div>
 
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
+            function initLeaderboardScripts() {
                 const scoreInputs = document.querySelectorAll('.score-filter-input');
                 scoreInputs.forEach(input => {
+                    if (input.dataset.lbInit) return; // evitar doble bind
+                    input.dataset.lbInit = '1';
                     input.addEventListener('input', function (e) {
                         let value = this.value.replace(/\D/g, '');
                         if (value) {
@@ -106,7 +108,9 @@
                         }
                     });
                 });
-            });
+            }
+            document.addEventListener('DOMContentLoaded', initLeaderboardScripts);
+            document.addEventListener('megabonk:ajaxLoad', initLeaderboardScripts);
         </script>
 
         <!-- =======================

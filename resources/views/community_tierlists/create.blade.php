@@ -31,7 +31,7 @@
 
         <form action="{{ route('community-tierlists.create') }}" method="GET" class="form-group" style="text-align: center; margin-bottom: 30px; background: #2c2f33; padding: 15px; border-radius: 10px;">
             <label for="categoria_select" style="display:inline-block; margin-right:10px; font-weight:bold; color:white;">Categoría:</label>
-            <select name="categoria" id="categoria_select" class="rank-select" onchange="this.form.submit()" style="padding:8px 15px;">
+            <select name="categoria" id="categoria_select" class="rank-select" onchange="this.form.dispatchEvent(new Event('submit', {bubbles:true, cancelable:true}))" style="padding:8px 15px;">
                 <option value="general" @if($categoria == 'general') selected @endif>General (Todo)</option>
                 <option value="personaje" @if($categoria == 'personaje') selected @endif>Personajes</option>
                 <option value="arma" @if($categoria == 'arma') selected @endif>Armas</option>

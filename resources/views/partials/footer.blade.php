@@ -105,3 +105,137 @@
 </script>
 <script src="https://cdn.tailwindcss.com"></script>
 @endif
+
+<!-- =======================
+     GLOBAL AJAX NAVIGATION
+======================= -->
+<style>
+    /* ── Transición fade para AJAX ── */
+    .ajax-fade-out {
+        opacity: 0 !important;
+        transition: opacity 0.18s ease-out !important;
+    }
+    .ajax-fade-in {
+        animation: ajaxFadeIn 0.3s ease-out forwards;
+    }
+    @keyframes ajaxFadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // ── Comprobar si un form debe ser ignorado ──
+        function shouldIgnoreForm(form) {
+            // 1) Forms cuyo <main> padre o el propio form tengan x-data (Alpine.js)
+            if (form.closest('[x-data]')) return true;
+            // 2) Forms con onsubmit="return false;" (filtrado client-side puro)
+            const onsubmit = form.getAttribute('onsubmit');
+            if (onsubmit && onsubmit.includes('return false')) return true;
+            // 3) Forms POST (nunca interceptar)
+            if (form.method.toUpperCase() !== 'GET') return true;
+            return false;
+        }
+
+        // ── Fetch + Replace ──
+        function fetchAndReplaceMain(url) {
+            const currMain = document.querySelector('main');
+
+            // Fade-out rápido
+            if (currMain) {
+                currMain.classList.add('ajax-fade-out');
+            }
+
+            fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'text/html'
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.text();
+            })
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newMain = doc.querySelector('main');
+
+                if (newMain && currMain) {
+                    // Inyectar contenido nuevo
+                    currMain.innerHTML = newMain.innerHTML;
+
+                    // Fade-in limpio
+                    currMain.classList.remove('ajax-fade-out');
+                    currMain.classList.remove('ajax-fade-in');
+                    void currMain.offsetWidth; // forzar reflow
+                    currMain.classList.add('ajax-fade-in');
+
+                    // Actualizar historial
+                    window.history.pushState({ path: url }, '', url);
+
+                    // Scroll suave al top
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                    // Re-inicializar scripts locales de cada página
+                    document.dispatchEvent(new CustomEvent('megabonk:ajaxLoad'));
+
+                    // Limpiar clase de animación al terminar
+                    currMain.addEventListener('animationend', function handler() {
+                        currMain.classList.remove('ajax-fade-in');
+                        currMain.removeEventListener('animationend', handler);
+                    });
+                } else {
+                    window.location.href = url;
+                }
+            })
+            .catch(error => {
+                console.error('AJAX Nav Error:', error);
+                if (currMain) currMain.classList.remove('ajax-fade-out');
+                window.location.href = url;
+            });
+        }
+
+        // ── Interceptar submit de formularios GET ──
+        document.addEventListener('submit', function(e) {
+            const form = e.target;
+            if (form.tagName !== 'FORM') return;
+            if (shouldIgnoreForm(form))  return;
+
+            e.preventDefault();
+            const url    = new URL(form.action || window.location.href);
+            const params = new URLSearchParams(new FormData(form));
+            url.search   = params.toString();
+            fetchAndReplaceMain(url.toString());
+        });
+
+        // ── Interceptar clicks de paginación y filtros de enlace ──
+        document.addEventListener('click', function(e) {
+            const link = e.target.closest('a');
+            if (!link) return;
+            // Paginación
+            if (link.closest('.pagination-neon-container') ||
+                link.closest('.pagination-wrapper') ||
+                link.closest('.pagination')) {
+                e.preventDefault();
+                fetchAndReplaceMain(link.href);
+                return;
+            }
+            // Filtros de enlace (botones de categoría, etc.)
+            if (link.closest('.tier-filters') ||
+                link.hasAttribute('data-ajax-filter')) {
+                e.preventDefault();
+                fetchAndReplaceMain(link.href);
+                return;
+            }
+        });
+
+        // ── Back / Forward del navegador ──
+        window.addEventListener('popstate', function() {
+            fetchAndReplaceMain(window.location.href);
+        });
+    });
+</script>
+
