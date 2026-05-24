@@ -222,6 +222,9 @@
                         <div>
                             <label>Título de la Build</label>
                             <input type="text" name="name" required placeholder="Ej: Fuego Inmortal..." maxlength="255">
+                            
+                            <label style="margin-top: 20px;">DESCRIPCIÓN / ESTRATEGIA (OPCIONAL)</label>
+                            <textarea name="description" rows="5" placeholder="Explica cómo se juega, el orden de compra, combos, etc."></textarea>
                         </div>
                     </div>
                 </div>

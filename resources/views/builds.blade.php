@@ -11,6 +11,7 @@
     <link rel="icon" href="{{ asset('images/iconotlabaho.webp') }}?v=1" type="image/webp">
     <link rel="shortcut icon" href="{{ asset('images/iconotlabaho.webp') }}">
     <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
@@ -101,16 +102,33 @@
 
                 {{-- Mapear los datos que vienen del paginator de Laravel `builds.data` --}}
                 <template x-for="build in builds" :key="build.id">
-                    <div class="build-card fade-in">
+                    <div class="build-card fade-in" style="min-width: 0;">
                         <div class="card-header">
                             <h3 x-text="build.name"></h3>
                             <!-- Representación de Medias Estrellas con CSS -->
                             <div class="valoracion-estrellas" :style="`--rating: ${parseFloat(build.rating).toFixed(1)};`" :title="`${parseFloat(build.rating).toFixed(1)} Estrellas`"></div>
                         </div>
                         <p class="card-details">
-                            <span>**Tipo:** <span x-text="build.type"></span></span>
+                            <span style="font-size: 0.9em; color: #aaa;">Tipo: <span style="color: #fff;" x-text="build.type"></span></span>
                         </p>
-                        <p class="card-description" x-text="build.description"></p>
+                        <div x-data="{ expanded: false }" x-show="build.description" style="margin-top: 10px;">
+                            <!-- Contenedor A (Contraído con gradiente) -->
+                            <div x-show="!expanded" x-transition.opacity style="position: relative;">
+                                <p class="card-description" x-text="build.description" style="word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; color: #ccc; line-height: 1.5; margin: 0;"></p>
+                                <template x-if="build.description && build.description.length > 150">
+                                    <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 2rem; background: linear-gradient(to top, rgba(20,20,30,0.95), transparent); pointer-events: none;"></div>
+                                </template>
+                            </div>
+
+                            <!-- Contenedor B (Expandido con animación x-collapse) -->
+                            <div x-show="expanded" x-collapse.duration.400ms>
+                                <p class="card-description" x-text="build.description" style="word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; color: #ccc; line-height: 1.5; margin: 0; white-space: pre-wrap;"></p>
+                            </div>
+                            
+                            <template x-if="build.description && build.description.length > 150">
+                                <button @click="expanded = !expanded" x-text="expanded ? 'Leer menos' : 'Leer más...'" style="background: none; border: none; color: #00f0ff; font-weight: bold; cursor: pointer; padding: 0; margin-top: 8px; font-size: 0.85em; transition: color 0.3s;" onmouseover="this.style.color='#00c8ff'" onmouseout="this.style.color='#00f0ff'"></button>
+                            </template>
+                        </div>
                         
                         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 15px;">
                             <span style="display: flex; align-items: center; gap: 6px; font-size: 0.85em; color: #aaa;">

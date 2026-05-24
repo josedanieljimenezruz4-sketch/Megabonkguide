@@ -108,7 +108,7 @@ class BuildController extends Controller
         $datosValidados = $request->validate([
             'name' => 'required|string|max:255',
             'character_id' => 'required|exists:items,id',
-            'description' => 'nullable|string',
+            'description' => 'nullable|string|max:2000',
             'rating' => 'integer|min:1|max:5',
             'type' => 'nullable|string',
             'meta_strategy_id' => 'nullable|exists:meta_strategies,id',
@@ -197,10 +197,11 @@ class BuildController extends Controller
         $datosValidados = $request->validate([
             'name' => 'required|string|max:255',
             'character_id' => 'required|exists:items,id',
-            'description' => 'nullable|string',
+            'description' => 'nullable|string|max:2000',
             'rating' => 'integer|min:1|max:5',
             'type' => 'nullable|string',
             'meta_strategy_id' => 'nullable|exists:meta_strategies,id',
+            // Validamos que los items sean arrays
             'items' => 'required|array',
             'items.Arma' => 'required|array|max:4',
             'items.Tomo' => 'required|array|max:4',

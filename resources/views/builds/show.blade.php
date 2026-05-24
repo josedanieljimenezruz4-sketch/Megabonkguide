@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{ asset('css/estilos.css') }}?v={{ time() }}">
     <link rel="icon" href="{{ asset('images/iconotlabaho.webp') }}" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <style>
@@ -156,6 +157,9 @@
             color: #ddd;
             line-height: 1.6;
             margin-top: 10px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-word;
         }
     </style>
 </head>
@@ -271,8 +275,31 @@
             @if($build->description)
             <div class="grid-section fade-in" style="animation-delay: 0.2s;">
                 <h3>📝 Estrategia de la Build</h3>
-                <div class="description-box">
-                    {{ $build->description }}
+                <style>
+                    .line-clamp-3 {
+                        display: -webkit-box;
+                        -webkit-line-clamp: 3;
+                        -webkit-box-orient: vertical;
+                        overflow: hidden;
+                    }
+                </style>
+                <div class="description-box" x-data="{ expanded: false }">
+                    <!-- Contenedor A (Contraído con gradiente) -->
+                    <div x-show="!expanded" x-transition.opacity style="position: relative;">
+                        <p class="line-clamp-3" style="margin: 0; white-space: pre-wrap;">{{ $build->description }}</p>
+                        @if(Str::length($build->description) > 150)
+                            <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 2.5rem; background: linear-gradient(to top, rgba(20,20,25,0.95), transparent); pointer-events: none;"></div>
+                        @endif
+                    </div>
+
+                    <!-- Contenedor B (Expandido con animación x-collapse) -->
+                    <div x-show="expanded" x-collapse.duration.400ms>
+                        <p style="margin: 0; white-space: pre-wrap;">{{ $build->description }}</p>
+                    </div>
+                    
+                    @if(Str::length($build->description) > 150)
+                        <button @click="expanded = !expanded" x-text="expanded ? 'Leer menos' : 'Leer más...'" style="background: none; border: none; color: #00f0ff; font-weight: bold; cursor: pointer; padding: 0; margin-top: 10px; font-size: 0.9em; transition: color 0.3s;" onmouseover="this.style.color='#00c8ff'" onmouseout="this.style.color='#00f0ff'"></button>
+                    @endif
                 </div>
             </div>
             @endif
