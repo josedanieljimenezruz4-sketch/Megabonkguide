@@ -38,6 +38,7 @@ Route::controller(GameDataController::class)->group(function () {
 Route::controller(\App\Http\Controllers\LeaderboardController::class)->group(function () {
     Route::get('/leaderboard', 'mostrarTablaDeClasificacion')->name('leaderboard');
     Route::post('/leaderboard', 'guardarNuevaPuntuacion')->name('leaderboard.store')->middleware('auth');
+    Route::get('/leaderboard/user-builds/{character_id}', 'getUserBuildsByCharacter')->name('leaderboard.user-builds')->middleware('auth');
 });
 
 // Sección UNLOCKS

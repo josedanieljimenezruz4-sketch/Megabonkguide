@@ -334,8 +334,8 @@
             </div>
 
             <!-- =======================
-                                                 SCRIPT DE VALIDACIÓN FORMULARIO
-                                            ======================= -->
+                 SCRIPT DE VALIDACIÓN FORMULARIO Y AJAX
+            ======================= -->
             <script>
                 document.addEventListener('DOMContentLoaded', function () {
                     const form = document.getElementById('scoreForm');
@@ -343,6 +343,39 @@
                     const btnSubmit = document.getElementById('btnSubmitScore');
                     const pointsFormatted = document.getElementById('points_formatted');
                     const pointsRaw = document.getElementById('points_raw');
+
+                    // AJAX para actualizar builds por personaje
+                    const characterSelect = form.querySelector('select[name="character_id"]');
+                    const buildSelect = form.querySelector('select[name="build_id"]');
+
+                    if (characterSelect && buildSelect && !characterSelect.hasAttribute('readonly')) {
+                        characterSelect.addEventListener('change', function() {
+                            const charId = this.value;
+
+                            if (!charId) {
+                                buildSelect.innerHTML = '<option value="">Ninguna / No especificar</option>';
+                                return;
+                            }
+
+                            buildSelect.innerHTML = '<option value="">Cargando builds...</option>';
+
+                            fetch(`/leaderboard/user-builds/${charId}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    buildSelect.innerHTML = '<option value="">Ninguna / No especificar</option>';
+                                    data.forEach(build => {
+                                        const option = document.createElement('option');
+                                        option.value = build.id;
+                                        option.textContent = build.name.length > 40 ? build.name.substring(0, 40) + '...' : build.name;
+                                        buildSelect.appendChild(option);
+                                    });
+                                })
+                                .catch(error => {
+                                    console.error('Error fetching builds:', error);
+                                    buildSelect.innerHTML = '<option value="">Ninguna / No especificar</option>';
+                                });
+                        });
+                    }
 
                     // Formateador de miles
                     pointsFormatted.addEventListener('input', function (e) {

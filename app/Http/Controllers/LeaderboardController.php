@@ -111,4 +111,15 @@ class LeaderboardController extends Controller
 
         return back()->with('success', '¡Puntuación enviada! Tu récord está en proceso de revisión por el equipo de administración.');
     }
+
+    // Devuelve las builds del usuario actual filtradas por personaje en formato JSON
+    public function getUserBuildsByCharacter($character_id)
+    {
+        $builds = \App\Models\Build::where('user_id', auth()->id())
+            ->where('character_id', $character_id)
+            ->select('id', 'name')
+            ->get();
+
+        return response()->json($builds);
+    }
 }
