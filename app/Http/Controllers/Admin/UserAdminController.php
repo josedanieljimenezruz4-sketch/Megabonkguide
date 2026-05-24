@@ -53,4 +53,25 @@ class UserAdminController extends Controller
 
         return redirect()->back()->with('success', 'Usuario eliminado correctamente.');
     }
+
+    /**
+     * Alterna el rol de un usuario entre Admin y Usuario normal.
+     * Seguridad: El usuario con ID 1 o el email del superadmin está blindado.
+     */
+    public function toggleRole($id)
+    {
+        $usuario = User::findOrFail($id);
+
+        // Blindaje del superadmin: ni ID 1 ni el email principal pueden perder admin
+        $emailProtegido = 'josedanieljimenezruz4@gmail.com';
+        if ($usuario->id == 1 || $usuario->email === $emailProtegido) {
+            return redirect()->back()->with('error', '⛔ No puedes modificar el rol del administrador principal del sistema.');
+        }
+
+        $usuario->is_admin = !$usuario->is_admin;
+        $usuario->save();
+
+        $nuevoRol = $usuario->is_admin ? 'Administrador' : 'Usuario';
+        return redirect()->back()->with('success', "Rol de {$usuario->username} cambiado a {$nuevoRol}.");
+    }
 }

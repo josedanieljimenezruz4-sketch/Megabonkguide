@@ -32,6 +32,7 @@
             Clasificación basada en la puntuación más alta por Personaje.
         </p>
 
+
         <div class="leaderboard-controls"
             style="background: #1e1e2e; border: 1px solid #333; border-radius: 12px; padding: 15px 25px; display: flex; flex-direction: row; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap;">
 
@@ -246,10 +247,24 @@
                 }
             </style>
             <div id="scoreModal"
-                style="display: {{ session('requires_confirmation') ? 'flex' : 'none' }}; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
+                style="display: {{ (session('requires_confirmation') || $errors->any()) ? 'flex' : 'none' }}; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
                 <div
                     style="background: #1a1a24; padding: 30px; border-radius: 10px; border: 2px solid #00f0ff; width: 90%; max-width: 500px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
                     <h2 style="color: #00f0ff; margin-top: 0;">Subir Puntuación</h2>
+
+                    {{-- Errores de validación de Laravel --}}
+                    @if($errors->any())
+                        <div style="background: rgba(255,0,60,0.15); border-left: 4px solid #ff003c; padding: 12px 16px; margin-bottom: 15px; border-radius: 4px;">
+                            <h4 style="margin: 0 0 8px 0; color: #ff003c; font-size: 0.95em;">❌ Errores en el formulario:</h4>
+                            <ul style="margin: 0; padding-left: 18px; color: #ff6b8a; font-size: 0.85em; line-height: 1.6;">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+
 
                     @if(session('requires_confirmation'))
                         <div
@@ -423,6 +438,127 @@
     ======================= -->
     @include('partials.footer')
 
+    @if(session('error_toast'))
+    <div id="errorToast" class="custom-toast error-toast">
+        <div class="toast-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+            </svg>
+        </div>
+        <div class="toast-text">
+            {{ session('error_toast') }}
+        </div>
+        <button class="toast-close" onclick="closeToast()">&times;</button>
+    </div>
+
+    <style>
+        .custom-toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(220, 38, 38, 0.85); /* Fondo rojo translúcido */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-left: 6px solid #ff1a1a;
+            color: #ffffff;
+            padding: 18px 24px;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.3);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: slideInFade 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+            opacity: 0;
+            transform: translateX(50px);
+        }
+        
+        .custom-toast.fade-out {
+            animation: slideOutFade 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+        }
+
+        .toast-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .toast-text {
+            font-size: 0.95rem;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        .toast-text strong {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.8rem;
+            line-height: 1;
+            cursor: pointer;
+            padding: 0;
+            margin-left: 10px;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .toast-close:hover {
+            color: #ffffff;
+            transform: scale(1.1);
+        }
+
+        @keyframes slideInFade {
+            0% {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideOutFade {
+            0% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+        }
+    </style>
+
+    <script>
+        function closeToast() {
+            const toast = document.getElementById('errorToast');
+            if (toast) {
+                toast.classList.add('fade-out');
+                setTimeout(() => {
+                    toast.remove();
+                }, 500);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto cerrar después de 5 segundos
+            setTimeout(() => {
+                closeToast();
+            }, 5000);
+        });
+    </script>
+    @endif
 </body>
 
 </html>

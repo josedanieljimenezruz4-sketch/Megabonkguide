@@ -128,7 +128,6 @@ Route::get('/perfil/{id}', [App\Http\Controllers\ProfileController::class, 'most
 // Rutas de Administrador (Requieren sesión y ser admin)
 Route::middleware(['auth', 'admin'])->name('admin.')->prefix('admin')->group(function () {
     Route::get('/', [AdminController::class, 'mostrarPanelAdministracion'])->name('dashboard');
-    Route::get('/tierlist-manager', [AdminController::class, 'gestionarTierlist'])->name('tierlist-manager');
     Route::get('/items/create', [ItemController::class, 'mostrarFormularioCreacion'])->name('items.create');
     Route::post('/items', [ItemController::class, 'guardarItem'])->name('items.store');
     Route::post('/items/bulk-approve', [ItemController::class, 'aprobacionMasiva'])->name('items.bulkApprove');
@@ -147,12 +146,19 @@ Route::middleware(['auth', 'admin'])->name('admin.')->prefix('admin')->group(fun
     Route::delete('/community-tierlists/{id}', [App\Http\Controllers\UserTierListController::class, 'eliminarTierListAdmin'])->name('community-tierlists.destroy');
     Route::delete('/comments/{id}', [App\Http\Controllers\CommentController::class, 'eliminarComentarioAdmin'])->name('comments.destroy');
 
-    // Nueva Moderación (Builds y Tierlists)
+    // Nueva Moderación (Builds, Tierlists y Posts)
     Route::get('/moderation', [\App\Http\Controllers\Admin\ModerationController::class, 'mostrarPanelModeracion'])->name('moderation.index');
     Route::delete('/moderation/builds/{id}', [\App\Http\Controllers\Admin\ModerationController::class, 'eliminarBuild'])->name('moderation.builds.destroy');
     Route::get('/moderation/builds/{build}/edit', [\App\Http\Controllers\Admin\ModerationController::class, 'editarBuild'])->name('moderation.builds.edit');
     Route::put('/moderation/builds/{build}', [\App\Http\Controllers\Admin\ModerationController::class, 'actualizarBuild'])->name('moderation.builds.update');
     Route::delete('/moderation/tierlists/{id}', [\App\Http\Controllers\Admin\ModerationController::class, 'eliminarTierList'])->name('moderation.tierlists.destroy');
+    Route::delete('/moderation/posts/{id}', [\App\Http\Controllers\Admin\ModerationController::class, 'eliminarPost'])->name('moderation.posts.destroy');
+
+    // CRUD Catálogo de Unlocks
+    Route::get('/catalogo', [ItemController::class, 'mostrarCatalogo'])->name('catalogo.index');
+    Route::get('/catalogo/{id}/edit', [ItemController::class, 'mostrarFormularioEdicion'])->name('catalogo.edit');
+    Route::put('/catalogo/{id}', [ItemController::class, 'actualizarItem'])->name('catalogo.update');
+    Route::delete('/catalogo/{id}', [ItemController::class, 'eliminarItem'])->name('catalogo.destroy');
 
     // Gestión del Meta
     Route::get('/meta', [\App\Http\Controllers\Admin\MetaAdminController::class, 'mostrarMetaAdmin'])->name('meta.index');
@@ -167,8 +173,12 @@ Route::middleware(['auth', 'admin'])->name('admin.')->prefix('admin')->group(fun
     Route::get('/leaderboard', [AdminController::class, 'gestionarLeaderboard'])->name('leaderboard.index');
     Route::post('/leaderboard/{id}/approve', [AdminController::class, 'aprobarPuntuacion'])->name('leaderboard.approve');
     Route::post('/leaderboard/{id}/reject', [AdminController::class, 'rechazarPuntuacion'])->name('leaderboard.reject');
-    Route::post('/leaderboard/reset-global', [AdminController::class, 'reiniciarLeaderboardGlobal'])->name('leaderboard.resetGlobal');
+    Route::post('/leaderboard/purge-rejected', [AdminController::class, 'limpiarRechazadas'])->name('leaderboard.purgeRejected');
+    Route::post('/leaderboard/reset-global', [AdminController::class, 'resetGlobalLeaderboard'])->name('leaderboard.resetGlobal');
     Route::delete('/leaderboard/{id}/reset', [AdminController::class, 'reiniciarPuntuacionUsuario'])->name('leaderboard.resetUser');
+
+    // Herramientas de Mantenimiento del Sistema
+    Route::post('/system/purge-orphans', [AdminController::class, 'purgarHuerfanos'])->name('system.purgeOrphans');
 
     // Wiki Admin
     Route::get('/wiki', [WikiAdminController::class, 'mostrarPanelWiki'])->name('wiki.index');
@@ -189,5 +199,6 @@ Route::middleware(['auth', 'admin'])->name('admin.')->prefix('admin')->group(fun
     // Gestión de Usuarios
     Route::get('/users', [\App\Http\Controllers\Admin\UserAdminController::class, 'mostrarUsuarios'])->name('users.index');
     Route::post('/users/{id}/ban', [\App\Http\Controllers\Admin\UserAdminController::class, 'gestionarBaneo'])->name('users.ban');
+    Route::post('/users/{id}/toggle-role', [\App\Http\Controllers\Admin\UserAdminController::class, 'toggleRole'])->name('users.toggleRole');
     Route::delete('/users/{id}', [\App\Http\Controllers\Admin\UserAdminController::class, 'eliminarUsuario'])->name('users.destroy');
 });

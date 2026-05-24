@@ -5,21 +5,21 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Build;
-use App\Models\TierList;
+use App\Models\CommunityPost;
 
 class ModerationController extends Controller
 {
     /**
-     * Muestra el panel de moderación para Builds y Tier Lists.
+     * Muestra el panel de moderación para Builds y Posts de comunidad.
      */
     public function mostrarPanelModeracion()
     {
         $buildsPaginadas = Build::with('user', 'character')->latest()->paginate(15, ['*'], 'builds_page');
-        $tierlistsPaginadas = TierList::with('user')->latest()->paginate(15, ['*'], 'tierlists_page');
+        $postsPaginados = CommunityPost::with('user')->latest()->paginate(15, ['*'], 'posts_page');
 
         return view('admin.moderation.index', [
             'builds' => $buildsPaginadas,
-            'tierlists' => $tierlistsPaginadas
+            'posts' => $postsPaginados
         ]);
     }
 
@@ -98,5 +98,18 @@ class ModerationController extends Controller
         }
 
         return redirect()->route('admin.moderation.index')->with('success', 'Build actualizada correctamente.');
+    }
+
+    /**
+     * Elimina permanentemente un post de la comunidad y su contenido asociado.
+     */
+    public function eliminarPost($id)
+    {
+        $post = CommunityPost::findOrFail($id);
+        // Eliminar likes y comentarios asociados
+        $post->likes()->detach();
+        $post->comments()->delete();
+        $post->delete();
+        return back()->with('success', 'Post de comunidad eliminado correctamente.');
     }
 }

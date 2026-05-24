@@ -16,6 +16,13 @@
         </div>
     @endif
 
+    @if(session('error'))
+        <div
+            style="background: rgba(255, 68, 68, 0.2); border-left: 4px solid #ff4444; padding: 15px; margin-bottom: 20px; color: #ff6b6b; border-radius: 4px; font-weight: bold;">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <div class="admin-card">
         <table class="admin-table">
             <thead>
@@ -23,6 +30,7 @@
                     <th>ID</th>
                     <th>Usuario</th>
                     <th>Email</th>
+                    <th>Rol</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
@@ -43,6 +51,25 @@
                             </div>
                         </td>
                         <td>{{ $user->email }}</td>
+                        <td>
+                            @if($user->id == 1 || $user->email === 'josedanieljimenezruz4@gmail.com')
+                                <span style="background: linear-gradient(90deg, #ff4b2b, #ff416c); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; color: white;">🛡️ SUPERADMIN</span>
+                            @elseif($user->is_admin)
+                                <form action="{{ route('admin.users.toggleRole', $user->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Quitar rol Admin a {{ $user->username }}?');">
+                                    @csrf
+                                    <button type="submit" style="background: #a8ff78; color: #000; font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; font-weight: bold; border: none; cursor: pointer; transition: all 0.3s;" title="Clic para degradar a Usuario">
+                                        👑 ADMIN ↓
+                                    </button>
+                                </form>
+                            @else
+                                <form action="{{ route('admin.users.toggleRole', $user->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Promover a {{ $user->username }} a Admin?');">
+                                    @csrf
+                                    <button type="submit" style="background: #555; color: #ccc; font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; font-weight: bold; border: none; cursor: pointer; transition: all 0.3s;" title="Clic para promover a Admin">
+                                        Usuario ↑
+                                    </button>
+                                </form>
+                            @endif
+                        </td>
                         <td>
                             @if($user->banned_until && \Carbon\Carbon::parse($user->banned_until)->isFuture())
                                 <span class="banned-status">Suspendido hasta

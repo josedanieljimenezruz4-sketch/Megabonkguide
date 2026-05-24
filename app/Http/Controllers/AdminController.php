@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\Item;
 use App\Models\TierList;
 use App\Models\Score;
+use App\Models\Build;
+use App\Models\CommunityPost;
 use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
@@ -35,6 +37,8 @@ class AdminController extends Controller
         $totalDesbloqueos = DB::table('user_unlocks')->count();
         $totalElementos = Item::count();
         $totalAdmins = User::where('is_admin', true)->count();
+        $totalPosts = CommunityPost::count();
+        $totalBuilds = Build::count();
 
         // Obtenemos los últimos 10 usuarios para mostrarlos en la tabla
         $ultimosUsuarios = User::latest()->take(10)->get();
@@ -44,6 +48,8 @@ class AdminController extends Controller
             'totalAdmins' => $totalAdmins,
             'totalDesbloqueos' => $totalDesbloqueos,
             'totalElementos' => $totalElementos,
+            'totalPosts' => $totalPosts,
+            'totalBuilds' => $totalBuilds,
             'ultimosUsuarios' => $ultimosUsuarios
         ]);
     }
@@ -81,12 +87,46 @@ class AdminController extends Controller
     }
 
     /**
-     * Reinicia el Leaderboard global (elimina todas las puntuaciones aprobadas).
+     * Limpia las puntuaciones rechazadas (spam) del leaderboard.
+     * Sustituye la acción destructiva de "Reiniciar Global" por una purga selectiva.
      */
-    public function reiniciarLeaderboardGlobal()
+    public function limpiarRechazadas()
     {
-        Score::where('status', 'approved')->delete();
-        return redirect()->back()->with('success', 'LEADERBOARD GLOBAL REINICIADO. Todas las puntuaciones han sido archivadas de forma segura.');
+        $totalEliminadas = Score::where('status', 'rejected')->count();
+        Score::where('status', 'rejected')->delete();
+        return redirect()->back()->with('success', "Se han purgado {$totalEliminadas} puntuaciones rechazadas (spam) del sistema.");
+    }
+
+    /**
+     * Reinicia el leaderboard global: elimina TODAS las puntuaciones del sistema.
+     * Acción destructiva para reinicio de temporadas.
+     */
+    public function resetGlobalLeaderboard()
+    {
+        $totalEliminadas = Score::count();
+        Score::query()->delete();
+        return redirect()->back()->with('success', "⚠️ LEADERBOARD REINICIADO: Se han eliminado {$totalEliminadas} puntuaciones del sistema. Nueva temporada iniciada.");
+    }
+
+    /**
+     * Purga registros huérfanos de user_unlocks cuyo item_id ya no existe en items.
+     * Herramienta de mantenimiento para mantener la integridad de la base de datos.
+     */
+    public function purgarHuerfanos()
+    {
+        $totalPurgados = DB::table('user_unlocks')
+            ->whereNotIn('item_id', function ($query) {
+                $query->select('id')->from('items');
+            })
+            ->count();
+
+        DB::table('user_unlocks')
+            ->whereNotIn('item_id', function ($query) {
+                $query->select('id')->from('items');
+            })
+            ->delete();
+
+        return redirect()->back()->with('success', "Mantenimiento completado: se han purgado {$totalPurgados} registros huérfanos de user_unlocks.");
     }
 
     /**
@@ -100,24 +140,22 @@ class AdminController extends Controller
     }
 
     /**
-     * Aprueba una puntuación pendiente, invalidando records anteriores del usuario en la misma categoría.
+     * Aprueba una puntuación pendiente, invalidando todos los records anteriores del usuario (un solo récord global).
      */
     public function aprobarPuntuacion($id)
     {
         $puntuacion = Score::findOrFail($id);
         
-        // Al aprobar un score, buscamos si este usuario tenía otro score aprobado para la misma categoría (dificultad + personaje)
-        // y lo borramos o rechazamos, porque solo puede haber 1 por categoría.
+        // Al aprobar un score, buscamos si este usuario tenía otro score aprobado
+        // (sin importar el personaje) y lo borramos, porque solo puede tener un récord activo globalmente.
         Score::where('user_id', $puntuacion->user_id)
-            ->where('character_id', $puntuacion->character_id)
-            ->where('difficulty', $puntuacion->difficulty)
             ->where('status', 'approved')
             ->where('id', '!=', $puntuacion->id)
             ->delete();
 
         $puntuacion->update(['status' => 'approved']);
 
-        return back()->with('success', 'Puntuación aprobada correctamente. Ha reemplazado los récords anteriores del usuario en esta categoría si existían.');
+        return back()->with('success', 'Puntuación aprobada correctamente. Ha reemplazado el récord anterior del usuario.');
     }
 
     /**

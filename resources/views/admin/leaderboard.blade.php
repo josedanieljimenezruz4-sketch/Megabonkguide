@@ -9,7 +9,7 @@
             <h1 class="text-3xl font-bold text-white mb-2 flex items-center gap-3">🏆 Moderación de Leaderboard</h1>
             <p class="text-gray-400">Aprueba, rechaza y resetea las puntuaciones enviadas por los usuarios.</p>
         </div>
-        <div>
+        <div class="flex flex-wrap gap-3">
             <button onclick="openGlobalResetModal()" class="bg-red-600/20 border-2 border-red-500 text-red-500 hover:bg-red-600 hover:text-white hover:shadow-[0_0_30px_rgba(220,38,38,0.8)] px-6 py-3 rounded-xl font-bold uppercase tracking-widest transition-all inline-flex items-center gap-3">
                 ⚠️ REINICIAR LEADERBOARD GLOBAL
             </button>
@@ -32,10 +32,8 @@
                     <tr>
                         <th class="p-4 rounded-tl-lg font-semibold">Usuario</th>
                         <th class="p-4 font-semibold">Personaje</th>
-                        <th class="p-4 font-semibold">Dificultad</th>
                         <th class="p-4 font-semibold">Puntuación</th>
                         <th class="p-4 font-semibold">Tiempo</th>
-                        <th class="p-4 font-semibold">Prueba</th>
                         <th class="p-4 font-semibold">Build</th>
                         <th class="p-4 text-center rounded-tr-lg font-semibold">Acciones</th>
                     </tr>
@@ -43,14 +41,10 @@
                 <tbody class="text-sm text-gray-300">
                     @forelse($pendingScores as $score)
                         <tr class="border-b border-white/5 hover:bg-white/5 transition-colors group">
-                            <td class="p-4 text-white font-medium">{{ $score->user->name }}</td>
+                            <td class="p-4 text-white font-medium">{{ $score->user->username ?? $score->user->name ?? 'Usuario Desconocido' }}</td>
                             <td class="p-4 text-gray-400">{{ $score->character->name ?? 'N/A' }}</td>
-                            <td class="p-4"><span class="px-2 py-1 bg-white/10 rounded text-xs">{{ strtoupper($score->difficulty) }}</span></td>
                             <td class="p-4"><strong class="text-yellow-500 text-lg group-hover:text-yellow-400 transition-colors">{{ number_format($score->points) }}</strong></td>
                             <td class="p-4 text-gray-400">{{ $score->time }}</td>
-                            <td class="p-4">
-                                <a href="{{ $score->proof_url }}" target="_blank" class="text-cyan-400 hover:text-cyan-300 underline decoration-cyan-500/30 underline-offset-4">Ver Prueba ↗</a>
-                            </td>
                             <td class="p-4">
                                 @if($score->build)
                                     <a href="{{ route('builds.show', $score->build_id) }}" target="_blank" class="bg-gray-800/50 hover:bg-gray-700 text-gray-300 hover:text-white px-3 py-1.5 rounded-full inline-flex items-center gap-2 transition-all text-xs">👁️ Ver Build</a>
@@ -73,7 +67,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="p-10 text-center text-gray-500 italic">No hay puntuaciones pendientes de moderación en este momento.</td>
+                            <td colspan="6" class="p-10 text-center text-gray-500 italic">No hay puntuaciones pendientes de moderación en este momento.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -91,7 +85,6 @@
                     <tr>
                         <th class="p-4 rounded-tl-lg font-semibold">Usuario</th>
                         <th class="p-4 font-semibold">Personaje</th>
-                        <th class="p-4 font-semibold">Dificultad</th>
                         <th class="p-4 font-semibold">Puntuación</th>
                         <th class="p-4 font-semibold">Tiempo</th>
                         <th class="p-4 text-center rounded-tr-lg font-semibold">Acciones</th>
@@ -102,11 +95,10 @@
                         <tr class="border-b border-white/5 hover:bg-white/5 transition-colors group">
                             <td class="p-4 text-white font-medium">{{ $score->user->username ?? $score->user->name }}</td>
                             <td class="p-4 text-gray-400">{{ $score->character->name ?? 'N/A' }}</td>
-                            <td class="p-4"><span class="px-2 py-1 bg-white/10 rounded text-xs">{{ strtoupper($score->difficulty) }}</span></td>
                             <td class="p-4"><strong class="text-cyan-400 text-lg group-hover:text-cyan-300 transition-colors drop-shadow-[0_0_5px_rgba(6,182,212,0.3)]">{{ number_format($score->points) }}</strong></td>
                             <td class="p-4 text-gray-400">{{ $score->time }}</td>
                             <td class="p-4 text-center">
-                                <form action="{{ route('admin.leaderboard.resetUser', $score->id) }}" method="POST" onsubmit="return confirm('¿Seguro que quieres borrar este récord del jugador?');">
+                                <form action="{{ route('admin.leaderboard.resetUser', $score->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esto permanentemente?');">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="border border-red-500/50 text-red-400 hover:bg-red-500 hover:text-white hover:shadow-[0_0_15px_rgba(239,68,68,0.5)] px-4 py-1.5 rounded-full inline-flex items-center gap-2 transition-all font-semibold text-xs">
                                         🔄 Reiniciar
@@ -116,7 +108,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="p-10 text-center text-gray-500 italic">No hay puntuaciones aprobadas todavía.</td>
+                            <td colspan="5" class="p-10 text-center text-gray-500 italic">No hay puntuaciones aprobadas todavía.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -132,14 +124,14 @@
 <div id="globalResetModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
     <div style="background: #111; padding: 40px; border-radius: 12px; width: 90%; max-width: 500px; border: 2px solid #ff0000; box-shadow: 0 0 30px rgba(255, 0, 0, 0.4); text-align: center;">
         <h1 style="color: #ff0000; margin-top: 0; font-size: 2.5rem;">¡CUIDADO!</h1>
-        <p style="color: white; font-size: 1.1rem; line-height: 1.5;">Estás a punto de <strong>reiniciar por completo</strong> la clasificación global. Todos los récords actuales serán eliminados de la vista pública (aunque se guardará un log de seguridad mediante soft deletes).</p>
-        <p style="color: #ffaa00; font-weight: bold; margin: 20px 0;">Esta acción obligará a todos los jugadores a volver a subir sus puntuaciones para el nuevo periodo.</p>
+        <p style="color: white; font-size: 1.1rem; line-height: 1.5;">Estás a punto de <strong>eliminar TODAS las puntuaciones</strong> del leaderboard global. Esta acción es <strong>permanente e irreversible</strong>.</p>
+        <p style="color: #ffaa00; font-weight: bold; margin: 20px 0;">Todos los récords (pendientes, aprobados y rechazados) serán borrados del sistema.</p>
         
         <form action="{{ route('admin.leaderboard.resetGlobal') }}" method="POST" id="globalResetForm">
             @csrf
             <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 30px;">
                 <label style="color: white; font-size: 0.9rem;">Escribe "REINICIAR" para confirmar:</label>
-                <input type="text" id="confirmText" onkeyup="checkResetText()" style="padding: 10px; text-align: center; font-weight: bold; font-size: 1.2rem; background: #222; border: 1px solid #444; color: white;" autocomplete="off">
+                <input type="text" id="confirmText" onkeyup="checkResetText()" style="padding: 10px; text-align: center; font-weight: bold; font-size: 1.2rem; background: #222; border: 1px solid #444; color: white; border-radius: 6px;" autocomplete="off">
                 
                 <div style="display: flex; gap: 10px; margin-top: 10px;">
                     <button type="button" onclick="closeGlobalResetModal()" style="flex: 1; padding: 15px; background: #444; color: white; border: none; font-weight: bold; cursor: pointer; border-radius: 5px;">CANCELAR</button>
@@ -180,7 +172,7 @@
     }
 
     function finalConfirm() {
-        if (confirm('ÚLTIMO AVISO: ¿Estás absolutamente seguro de que quieres borrar todos los récords globales?')) {
+        if (confirm('ÚLTIMO AVISO: ¿Estás absolutamente seguro? Se borrarán TODAS las puntuaciones del sistema.')) {
             document.getElementById('globalResetForm').submit();
         }
     }

@@ -55,43 +55,59 @@ class LeaderboardController extends Controller
     // Registra una nueva puntuación si supera el récord anterior del usuario.
     public function guardarNuevaPuntuacion(Request $request)
     {
+        // Sanitizar puntos: el frontend envía con separador de miles (ej: 777.778)
+        $request->merge(['points' => (int) str_replace('.', '', $request->points)]);
+
         $request->validate([
             'character_id' => 'required|string|exists:items,id',
             'points' => 'required|integer|min:0',
             'time' => ['required', 'regex:/^\d{2}:\d{2}:\d{2}$/'],
             'build_id' => 'nullable|exists:builds,id'
+        ], [
+            'character_id.required' => 'Debes seleccionar un personaje.',
+            'character_id.exists' => 'El personaje seleccionado no existe en el sistema.',
+            'points.required' => 'La puntuación es obligatoria.',
+            'points.integer' => 'La puntuación debe ser un número entero válido.',
+            'points.min' => 'La puntuación no puede ser negativa.',
+            'time.required' => 'El tiempo es obligatorio.',
+            'time.regex' => 'El formato del tiempo debe ser HH:MM:SS (ej: 01:42:15).',
+            'build_id.exists' => 'La build seleccionada no existe.',
         ]);
 
         $userId = auth()->id();
         $characterId = $request->character_id;
         $newPoints = $request->points;
 
-        $existingScore = Score::where('user_id', $userId)
-            ->where('character_id', $characterId)
-            ->first();
+        // Buscar el récord máximo global de este usuario (sin importar el personaje) pero solo aprobadas
+        $maxGlobal = Score::where('user_id', auth()->id())->where('status', 'approved')->max('points') ?? 0;
 
-        if ($existingScore) {
-            if ($newPoints > $existingScore->points) {
-                $existingScore->update([
-                    'points' => $newPoints,
-                    'time' => $request->time,
-                    'build_id' => $request->build_id,
-                    'status' => 'pending' // Anti-cheats: Pasa a pendiente
-                ]);
-                return back()->with('success', '¡Puntuación enviada! Tu récord está en proceso de revisión por el equipo de administración.');
-            } else {
-                return back()->with('error', '¡Buen intento! Pero tu récord actual sigue siendo el mejor');
-            }
+        if ($maxGlobal !== null && $request->points <= $maxGlobal) {
+            return redirect()->back()->with('error_toast', '¡Buen intento! Pero ya tienes un récord global superior en el Leaderboard.');
         }
 
-        Score::create([
-            'user_id' => $userId,
-            'character_id' => $characterId,
-            'build_id' => $request->build_id,
-            'points' => $newPoints,
-            'time' => $request->time,
-            'status' => 'pending', // Anti-cheats: Pasa a pendiente
-        ]);
+        // Si ya tiene un pending anterior para este personaje, lo actualizamos en vez de crear otro
+        $pendingScore = Score::where('user_id', $userId)
+            ->where('character_id', $characterId)
+            ->where('status', 'pending')
+            ->first();
+
+        if ($pendingScore) {
+            $pendingScore->update([
+                'points' => $newPoints,
+                'time' => $request->time,
+                'build_id' => $request->build_id,
+            ]);
+        } else {
+            // Crear un NUEVO registro pendiente (el aprobado antiguo sigue visible)
+            Score::create([
+                'user_id' => $userId,
+                'character_id' => $characterId,
+                'build_id' => $request->build_id,
+                'points' => $newPoints,
+                'time' => $request->time,
+                'status' => 'pending',
+            ]);
+        }
 
         return back()->with('success', '¡Puntuación enviada! Tu récord está en proceso de revisión por el equipo de administración.');
     }

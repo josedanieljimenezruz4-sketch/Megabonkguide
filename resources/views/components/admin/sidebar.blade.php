@@ -9,7 +9,7 @@
     @endphp
     <ul class="sidebar-menu flex flex-col mt-4">
         <li><a href="{{ route('admin.dashboard') }}" class="{{ $baseClass }} {{ request()->routeIs('admin.dashboard') ? $activeClass : $inactiveClass }}"><i>🏠</i> Dashboard</a></li>
-        <li><a href="{{ route('admin.tierlist-manager') }}" class="{{ $baseClass }} {{ request()->routeIs('admin.tierlist-manager') ? $activeClass : $inactiveClass }}"><i>📋</i> Tier Lists Oficial</a></li>
+        <li><a href="{{ route('admin.catalogo.index') }}" class="{{ $baseClass }} {{ request()->routeIs('admin.catalogo.*') ? $activeClass : $inactiveClass }}"><i>📦</i> Catálogo Unlocks</a></li>
         <li><a href="{{ route('admin.community-tierlists.index') }}" class="{{ $baseClass }} {{ request()->routeIs('admin.community-tierlists.*') ? $activeClass : $inactiveClass }}"><i>👥</i> Tier Lists Comunidad</a></li>
         <li><a href="{{ route('admin.wiki.index') }}" class="{{ $baseClass }} {{ request()->routeIs('admin.wiki.*') ? $activeClass : $inactiveClass }}"><i>📚</i> Gestión Wiki</a></li>
         <li><a href="{{ route('admin.leaderboard.index') }}" class="{{ $baseClass }} {{ request()->routeIs('admin.leaderboard.*') ? $activeClass : $inactiveClass }}"><i>🏆</i> Leaderboard</a></li>
