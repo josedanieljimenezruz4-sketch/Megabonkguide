@@ -28,22 +28,18 @@
         <!-- =======================
              CONTROLES Y FILTROS
         ======================= -->
-        <p style="font-size: 0.95em; color: #aaa; margin-top: 0; margin-bottom: 15px; text-align: center;">
+        <p class="leaderboard-subtitle">
             Clasificación basada en la puntuación más alta por Personaje.
         </p>
 
 
-        <div class="leaderboard-controls"
-            style="background: #1e1e2e; border: 1px solid #333; border-radius: 12px; padding: 15px 25px; display: flex; flex-direction: row; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap;">
+        <div class="leaderboard-controls">
 
-            <form action="{{ route('leaderboard') }}" method="GET"
-                style="display: flex; flex-direction: row; align-items: center; gap: 12px; margin: 0; flex-wrap: wrap; flex-grow: 1;">
+            <form action="{{ route('leaderboard') }}" method="GET" class="leaderboard-filter-form">
 
-                <div style="display: flex; align-items: center; gap: 6px;">
-                    <span
-                        style="color: #bc13fe; font-weight: bold; font-size: 0.95em; white-space: nowrap;">Personaje:</span>
-                    <select id="filter-character" name="character" class="custom-select" onchange="this.form.dispatchEvent(new Event('submit', {bubbles:true, cancelable:true}))"
-                        style="background: #111; color: #fff; border: 1px solid #444; padding: 6px 12px; border-radius: 6px; cursor: pointer;">
+                <div class="filter-inline-group">
+                    <span class="filter-label">Personaje:</span>
+                    <select id="filter-character" name="character" class="custom-select filter-select" onchange="this.form.dispatchEvent(new Event('submit', {bubbles:true, cancelable:true}))">
                         <option value="all" {{ $characterId == 'all' ? 'selected' : '' }}>Todos</option>
                         @foreach($characters as $char)
                             <option value="{{ $char->id }}" {{ $characterId == $char->id ? 'selected' : '' }}>
@@ -53,41 +49,35 @@
                     </select>
                 </div>
 
-                <div style="display: flex; align-items: center; gap: 6px;">
-                    <span style="color: #bc13fe; font-weight: bold; font-size: 0.95em; white-space: nowrap;">Min:</span>
-                    <input type="text" id="filter-score-min" name="score_min" class="custom-select score-filter-input"
-                        placeholder="Ej: 100.000" value="{{ request('score_min') }}"
-                        style="width: 100px; background: #111; color: #fff; border: 1px solid #444; padding: 6px 10px; border-radius: 6px;">
+                <div class="filter-inline-group">
+                    <span class="filter-label">Min:</span>
+                    <input type="text" id="filter-score-min" name="score_min" class="custom-select score-filter-input filter-input-score"
+                        placeholder="Ej: 100.000" value="{{ request('score_min') }}">
                 </div>
 
-                <div style="display: flex; align-items: center; gap: 6px;">
-                    <span style="color: #bc13fe; font-weight: bold; font-size: 0.95em; white-space: nowrap;">Max:</span>
-                    <input type="text" id="filter-score-max" name="score_max" class="custom-select score-filter-input"
-                        placeholder="Ej: 999.999" value="{{ request('score_max') }}"
-                        style="width: 100px; background: #111; color: #fff; border: 1px solid #444; padding: 6px 10px; border-radius: 6px;">
+                <div class="filter-inline-group">
+                    <span class="filter-label">Max:</span>
+                    <input type="text" id="filter-score-max" name="score_max" class="custom-select score-filter-input filter-input-score"
+                        placeholder="Ej: 999.999" value="{{ request('score_max') }}">
                 </div>
 
-                <div style="display: flex; align-items: center; gap: 8px; margin-left: 5px;">
-                    <button type="submit"
-                        style="background: #e94560; color: #fff; border: none; padding: 7px 14px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.9em;">
+                <div class="filter-actions">
+                    <button type="submit" class="btn-filter-submit">
                         Filtrar
                     </button>
-                    <a href="{{ route('leaderboard') }}"
-                        style="background: transparent; color: #fff; border: 1px solid #555; padding: 7px 14px; border-radius: 6px; text-decoration: none; font-size: 0.9em; font-weight: bold; white-space: nowrap;">
+                    <a href="{{ route('leaderboard') }}" class="btn-filter-clear">
                         Limpiar
                     </a>
                 </div>
             </form>
 
-            <div style="flex-shrink: 0;">
+            <div class="leaderboard-cta-container">
                 @auth
-                    <button onclick="document.getElementById('scoreModal').style.display='block'"
-                        style="background: #ffcf00; color: #000; padding: 10px 20px; border: none; border-radius: 6px; font-weight: 800; cursor: pointer; box-shadow: 0 0 10px rgba(255, 207, 0, 0.3); white-space: nowrap;">
+                    <button onclick="document.getElementById('scoreModal').style.display='block'" class="btn-subir-puntuacion">
                         🏆 SUBIR PUNTUACIÓN
                     </button>
                 @else
-                    <a href="{{ route('login') }}"
-                        style="background: #333; color: #fff; padding: 10px 16px; border-radius: 6px; text-decoration: none; font-size: 0.85em; font-weight: bold; white-space: nowrap;">
+                    <a href="{{ route('login') }}" class="btn-login-leaderboard">
                         Inicia sesión para subir
                     </a>
                 @endauth
@@ -132,24 +122,21 @@
                 <tbody>
                     @php $actualRank = 1; @endphp
                     @forelse($scores as $index => $score)
-                        <tr class="{{ $score->status == 'pending' ? 'pending-row' : ($actualRank <= 3 ? 'top-3' : '') }}"
-                            style="{{ $score->status == 'pending' ? 'opacity: 0.5; background: rgba(255,165,0,0.1);' : '' }}">
+                        <tr class="{{ $score->estatus == 'pending' ? 'pending-row pending-row-inline' : ($actualRank <= 3 ? 'top-3' : '') }}">
                             <td
-                                class="rank-col {{ $score->status == 'approved' ? ($actualRank == 1 ? 'rank-gold' : ($actualRank == 2 ? 'rank-silver' : ($actualRank == 3 ? 'rank-bronze' : ''))) : '' }}">
-                                @if($score->status == 'pending')
+                                class="rank-col {{ $score->estatus == 'approved' ? ($actualRank == 1 ? 'rank-gold' : ($actualRank == 2 ? 'rank-silver' : ($actualRank == 3 ? 'rank-bronze' : ''))) : '' }}">
+                                @if($score->estatus == 'pending')
                                     ⏳
                                 @else
                                     {{ $actualRank++ }}
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('profile.public', $score->user->id) }}"
-                                    style="color: #fff; text-decoration: none; font-weight: bold;">
+                                <a href="{{ route('profile.public', $score->user->id) }}" class="player-link">
                                     {{ $score->user->name ?? $score->user->username }}
                                 </a>
-                                @if($score->status == 'pending')
-                                    <span
-                                        style="font-size: 0.7em; background: orange; color: black; padding: 2px 5px; border-radius: 4px; margin-left: 5px;">Pendiente</span>
+                                @if($score->estatus == 'pending')
+                                    <span class="badge-pending">Pendiente</span>
                                 @endif
                             </td>
                             <td class="score-highlight">{{ number_format($score->points) }}</td>
@@ -165,7 +152,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" style="text-align: center; padding: 20px; color: #888;">No hay puntuaciones
+                            <td colspan="6" class="empty-row-message">No hay puntuaciones
                                 registradas para esta categoría aún.</td>
                         </tr>
                     @endforelse
@@ -177,86 +164,16 @@
              MODAL DE SUBIDA DE PUNTUACIÓN
         ======================= -->
         @auth
-            <!-- Modal de Subida de Puntuación -->
-            <style>
-                .neon-input {
-                    width: 100%;
-                    padding: 8px;
-                    background: #222;
-                    border: 1px solid #444;
-                    color: #fff;
-                    border-radius: 4px;
-                    outline: none;
-                    transition: all 0.3s ease;
-                }
-
-                .neon-input:focus {
-                    border-color: #00f0ff;
-                    box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
-                }
-
-                .neon-input.is-invalid {
-                    border-color: #ff003c;
-                    box-shadow: 0 0 8px rgba(255, 0, 60, 0.4);
-                }
-
-                .neon-input.is-valid {
-                    border-color: #00ffaa;
-                    box-shadow: 0 0 8px rgba(0, 255, 170, 0.4);
-                }
-
-                .custom-error {
-                    color: #ff003c;
-                    font-size: 0.8em;
-                    margin-top: 5px;
-                    display: none;
-                    text-shadow: 0 0 5px rgba(255, 0, 60, 0.5);
-                }
-
-                .btn-submit-score {
-                    background: #444;
-                    border: none;
-                    color: #888;
-                    font-weight: bold;
-                    padding: 8px 15px;
-                    border-radius: 4px;
-                    cursor: not-allowed;
-                    transition: all 0.3s ease;
-                }
-
-                .btn-submit-score.ready {
-                    background: #00f0ff;
-                    color: #000;
-                    cursor: pointer;
-                    box-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
-                    animation: readyPulse 1.5s infinite;
-                }
-
-                @keyframes readyPulse {
-                    0% {
-                        box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
-                    }
-
-                    50% {
-                        box-shadow: 0 0 20px rgba(0, 240, 255, 0.8);
-                    }
-
-                    100% {
-                        box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
-                    }
-                }
-            </style>
-            <div id="scoreModal"
-                style="display: {{ (session('requires_confirmation') || $errors->any()) ? 'flex' : 'none' }}; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
-                <div
-                    style="background: #1a1a24; padding: 30px; border-radius: 10px; border: 2px solid #00f0ff; width: 90%; max-width: 500px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                    <h2 style="color: #00f0ff; margin-top: 0;">Subir Puntuación</h2>
+            <div id="scoreModal" class="score-modal-overlay"
+                style="display: {{ (session('requires_confirmation') || $errors->any()) ? 'flex' : 'none' }};">
+                <div class="score-modal-content">
+                    <h2 class="score-modal-title">Subir Puntuación</h2>
 
                     {{-- Errores de validación de Laravel --}}
                     @if($errors->any())
-                        <div style="background: rgba(255,0,60,0.15); border-left: 4px solid #ff003c; padding: 12px 16px; margin-bottom: 15px; border-radius: 4px;">
-                            <h4 style="margin: 0 0 8px 0; color: #ff003c; font-size: 0.95em;">❌ Errores en el formulario:</h4>
-                            <ul style="margin: 0; padding-left: 18px; color: #ff6b8a; font-size: 0.85em; line-height: 1.6;">
+                        <div class="validation-errors-box">
+                            <h4 class="validation-errors-title">❌ Errores en el formulario:</h4>
+                            <ul class="validation-errors-list">
                                 @foreach($errors->all() as $error)
                                     <li>{{ $error }}</li>
                                 @endforeach
@@ -264,13 +181,10 @@
                         </div>
                     @endif
 
-
-
                     @if(session('requires_confirmation'))
-                        <div
-                            style="background: rgba(255,165,0,0.2); border-left: 4px solid orange; padding: 15px; margin-bottom: 20px; border-radius: 4px;">
-                            <h4 style="margin: 0 0 10px 0; color: orange;">⚠️ Confirmar Nuevo Récord</h4>
-                            <p style="margin: 0; color: #ddd; font-size: 0.9em;">{{ session('confirmation_msg') }}</p>
+                        <div class="confirmation-box">
+                            <h4 class="confirmation-title">⚠️ Confirmar Nuevo Récord</h4>
+                            <p class="confirmation-message">{{ session('confirmation_msg') }}</p>
                         </div>
                     @endif
 
@@ -281,10 +195,9 @@
                             <input type="hidden" name="confirm_override" value="1">
                         @endif
 
-
-                        <div style="margin-bottom: 15px;">
-                            <label style="display: block; margin-bottom: 5px; color: #ddd;">Personaje Usado:</label>
-                            <select name="character_id" class="neon-input" data-required="true" {{ session('requires_confirmation') ? 'readonly style=pointer-events:none;opacity:0.6;' : '' }}>
+                        <div class="modal-field-group">
+                            <label class="modal-label">Personaje Usado:</label>
+                            <select name="character_id" class="neon-input {{ session('requires_confirmation') ? 'modal-readonly' : '' }}" data-required="true">
                                 <option value="">-- Selecciona un Personaje --</option>
                                 @foreach($characters as $char)
                                     <option value="{{ $char->id }}" {{ old('character_id') == $char->id ? 'selected' : '' }}>
@@ -294,25 +207,23 @@
                             </select>
                             <div class="custom-error">Este campo es obligatorio para verificar tu récord.</div>
                         </div>
-                        <div style="margin-bottom: 15px;">
-                            <label style="display: block; margin-bottom: 5px; color: #ddd;">Puntuación Final (Ej:
-                                9.875.120):</label>
-                            <input type="text" id="points_formatted" class="neon-input" data-required="true" placeholder="0"
-                                value="{{ old('points') ? number_format(old('points'), 0, '', '.') : '' }}" {{ session('requires_confirmation') ? 'readonly style=pointer-events:none;opacity:0.6;' : '' }}>
+                        <div class="modal-field-group">
+                            <label class="modal-label">Puntuación Final (Ej: 9.875.120):</label>
+                            <input type="text" id="points_formatted" class="neon-input {{ session('requires_confirmation') ? 'modal-readonly' : '' }}" data-required="true" placeholder="0"
+                                value="{{ old('points') ? number_format(old('points'), 0, '', '.') : '' }}">
                             <input type="hidden" id="points_raw" name="points" value="{{ old('points') }}">
                             <div class="custom-error">Este campo es obligatorio para verificar tu récord.</div>
                         </div>
-                        <div style="margin-bottom: 15px;">
-                            <label style="display: block; margin-bottom: 5px; color: #ddd;">Tiempo Final (Ej:
-                                01:42:15):</label>
-                            <input type="text" name="time" class="neon-input" data-required="true" placeholder="HH:MM:SS"
-                                value="{{ old('time') }}" {{ session('requires_confirmation') ? 'readonly style=pointer-events:none;opacity:0.6;' : '' }}>
+                        <div class="modal-field-group">
+                            <label class="modal-label">Tiempo Final (Ej: 01:42:15):</label>
+                            <input type="text" name="time" class="neon-input {{ session('requires_confirmation') ? 'modal-readonly' : '' }}" data-required="true" placeholder="HH:MM:SS"
+                                value="{{ old('time') }}">
                             <div class="custom-error">Este campo es obligatorio para verificar tu récord. Formato: HH:MM:SS.
                             </div>
                         </div>
-                        <div style="margin-bottom: 25px;">
-                            <label style="display: block; margin-bottom: 5px; color: #ddd;">Build Usada (Opcional):</label>
-                            <select name="build_id" class="neon-input" {{ session('requires_confirmation') ? 'readonly style=pointer-events:none;opacity:0.6;' : '' }}>
+                        <div class="modal-field-group modal-field-group--last">
+                            <label class="modal-label">Build Usada (Opcional):</label>
+                            <select name="build_id" class="neon-input {{ session('requires_confirmation') ? 'modal-readonly' : '' }}">
                                 <option value="">Ninguna / No especificar</option>
                                 @foreach(auth()->user()->builds as $build)
                                     <option value="{{ $build->id }}" {{ old('build_id') == $build->id ? 'selected' : '' }}>
@@ -321,9 +232,8 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                            <button type="button" onclick="document.getElementById('scoreModal').style.display='none'"
-                                style="background: transparent; border: 1px solid #888; color: #888; padding: 8px 15px; border-radius: 4px; cursor: pointer;">Cancelar</button>
+                        <div class="modal-actions">
+                            <button type="button" onclick="document.getElementById('scoreModal').style.display='none'" class="btn-modal-cancel">Cancelar</button>
                             <button type="submit" id="btnSubmitScore"
                                 class="btn-submit-score {{ session('requires_confirmation') ? 'ready' : '' }}" {{ session('requires_confirmation') ? '' : 'disabled' }}>
                                 {{ session('requires_confirmation') ? 'CONFIRMAR NUEVO RÉCORD' : 'Enviar a Revisión' }}
@@ -344,11 +254,11 @@
                     const pointsFormatted = document.getElementById('points_formatted');
                     const pointsRaw = document.getElementById('points_raw');
 
-                    // AJAX para actualizar builds por personaje
+                    // Carga dinámica de builds filtradas por personaje seleccionado
                     const characterSelect = form.querySelector('select[name="character_id"]');
                     const buildSelect = form.querySelector('select[name="build_id"]');
 
-                    if (characterSelect && buildSelect && !characterSelect.hasAttribute('readonly')) {
+                    if (characterSelect && buildSelect && !characterSelect.classList.contains('modal-readonly')) {
                         characterSelect.addEventListener('change', function() {
                             const charId = this.value;
 
@@ -377,12 +287,10 @@
                         });
                     }
 
-                    // Formateador de miles
+                    // Formateador de miles para el campo de puntos
                     pointsFormatted.addEventListener('input', function (e) {
-                        // Quitar todo lo que no sea número
                         let value = this.value.replace(/\D/g, '');
-                        pointsRaw.value = value; // Guardar el valor real
-                        // Formatear con puntos
+                        pointsRaw.value = value;
                         if (value) {
                             this.value = parseInt(value, 10).toLocaleString('es-ES');
                         } else {
@@ -392,6 +300,7 @@
                         checkFormValidity();
                     });
 
+                    // Valida un campo individual y muestra/oculta el error visual
                     function validateField(field) {
                         const errorDiv = field.nextElementSibling;
                         let isValid = false;
@@ -414,6 +323,7 @@
                         return isValid;
                     }
 
+                    // Comprueba si todos los campos requeridos son válidos para activar el botón
                     function checkFormValidity() {
                         let allValid = true;
                         inputs.forEach(input => {
@@ -433,7 +343,7 @@
                         }
                     }
 
-                    // Event Listeners para validación en tiempo real
+                    // Validación en tiempo real para cada campo requerido
                     inputs.forEach(input => {
                         if (input.id !== 'points_formatted') {
                             input.addEventListener('input', function () {
@@ -447,7 +357,7 @@
                         }
                     });
 
-                    // Validación al hacer submit
+                    // Validación final al enviar el formulario
                     form.addEventListener('submit', function (e) {
                         let isFormValid = true;
                         inputs.forEach(input => {
@@ -457,7 +367,7 @@
                         });
 
                         if (!isFormValid) {
-                            e.preventDefault(); // Evitar envío si hay errores
+                            e.preventDefault();
                         }
                     });
                 });
@@ -485,93 +395,6 @@
         </div>
         <button class="toast-close" onclick="closeToast()">&times;</button>
     </div>
-
-    <style>
-        .custom-toast {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: rgba(220, 38, 38, 0.85); /* Fondo rojo translúcido */
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-left: 6px solid #ff1a1a;
-            color: #ffffff;
-            padding: 18px 24px;
-            border-radius: 10px;
-            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.3);
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            animation: slideInFade 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
-            opacity: 0;
-            transform: translateX(50px);
-        }
-        
-        .custom-toast.fade-out {
-            animation: slideOutFade 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
-        }
-
-        .toast-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .toast-text {
-            font-size: 0.95rem;
-            line-height: 1.4;
-            font-weight: 500;
-        }
-
-        .toast-text strong {
-            font-size: 1.05rem;
-            font-weight: 800;
-            color: #ffffff;
-            letter-spacing: 0.5px;
-        }
-
-        .toast-close {
-            background: none;
-            border: none;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 1.8rem;
-            line-height: 1;
-            cursor: pointer;
-            padding: 0;
-            margin-left: 10px;
-            transition: color 0.3s ease, transform 0.3s ease;
-        }
-
-        .toast-close:hover {
-            color: #ffffff;
-            transform: scale(1.1);
-        }
-
-        @keyframes slideInFade {
-            0% {
-                opacity: 0;
-                transform: translateX(50px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes slideOutFade {
-            0% {
-                opacity: 1;
-                transform: translateX(0);
-            }
-            100% {
-                opacity: 0;
-                transform: translateX(50px);
-            }
-        }
-    </style>
 
     <script>
         function closeToast() {

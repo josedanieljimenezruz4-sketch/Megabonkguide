@@ -10,7 +10,7 @@
             <form action="{{ route('admin.meta.reset') }}" method="POST" style="margin: 0;" onsubmit="return confirm('⚠️ ¿REINICIAR TODA LA META?\n\nEsto pondrá TODOS los rangos a null.\nUsa transacción de BD.\n\n¿Confirmar?')">
                 @csrf
                 <button type="submit" style="background: rgba(255, 0, 0, 0.15); border: 1px solid #ff0000; color: #ff4444; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: all 0.3s;" onmouseover="this.style.background='rgba(255,0,0,0.3)'; this.style.boxShadow='0 0 12px rgba(255,0,0,0.5)'" onmouseout="this.style.background='rgba(255,0,0,0.15)'; this.style.boxShadow='none'">
-                    ⚠️ Reiniciar Meta
+                    ⚠️ Reiniciar Tierlist
                 </button>
             </form>
             <a href="{{ route('admin.dashboard') }}" style="background: #222; border: 1px solid #444; color: #fff; padding: 8px 15px; border-radius: 5px; text-decoration: none;">&larr; Volver</a>

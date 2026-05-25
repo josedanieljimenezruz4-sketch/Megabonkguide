@@ -8,7 +8,11 @@ use App\Models\Item;
 
 class LeaderboardController extends Controller
 {
-    // Carga los 50 mejores puntajes aprobados filtrados por personaje.
+    /**
+     * Muestra la tabla de clasificación con los 50 mejores puntajes aprobados.
+     * Aplica filtros por personaje y rango de puntuación.
+     * Limita a un máximo de 3 puntuaciones por usuario mediante ROW_NUMBER().
+     */
     public function mostrarTablaDeClasificacion(Request $request)
     {
         $characterId = $request->get('character', 'all');
@@ -52,7 +56,10 @@ class LeaderboardController extends Controller
         return view('leaderboard', compact('scores', 'characters', 'characterId'));
     }
 
-    // Registra una nueva puntuación si supera el récord anterior del usuario.
+    /**
+     * Registra una nueva puntuación si supera el récord global anterior del usuario.
+     * Si ya existe un registro pendiente para el mismo personaje, lo actualiza en lugar de duplicar.
+     */
     public function guardarNuevaPuntuacion(Request $request)
     {
         // Sanitizar puntos: el frontend envía con separador de miles (ej: 777.778)
@@ -76,6 +83,7 @@ class LeaderboardController extends Controller
 
         $userId = auth()->id();
         $characterId = $request->character_id;
+        // Puntos nuevos ya sanitizados (sin separador de miles)
         $newPoints = $request->points;
 
         // Buscar el récord máximo global de este usuario (sin importar el personaje) pero solo aprobadas
@@ -112,7 +120,10 @@ class LeaderboardController extends Controller
         return back()->with('success', '¡Puntuación enviada! Tu récord está en proceso de revisión por el equipo de administración.');
     }
 
-    // Devuelve las builds del usuario actual filtradas por personaje en formato JSON
+    /**
+     * Devuelve las builds del usuario actual filtradas por personaje en formato JSON.
+     * Usado por el selector AJAX del modal de subida de puntuación.
+     */
     public function getUserBuildsByCharacter($character_id)
     {
         $builds = \App\Models\Build::where('user_id', auth()->id())

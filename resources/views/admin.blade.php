@@ -10,16 +10,17 @@
     <div class="admin-dashboard">
         <h1 class="admin-title">👑 Dashboard</h1>
 
+        <!-- Tarjetas de estadísticas globales del sistema -->
         <div class="admin-stats-grid">
-            <a href="{{ route('admin.users.index') }}" class="admin-stat-card" style="border-left-color: #00d2ff; text-decoration: none; color: inherit;">
+            <a href="{{ route('admin.users.index') }}" class="admin-stat-card" style="border-left-color: #00d2ff;">
                 <h3>👥 Usuarios Totales</h3>
                 <p class="stat-value">{{ $totalUsuarios }}</p>
             </a>
-            <a href="{{ route('admin.users.index') }}" class="admin-stat-card" style="border-left-color: #ff4b2b; text-decoration: none; color: inherit;">
+            <a href="{{ route('admin.users.index') }}" class="admin-stat-card" style="border-left-color: #ff4b2b;">
                 <h3>👑 Administradores</h3>
                 <p class="stat-value">{{ $totalAdmins }}</p>
             </a>
-            <a href="{{ route('admin.catalogo.index') }}" class="admin-stat-card" style="border-left-color: #ffcf00; text-decoration: none; color: inherit;">
+            <a href="{{ route('admin.catalogo.index') }}" class="admin-stat-card" style="border-left-color: #ffcf00;">
                 <h3>⚔️ Ítems Registrados</h3>
                 <p class="stat-value">{{ $totalElementos }}</p>
             </a>
@@ -27,16 +28,17 @@
                 <h3>🔓 Unlocks Realizados</h3>
                 <p class="stat-value">{{ $totalDesbloqueos }}</p>
             </div>
-            <a href="{{ route('admin.moderation.index') }}" class="admin-stat-card" style="border-left-color: #B965F0; text-decoration: none; color: inherit;">
+            <a href="{{ route('admin.moderation.index') }}" class="admin-stat-card" style="border-left-color: #B965F0;">
                 <h3>💬 Posts Comunidad</h3>
                 <p class="stat-value">{{ $totalPosts }}</p>
             </a>
-            <a href="{{ route('admin.moderation.index') }}" class="admin-stat-card" style="border-left-color: #36d1dc; text-decoration: none; color: inherit;">
+            <a href="{{ route('admin.moderation.index') }}" class="admin-stat-card" style="border-left-color: #36d1dc;">
                 <h3>⚒️ Builds Totales</h3>
                 <p class="stat-value">{{ $totalBuilds }}</p>
             </a>
         </div>
 
+        <!-- Tabla de los últimos 10 usuarios registrados -->
         <h2>Últimos Usuarios</h2>
         <table class="admin-users-table">
             <thead>
@@ -68,20 +70,20 @@
         </table>
 
         {{-- Herramientas de Mantenimiento --}}
-        <h2 style="margin-top: 2.5rem;">🔧 Herramientas de Mantenimiento</h2>
+        <h2 class="admin-maintenance-title">🔧 Herramientas de Mantenimiento</h2>
         @if(session('success'))
-            <div style="background: rgba(34,197,94,0.15); border-left: 4px solid #22c55e; padding: 12px 16px; margin-bottom: 1.5rem; color: #fff; border-radius: 6px;">
+            <div class="admin-success-alert">
                 {{ session('success') }}
             </div>
         @endif
-        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
+        <div class="admin-maintenance-card">
             <div>
-                <h3 style="margin: 0 0 6px 0; color: #f59e0b; font-size: 1.1rem;">🗑️ Purgar Registros Huérfanos</h3>
-                <p style="margin: 0; color: #9ca3af; font-size: 0.9rem;">Elimina registros de <code style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">user_unlocks</code> cuyo ítem ya no existe en el catálogo.</p>
+                <h3>🗑️ Purgar Registros Huérfanos</h3>
+                <p>Elimina registros de <code>user_unlocks</code> cuyo ítem ya no existe en el catálogo.</p>
             </div>
             <form action="{{ route('admin.system.purgeOrphans') }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas purgar los registros huérfanos? Esta acción es irreversible.');">
                 @csrf
-                <button type="submit" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.3s; text-transform: uppercase; letter-spacing: 1px;">
+                <button type="submit" class="btn-purge">
                     🧹 Ejecutar Purga
                 </button>
             </form>

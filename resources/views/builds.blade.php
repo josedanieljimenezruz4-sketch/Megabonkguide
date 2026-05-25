@@ -92,57 +92,56 @@
                 </form>
             </aside>
 
-            {{-- REMOVED SECOND x-data --}}
             <section class="results-list">
-                <div class="results-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="results-header">
                     <h2 x-text="'Resultados (' + builds.length + ')'">Resultados</h2>
-                    <a href="{{ route('builds.create') }}" class="btn-primary" style="padding: 10px 15px; border-radius: 8px; font-weight: bold;">+ Publicar mi Build</a>
+                    <a href="{{ route('builds.create') }}" class="btn-primary btn-publish-build">+ Publicar mi Build</a>
                     <div x-show="loading" class="spinner"></div>
                 </div>
 
                 {{-- Mapear los datos que vienen del paginator de Laravel `builds.data` --}}
                 <template x-for="build in builds" :key="build.id">
-                    <div class="build-card fade-in" style="min-width: 0;">
+                    <div class="build-card fade-in">
                         <div class="card-header">
                             <h3 x-text="build.name"></h3>
                             <!-- Representación de Medias Estrellas con CSS -->
                             <div class="valoracion-estrellas" :style="`--rating: ${parseFloat(build.rating).toFixed(1)};`" :title="`${parseFloat(build.rating).toFixed(1)} Estrellas`"></div>
                         </div>
                         <p class="card-details">
-                            <span style="font-size: 0.9em; color: #aaa;">Tipo: <span style="color: #fff;" x-text="build.type"></span></span>
+                            <span class="card-detail-label">Tipo: <span class="card-detail-value" x-text="build.type"></span></span>
                         </p>
-                        <div x-data="{ expanded: false }" x-show="build.description" style="margin-top: 10px;">
+                        <div x-data="{ expanded: false }" x-show="build.description" class="build-description-toggle">
                             <!-- Contenedor A (Contraído con gradiente) -->
                             <div x-show="!expanded" x-transition.opacity style="position: relative;">
-                                <p class="card-description" x-text="build.description" style="word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; color: #ccc; line-height: 1.5; margin: 0;"></p>
+                                <p class="card-description build-description-collapsed" x-text="build.description"></p>
                                 <template x-if="build.description && build.description.length > 150">
-                                    <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: 2rem; background: linear-gradient(to top, rgba(20,20,30,0.95), transparent); pointer-events: none;"></div>
+                                    <div class="build-description-fade"></div>
                                 </template>
                             </div>
 
                             <!-- Contenedor B (Expandido con animación x-collapse) -->
                             <div x-show="expanded" x-collapse.duration.400ms>
-                                <p class="card-description" x-text="build.description" style="word-wrap: break-word; overflow-wrap: break-word; word-break: break-word; color: #ccc; line-height: 1.5; margin: 0; white-space: pre-wrap;"></p>
+                                <p class="card-description build-description-expanded" x-text="build.description"></p>
                             </div>
                             
                             <template x-if="build.description && build.description.length > 150">
-                                <button @click="expanded = !expanded" x-text="expanded ? 'Leer menos' : 'Leer más...'" style="background: none; border: none; color: #00f0ff; font-weight: bold; cursor: pointer; padding: 0; margin-top: 8px; font-size: 0.85em; transition: color 0.3s;" onmouseover="this.style.color='#00c8ff'" onmouseout="this.style.color='#00f0ff'"></button>
+                                <button @click="expanded = !expanded" x-text="expanded ? 'Leer menos' : 'Leer más...'" class="btn-read-more"></button>
                             </template>
                         </div>
                         
-                        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 15px;">
-                            <span style="display: flex; align-items: center; gap: 6px; font-size: 0.85em; color: #aaa;">
+                        <div class="build-card-footer">
+                            <span class="build-author-info">
                                 Creada por 
-                                <img :src="build.user ? build.user.avatar_url : '{{ asset('images/default-avatar.png') }}'" alt="Avatar" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; border: 1px solid #ffcf00;">
-                                <a :href="build.user ? '/perfil/' + build.user.id : '#'" style="color: #ffcf00; font-weight: bold; text-decoration: none;" x-text="build.user ? build.user.username : 'Anónimo'"></a>
+                                <img :src="build.user ? build.user.avatar_url : '{{ asset('images/default-avatar.png') }}'" alt="Avatar" class="build-author-avatar">
+                                <a :href="build.user ? '/perfil/' + build.user.id : '#'" class="build-author-link" x-text="build.user ? build.user.username : 'Anónimo'"></a>
                                 <template x-if="build.user && build.user.is_admin">
-                                    <span style="color: #1da1f2; margin-left: -2px;" title="Verificado">☑️</span>
+                                    <span class="build-verified-icon" title="Verificado">☑️</span>
                                 </template>
                                 <span x-text="build.created_at_human ? 'hace ' + build.created_at_human : ''"></span>
                             </span>
-                            <div style="display: flex; gap: 10px;">
+                            <div class="build-card-actions">
                                 <template x-if="build.user_id == {{ auth()->id() ?? 'null' }}">
-                                    <a :href="'/builds/' + build.id + '/edit'" class="view-build-link" style="background: rgba(255, 255, 255, 0.1); border-color: #ffcf00; color: #ffcf00;">✏️ Editar</a>
+                                    <a :href="'/builds/' + build.id + '/edit'" class="view-build-link btn-edit-build">✏️ Editar</a>
                                 </template>
                                 <a :href="'/builds/' + build.id" class="view-build-link">Ver Detalles →</a>
                             </div>
@@ -170,6 +169,7 @@
                             rating: '',
                             type: ''
                         },
+                        // Obtiene builds del backend según los filtros activos
                         async fetchBuilds() {
                             this.loading = true;
                             const params = new URLSearchParams(this.filters).toString();
@@ -178,7 +178,7 @@
                                     headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
                                 });
                                 const data = await response.json();
-                                // Paginator de laravel retorna los items en "data"
+                                // Paginator de Laravel retorna los items en "data"
                                 this.builds = data.builds.data;
                                 this.counts = data.counts;
                             } catch (error) {

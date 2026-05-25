@@ -159,12 +159,15 @@ class BuildController extends Controller
         $accesorios = Item::where('type', 'item')->get();
         $strategies = MetaStrategy::where('is_active', true)->get();
 
+        // Cargamos los ítems para mapear las selecciones actuales por tipo de ranura
         $build->load('items');
 
+        // Inicializar arrays para mapear los ítems seleccionados por tipo de ranura
         $selectedArmas = [];
         $selectedTomos = [];
         $selectedItems = [];
 
+        // Contadores para indexar cada ítem dentro de su tipo
         $armaCount = 1;
         $tomoCount = 1;
         $itemCount = 1;
@@ -179,6 +182,7 @@ class BuildController extends Controller
             }
         }
 
+        // Garantizar un mínimo de 2 slots visibles en el formulario
         $armasCountTotal = max(2, count($selectedArmas));
         $tomosCountTotal = max(2, count($selectedTomos));
 
@@ -217,6 +221,7 @@ class BuildController extends Controller
             'meta_strategy_id' => $datosValidados['meta_strategy_id'] ?? null,
         ]);
 
+        // Preparar array de sincronización para la tabla pivote build_item
         $formattedSync = [];
         foreach (['Arma', 'Tomo', 'Item'] as $tipoRanura) {
             if (isset($datosValidados['items'][$tipoRanura])) {

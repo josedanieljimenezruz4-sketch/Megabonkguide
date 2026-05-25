@@ -54,8 +54,6 @@ class AdminController extends Controller
         ]);
     }
 
-
-
     /**
      * Muestra el gestor de Tier Lists de la comunidad (Modo antiguo).
      */
