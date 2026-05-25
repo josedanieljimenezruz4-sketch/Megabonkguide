@@ -20,6 +20,6 @@ class AdminMiddleware
             return $next($request);
         }
 
-        return redirect('/')->with('error', 'No tienes permisos de Administrador para acceder a esta ruta.');
+        abort(403, 'No tienes acceso a estas funciones del sistema.');
     }
 }
