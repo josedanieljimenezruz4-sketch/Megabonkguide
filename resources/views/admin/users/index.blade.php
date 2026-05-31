@@ -52,7 +52,7 @@
                         </td>
                         <td>{{ $user->email }}</td>
                         <td>
-                            @if($user->id == 1 || $user->email === 'josedanieljimenezruz4@gmail.com')
+                            @if($user->id == 1)
                                 <span style="background: linear-gradient(90deg, #ff4b2b, #ff416c); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; color: white;">🛡️ SUPERADMIN</span>
                             @elseif($user->is_admin)
                                 <form action="{{ route('admin.users.toggleRole', $user->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Quitar rol Admin a {{ $user->username }}?');">

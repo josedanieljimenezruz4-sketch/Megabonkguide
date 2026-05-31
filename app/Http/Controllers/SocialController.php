@@ -63,6 +63,12 @@ class SocialController extends Controller
                 'discord_id' => $proveedor == 'discord' ? $usuarioSocial->getId() : null,
                 'avatar' => $usuarioSocial->getAvatar(),
             ]);
+
+            // Aseguramos explícitamente que los nuevos usuarios nazcan sin permisos de admin.
+            // Si el admin inicia sesión y su correo ya existe en la BD, entrará en el bloque
+            // superior "if ($usuario)" y su estado "is_admin" quedará intacto.
+            $usuario->is_admin = 0;
+            $usuario->save();
         }
 
         Auth::login($usuario, true); // true para "remember me"
