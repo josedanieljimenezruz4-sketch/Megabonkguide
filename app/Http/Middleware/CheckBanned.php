@@ -10,7 +10,9 @@ use Carbon\Carbon;
 class CheckBanned
 {
     /**
-     * Manejar una solicitud entrante.
+     * Intercepta usuarios baneados y los redirige a la pantalla de prisión.
+     * Si el baneo ya ha expirado, permite el acceso con normalidad.
+     * La ruta /banned queda excluida para evitar bucles infinitos de redirección.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
@@ -19,19 +21,14 @@ class CheckBanned
     public function handle(Request $request, Closure $next)
     {
         if (Auth::check()) {
-            $user = Auth::user();
-            if ($user->banned_until && Carbon::parse($user->banned_until)->isFuture()) {
-                $bannedUntil = Carbon::parse($user->banned_until);
-                $message = 'Tu cuenta estÃ¡ suspendida hasta el ' . $bannedUntil->format('d/m/Y H:i') . '.';
-                if ($bannedUntil->diffInYears(Carbon::now()) > 50) {
-                    $message = 'Tu cuenta ha sido suspendida permanentemente.';
+            $usuario = Auth::user();
+
+            // Comprobar si el usuario tiene un baneo activo (fecha futura)
+            if ($usuario->banned_until && Carbon::parse($usuario->banned_until)->isFuture()) {
+                // Excluir la ruta de prisión y logout para evitar bucles infinitos
+                if (!$request->is('banned') && !$request->is('logout')) {
+                    return redirect()->route('banned');
                 }
-
-                Auth::logout();
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-
-                return redirect()->route('login')->with('error', $message);
             }
         }
 

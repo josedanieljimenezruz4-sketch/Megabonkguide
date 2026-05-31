@@ -24,6 +24,15 @@ use App\Http\Controllers\Admin\WikiAdminController;
 // Página de Inicio
 Route::get('/', [HomeController::class, 'mostrarInicio'])->name('home');
 
+// Pantalla de Prisión (fuera de CheckBanned para evitar bucles de redirección)
+Route::get('/banned', function () {
+    // Si no está logueado o su baneo expiró, lo sacamos de la prisión y lo devolvemos al inicio
+    if (!auth()->check() || !auth()->user()->banned_until || !auth()->user()->banned_until->isFuture()) {
+        return redirect()->route('home');
+    }
+    return view('errors.banned');
+})->name('banned')->middleware('auth');
+
 // Rutas exclusivas a Builds
 Route::get('/builds', [\App\Http\Controllers\BuildController::class, 'mostrarListaDeBuilds'])->name('builds.index');
 Route::get('/builds/{build}', [\App\Http\Controllers\BuildController::class, 'mostrarBuild'])->name('builds.show')->where('build', '[0-9]+');

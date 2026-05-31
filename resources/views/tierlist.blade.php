@@ -22,7 +22,6 @@
         <p class="intro-text-tierlist">
             Nuestra Tier List se actualiza semanalmente con base en el rendimiento de los objetos y personajes en el
             **Leaderboard**.
-            Las unidades se clasifican según su potencial máximo en los desafíos de mayor dificultad (Bonk +10).
             ¡Recuerda que la habilidad del jugador siempre es el factor más importante!
         </p>
 

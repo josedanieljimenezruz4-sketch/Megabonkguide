@@ -1451,3 +1451,143 @@ a {
     text-decoration: none;
     color: inherit;
 }
+
+/* =========================================
+   PANTALLA DE PRISIÓN / BANEO
+========================================= */
+.banned-card {
+    border-color: rgba(255, 0, 60, 0.4) !important;
+    max-width: 700px;
+}
+
+.banned-card:hover {
+    border-color: rgba(255, 0, 60, 0.8) !important;
+    box-shadow: 0 0 40px rgba(255, 0, 60, 0.3) !important;
+    transform: none; /* Deshabilitar el translateY del glass-card base */
+}
+
+.banned-title {
+    font-size: 3.5rem;
+    color: #ff003c;
+    text-shadow: 0 0 15px rgba(255, 0, 60, 0.8), 0 0 40px rgba(255, 0, 60, 0.4);
+}
+
+/* Contenedor del contador */
+.banned-countdown-container {
+    margin: 30px 0;
+    padding: 25px;
+    background: rgba(255, 0, 60, 0.05);
+    border: 1px solid rgba(255, 0, 60, 0.2);
+    border-radius: 12px;
+}
+
+.banned-countdown-label {
+    font-size: 1rem;
+    color: #aaa;
+    margin: 0 0 15px 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Reloj digital neón */
+.banned-clock {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.banned-clock-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 70px;
+}
+
+.banned-clock-value {
+    font-size: 3rem;
+    font-weight: 900;
+    color: #ff003c;
+    text-shadow: 0 0 10px rgba(255, 0, 60, 0.6);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+}
+
+.banned-clock-label {
+    font-size: 0.75rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 5px;
+}
+
+.banned-clock-separator {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: rgba(255, 0, 60, 0.5);
+    line-height: 1;
+    padding-bottom: 18px; /* Alinear con los números, no con la etiqueta */
+}
+
+/* Acciones al expirar el baneo */
+.banned-expired-actions {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.banned-expired-message {
+    color: #00ffaa;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-shadow: 0 0 10px rgba(0, 255, 170, 0.5);
+}
+
+/* Ban permanente */
+.banned-permanent-label {
+    font-size: 2rem;
+    color: #ff003c;
+    font-weight: 900;
+    text-shadow: 0 0 15px rgba(255, 0, 60, 0.6);
+    margin: 0 0 10px 0;
+}
+
+.banned-permanent-message {
+    font-size: 1.1rem;
+    color: #aaa;
+    margin: 0;
+}
+
+/* Botón de cerrar sesión en pantalla de baneo */
+.banned-logout-container {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.btn-banned-logout {
+    background: transparent;
+    border: 1px solid #555;
+    color: #888;
+    padding: 10px 25px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-banned-logout:hover {
+    border-color: var(--color-primary-accent);
+    color: var(--color-primary-accent);
+    box-shadow: 0 0 10px rgba(65, 232, 239, 0.3);
+}
+
+@media (max-width: 600px) {
+    .banned-title { font-size: 2.5rem; }
+    .banned-clock-value { font-size: 2rem; }
+    .banned-clock-unit { min-width: 55px; }
+    .banned-clock-separator { font-size: 1.8rem; }
+}

@@ -28,6 +28,7 @@ class User extends Authenticatable
         'google_id',
         'discord_id',
         'avatar',
+        'banned_until',
     ];
 
     /**
@@ -47,6 +48,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'banned_until' => 'datetime',
     ];
 
     protected $appends = ['avatar_url'];
@@ -67,7 +69,7 @@ class User extends Authenticatable
     }
 
     /**
-     * RELACIÃ“N: MUCHOS A MUCHOS
+     * RELACIÓN: MUCHOS A MUCHOS
      * Un usuario puede desbloquear muchos Ã­tems y un Ã­tem puede ser desbloqueado por muchos usuarios.
      * Conecta la tabla 'users' y 'items' a travÃ©s de la tabla intermedia 'user_unlocks'.
      * ->withTimestamps() mantiene actualizadas las fechas created_at y updated_at en la tabla pivote.
@@ -78,8 +80,8 @@ class User extends Authenticatable
     }
 
     /**
-     * RELACIÃ“N: 1 A MUCHOS
-     * Un usuario puede escribir mÃºltiples comentarios a lo largo de la aplicaciÃ³n.
+     * RELACIÓN: 1 A MUCHOS
+     * Un usuario puede escribir múltiples comentarios a lo largo de la aplicación.
      */
     public function comments()
     {
@@ -87,8 +89,8 @@ class User extends Authenticatable
     }
 
     /**
-     * RELACIÃ“N: 1 A MUCHOS
-     * Un usuario puede publicar varios posts en la secciÃ³n de la Comunidad.
+     * RELACIÓN: 1 A MUCHOS
+     * Un usuario puede publicar varios posts en la sección de la Comunidad.
      */
     public function communityPosts()
     {
@@ -96,7 +98,7 @@ class User extends Authenticatable
     }
 
     /**
-     * RELACIÃ“N: 1 A MUCHOS
+     * RELACIÓN: 1 A MUCHOS
      * Un usuario es autor de muchas Builds (estrategias de equipamiento).
      */
     public function builds()
