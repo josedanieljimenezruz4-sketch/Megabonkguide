@@ -90,7 +90,7 @@
                                 <div style="background: #1e1e2e; padding: 15px; border-radius: 8px; border-left: 4px solid #2e7d32; transition: transform 0.2s; border-top: 1px solid #333; border-right: 1px solid #333; border-bottom: 1px solid #333;"
                                     onmouseover="this.style.transform='translateY(-3px)'"
                                     onmouseout="this.style.transform='translateY(0)'">
-                                    <h4 style="color: #fff; margin: 0 0 5px 0;">{{ $build->name ?? 'Build sin título' }}</h4>
+                                    <h4 style="color: #fff; margin: 0 0 5px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 80px;" title="{{ $build->name ?? 'Build sin título' }}">{{ $build->name ?? 'Build sin título' }}</h4>
                                     <span style="color: #aaa; font-size: 0.85em;">{{ $build->created_at->format('d/m/Y') }}</span>
                                 </div>
                             </a>
@@ -120,7 +120,7 @@
                                 <div style="background: #1e1e2e; padding: 15px; border-radius: 8px; border-left: 4px solid #ffcf00; transition: transform 0.2s; border-top: 1px solid #333; border-right: 1px solid #333; border-bottom: 1px solid #333;"
                                     onmouseover="this.style.transform='translateY(-3px)'"
                                     onmouseout="this.style.transform='translateY(0)'">
-                                    <h4 style="color: #fff; margin: 0 0 5px 0;">{{ $tl->titulo }}</h4>
+                                    <h4 style="color: #fff; margin: 0 0 5px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 80px;" title="{{ $tl->titulo }}">{{ $tl->titulo }}</h4>
                                     <div style="display: flex; justify-content: space-between; font-size: 0.85em; color: #aaa;">
                                         <span>{{ ucfirst($tl->categoria) }}</span>
                                         <span>{{ $tl->created_at->format('d/m/Y') }}</span>
