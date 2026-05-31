@@ -12,6 +12,7 @@ class CreateItemsTable extends Migration
             $table->string('id')->primary(); // Mismo ID de HTML "hacha-purpura"
             $table->string('name');
             $table->text('description')->nullable();
+            $table->string('requirement')->nullable();
             $table->string('type'); // 'arma', 'tomo', 'personaje', 'item'
             $table->string('image_path')->nullable();
             $table->timestamps();

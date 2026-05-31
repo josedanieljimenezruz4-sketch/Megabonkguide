@@ -16,7 +16,7 @@ class CreateUserRankVotesTable extends Migration
         Schema::create('user_rank_votes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('item_id')->collation('utf8mb4_0900_ai_ci');
+            $table->string('item_id');
             $table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
             $table->enum('suggested_rank', ['S', 'A', 'B', 'C']);
             $table->timestamps();
