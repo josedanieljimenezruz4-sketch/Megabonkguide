@@ -8,6 +8,12 @@ use App\Models\User;
 use App\Models\Item;
 use App\Models\Build;
 use App\Models\MetaStrategy;
+use App\Models\GameInfo;
+use App\Models\Faq;
+use App\Models\CommunityPost;
+use App\Models\Score;
+use App\Models\TierList;
+use App\Models\TierListRow;
 
 class DatabaseSeeder extends Seeder
 {
@@ -274,5 +280,62 @@ class DatabaseSeeder extends Seeder
             'item-03' => ['slot_type' => 'Item'], // Anillo Sanguijuela
             'item-01' => ['slot_type' => 'Item']  // Collar de Ajo
         ]);
+
+        // 5. Crear Información del Juego (GameInfo y FAQs)
+        $gameInfos = [
+            ['title' => 'Sobre Megabonk', 'content' => 'Megabonk es un juego roguelite de supervivencia extrema donde cada decisión cuenta.', 'category' => 'General'],
+            ['title' => 'Cómo jugar', 'content' => 'Recoge objetos, sobrevive oleadas y desbloquea nuevas builds.', 'category' => 'Guía'],
+            ['title' => 'Mecánicas Base', 'content' => 'Descubre sinergias únicas al combinar armas con su tomo correspondiente. ¡La experimentación es clave para la supervivencia!', 'category' => 'Mecánicas']
+        ];
+
+        $faq = [
+            ['title' => '¿Es multijugador?', 'content' => 'Por ahora, ¡conquista las tablas de clasificación en solitario!', 'category' => 'FAQ'],
+            ['title' => '¿Cómo puedo subir mis propias builds?', 'content' => 'Debes iniciar sesión con tu cuenta de Discord y dirigirte al apartado de Builds dentro de tu perfil.', 'category' => 'FAQ'],
+            ['title' => '¿El juego soporta mando?', 'content' => 'Megabonk está optimizado tanto para teclado y ratón como para mando de consola.', 'category' => 'FAQ'],
+            ['title' => '¿Cómo funciona el Leaderboard?', 'content' => 'Tu puntuación se envía automáticamente al finalizar cada run exitosa; se guardan tus 10 mejores marcas personales.', 'category' => 'FAQ']
+        ];
+
+        foreach ($gameInfos as $info) {
+            GameInfo::firstOrCreate(['title' => $info['title']], $info);
+        }
+
+        foreach ($faq as $f) {
+            Faq::firstOrCreate(['title' => $f['title']], $f);
+        }
+
+        // 6. Crear Posts de la Comunidad
+        $posts = [
+            ['user_id' => $admin->id, 'title' => 'Mi primera victoria', 'content' => '¡Por fin logré vencer al jefe del Abismo con Lyra!', 'category' => 'build'],
+            ['user_id' => $admin->id, 'title' => '¿Nerf a las Dagas Gemelas?', 'content' => 'El DPS es demasiado alto, ¿qué opinan?', 'category' => 'meta'],
+            ['user_id' => $admin->id, 'title' => '¿Cuándo sale el nuevo parche?', 'content' => 'Llevo esperando meses.', 'category' => 'question']
+        ];
+        foreach ($posts as $post) {
+            CommunityPost::firstOrCreate(['title' => $post['title']], $post);
+        }
+
+        // 7. Crear Puntuaciones (Leaderboard)
+        $scores = [
+            ['user_id' => $admin->id, 'character_id' => 'pj-01', 'build_id' => $build1->id, 'points' => 35000, 'time' => '30:00', 'status' => 'approved'],
+        ];
+        foreach ($scores as $score) {
+            Score::firstOrCreate(['points' => $score['points'], 'time' => $score['time']], $score);
+        }
+
+        // 8. Crear Tier Lists
+        $tierPersonajes = TierList::firstOrCreate(
+            ['titulo' => 'Meta de Personajes'],
+            ['user_id' => $admin->id, 'categoria' => 'Personajes', 'descripcion' => 'Los mejores personajes para farmear oro']
+        );
+        TierListRow::firstOrCreate(['tier_list_id' => $tierPersonajes->id, 'item_id' => 'pj-01'], ['rank' => 'S']);
+        TierListRow::firstOrCreate(['tier_list_id' => $tierPersonajes->id, 'item_id' => 'pj-02'], ['rank' => 'A']);
+
+        $tierArmas = TierList::firstOrCreate(
+            ['titulo' => 'Tier List de Armas'],
+            ['user_id' => $admin->id, 'categoria' => 'Armas', 'descripcion' => 'Clasificación de armas según su daño por segundo']
+        );
+        TierListRow::firstOrCreate(['tier_list_id' => $tierArmas->id, 'item_id' => 'arma-04'], ['rank' => 'S']);
+        TierListRow::firstOrCreate(['tier_list_id' => $tierArmas->id, 'item_id' => 'arma-03'], ['rank' => 'S']);
+        TierListRow::firstOrCreate(['tier_list_id' => $tierArmas->id, 'item_id' => 'arma-02'], ['rank' => 'A']);
+        TierListRow::firstOrCreate(['tier_list_id' => $tierArmas->id, 'item_id' => 'arma-01'], ['rank' => 'C']);
     }
 }
