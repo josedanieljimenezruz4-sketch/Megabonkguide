@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Item;
 use App\Models\Build;
+use App\Models\MetaStrategy;
 
 class DatabaseSeeder extends Seeder
 {
@@ -203,7 +204,23 @@ class DatabaseSeeder extends Seeder
             Item::updateOrCreate(['id' => $item['id']], $item);
         }
 
-        // 3. Crear 2 Builds asociadas al Admin y a los ítems
+        // 3. Crear Estrategias Dominantes (Meta Strategies)
+        $metaDps = MetaStrategy::firstOrCreate(
+            ['title' => 'Estrategia DPS'],
+            ['description' => 'Maximiza el daño para eliminar enemigos rápidamente.', 'build_type' => 'DPS', 'is_active' => true]
+        );
+
+        $metaSoporte = MetaStrategy::firstOrCreate(
+            ['title' => 'Estrategia Soporte'],
+            ['description' => 'Control de masas y apoyo para facilitar la partida.', 'build_type' => 'Soporte', 'is_active' => true]
+        );
+
+        $metaHealer = MetaStrategy::firstOrCreate(
+            ['title' => 'Estrategia Healer'],
+            ['description' => 'Prioriza la curación y la supervivencia extrema.', 'build_type' => 'Healer', 'is_active' => true]
+        );
+
+        // 4. Crear 3 Builds asociadas al Admin, a las estrategias y a los ítems
         $build1 = Build::firstOrCreate(
             ['name' => 'Build de Daño Rápido'],
             [
@@ -211,7 +228,8 @@ class DatabaseSeeder extends Seeder
                 'character_id' => 'pj-01',
                 'description' => 'Una build excelente para limpiar rápidamente olas de enemigos usando ataques veloces.',
                 'rating' => 5,
-                'type' => 'DPS'
+                'type' => 'DPS',
+                'meta_strategy_id' => $metaDps->id
             ]
         );
         // Asociar ítems a la build
@@ -222,13 +240,14 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $build2 = Build::firstOrCreate(
-            ['name' => 'Mago de Control Absoluto'],
+            ['name' => 'Mago de Control y Soporte'],
             [
                 'user_id' => $admin->id,
                 'character_id' => 'pj-02',
                 'description' => 'Mantén a los enemigos a raya congelándolos y ralentizándolos constantemente.',
                 'rating' => 4,
-                'type' => 'Control'
+                'type' => 'Soporte',
+                'meta_strategy_id' => $metaSoporte->id
             ]
         );
         // Asociar ítems a la build
@@ -236,6 +255,24 @@ class DatabaseSeeder extends Seeder
             'tomo-02' => ['slot_type' => 'Tomo'], // Grimorio Helado
             'tomo-03' => ['slot_type' => 'Tomo'], // Códice del Vacío
             'item-06' => ['slot_type' => 'Item']  // Reloj de Arena Roto
+        ]);
+
+        $build3 = Build::firstOrCreate(
+            ['name' => 'Superviviente Healer'],
+            [
+                'user_id' => $admin->id,
+                'character_id' => 'pj-01',
+                'description' => 'Recuperación constante de salud gracias a los golpes críticos y curaciones.',
+                'rating' => 5,
+                'type' => 'Healer',
+                'meta_strategy_id' => $metaHealer->id
+            ]
+        );
+        // Asociar ítems a la build
+        $build3->items()->sync([
+            'arma-01' => ['slot_type' => 'Arma'], // Hacha de Hierro
+            'item-03' => ['slot_type' => 'Item'], // Anillo Sanguijuela
+            'item-01' => ['slot_type' => 'Item']  // Collar de Ajo
         ]);
     }
 }
